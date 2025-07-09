@@ -468,5 +468,17 @@ body {
 }
 
 input.is-invalid + .mensagem-erro {
-    display: block;
-}
+    display: block;}        
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .cartao-status .numero {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+        }
+        
+        .cartao-status .rotulo {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+        }
