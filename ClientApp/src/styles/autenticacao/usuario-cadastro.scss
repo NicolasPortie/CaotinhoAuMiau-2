@@ -1329,5 +1329,8 @@ body {
     text-align: left;
     margin: 0;
     line-height: 1.5;
-    cursor: pointer;
-} 
+    cursor: pointer;}         span[data-valmsg-for="CEP"],
+        span[data-valmsg-for="CPF"] {
+            display: none !important;
+        }
+        

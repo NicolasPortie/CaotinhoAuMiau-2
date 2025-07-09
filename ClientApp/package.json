@@ -1,0 +1,10 @@
+{
+  "name": "caotinhoaumiau",
+  "version": "1.0.0",
+  "scripts": {
+    "build:css": "sass src/styles/main.scss dist/css/bundle.css && cp dist/css/bundle.css ../wwwroot/css/bundle.css"
+  },
+  "devDependencies": {
+    "sass": "^1.69.5"
+  }
+}

@@ -1,0 +1,22 @@
+@import 'variables';
+@import 'layout';
+@import 'components';
+
+@import 'admin/admin-dashboard';
+@import 'admin/admin-gerenciamento-adocoes';
+@import 'admin/admin-gerenciamento-colaboradores';
+@import 'admin/admin-gerenciamento-formularios';
+@import 'admin/admin-gerenciamento-pets';
+@import 'admin/slidebar-admin';
+@import 'autenticacao/escolher-perfil';
+@import 'autenticacao/usuario-cadastro';
+@import 'autenticacao/usuario-login';
+@import 'home/home';
+@import 'home/sobre';
+@import 'shared/navbar';
+@import 'shared/notificacoes';
+@import 'shared/slidebar';
+@import 'usuario/usuario-adocoes';
+@import 'usuario/usuario-explorar-pets';
+@import 'usuario/usuario-formulario-adocao';
+@import 'usuario/usuario-perfil';
