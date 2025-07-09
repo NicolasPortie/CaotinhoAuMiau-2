@@ -1,0 +1,286 @@
+@model IEnumerable<PerfilViewModel>
+
+@{
+    ViewData["Title"] = "Escolha seu Perfil";
+    Layout = "_Layout";
+    
+    var perfis = Model ?? Enumerable.Empty<PerfilViewModel>();
+    bool mostraSelecao =
+        perfis.Count() == 2 &&
+        perfis.Any(p => p.Tipo == "Admin") &&
+        perfis.Any(p => p.Tipo == "Adotante");
+}
+
+@if (mostraSelecao)
+{
+    <style>
+        :root {
+            --primary: #FF6B00;
+            --primary-hover: #FF8533;
+            --secondary: #FFA366;
+            --background-dark: #222;
+            --overlay-dark: rgba(0,0,0,0.68);
+            --white: #fff;
+            --success: #28a745;
+            --gray-600: #6C757D;
+            --gray-700: #495057;
+            --shadow: 0 4px 24px rgba(0,0,0,0.10);
+            --border-radius: 18px;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        body.overlay-active {
+            overflow: hidden;
+        }
+        .profile-selector-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: url('/imagens/Imagens CaotinhoAuMiau/fundo2.jpg') center center/cover no-repeat;
+            z-index: 9998;
+        }
+        .profile-selector-bg::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--overlay-dark);
+            z-index: 1;
+        }
+        .profile-selector-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        .profile-selector-container {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 2.5rem 2rem 2rem 2rem;
+            max-width: 900px;
+            width: 100%;
+            margin: 0 1rem;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            pointer-events: all;
+        }
+        .profile-selector-header {
+            margin-bottom: 2.2rem;
+        }
+        .profile-selector-logo {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        .profile-selector-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--gray-700);
+            margin-bottom: 0.3rem;
+            font-family: 'Poppins', sans-serif;
+        }
+        .profile-selector-subtitle {
+            font-size: 1.1rem;
+            color: var(--gray-600);
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+        }
+        .profile-cards-container {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            align-items: stretch;
+            flex-wrap: wrap;
+        }
+        .profile-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 2px solid #f3f3f3;
+            flex: 1 1 320px;
+            max-width: 350px;
+            min-width: 260px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            padding: 1.5rem 1.2rem 1.2rem 1.2rem;
+            margin: 0 auto;
+            transition: var(--transition);
+            justify-content: space-between;
+        }
+        .profile-card:hover, .profile-card:focus {
+            border-color: var(--primary);
+            box-shadow: 0 8px 32px rgba(255,107,0,0.10);
+            transform: translateY(-6px) scale(1.02);
+        }
+        .profile-card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .profile-card-icon {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        .profile-card-description {
+            color: var(--gray-600);
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 1.1rem;
+        }
+        .profile-card-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 1.2rem 0;
+        }
+        .profile-card-features li {
+            padding: 0.35rem 0;
+            color: var(--gray-700);
+            font-size: 0.97rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .profile-card-features li::before {
+            content: '✔';
+            color: var(--success);
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-right: 0.3rem;
+        }
+        .profile-card-action {
+            width: 100%;
+            padding: 0.9rem 0;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-hover) 100%);
+            color: var(--white);
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem;
+            margin-top: auto;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .profile-card-action:hover, .profile-card-action:focus {
+            background: linear-gradient(90deg, var(--primary-hover) 0%, var(--primary) 100%);
+            box-shadow: 0 4px 16px rgba(255,107,0,0.13);
+        }
+        @@media (max-width: 900px) {
+            .profile-cards-container {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            .profile-card {
+                max-width: 100%;
+            }
+        }
+        @@media (max-width: 600px) {
+            .profile-selector-container {
+                padding: 1.2rem 0.3rem;
+            }
+            .profile-selector-title {
+                font-size: 1.3rem;
+            }
+            .profile-card {
+                padding: 1rem 0.5rem;
+            }
+        }
+    </style>
+    <div class="profile-selector-bg"></div>
+    <div class="profile-selector-overlay">
+        <div class="profile-selector-container">
+            <div class="profile-selector-header">
+                <i class="fas fa-paw profile-selector-logo" aria-hidden="true"></i>
+                <h1 class="profile-selector-title">Escolha seu Perfil</h1>
+                <p class="profile-selector-subtitle">Selecione como você deseja acessar o sistema e começar sua jornada</p>
+            </div>
+            <div class="profile-cards-container">
+                @foreach (var perfil in perfis)
+                {
+                    <div class="profile-card" tabindex="0" data-action="@perfil.ActionUrl" aria-label="Entrar como @perfil.Nome">
+                        <h3 class="profile-card-title">
+                            <i class="fas @(perfil.Tipo == "Adotante" ? "fa-paw" : "fa-user-gear") profile-card-icon"></i>
+                            @perfil.Nome
+                        </h3>
+                        <p class="profile-card-description">
+                            @if (perfil.Tipo == "Admin")
+                            {
+                                <span>Acesse o painel administrativo completo para gerenciar todo o sistema, desde pets e adoções até colaboradores e configurações avançadas.</span>
+                            }
+                            else
+                            {
+                                <span>Explore nossa comunidade de pets disponíveis para adoção e gerencie suas solicitações de forma simples e intuitiva.</span>
+                            }
+                        </p>
+                        <ul class="profile-card-features">
+                            @if (perfil.Tipo == "Admin")
+                            {
+                                <li>Gerenciar pets e adoções</li>
+                                <li>Visualizar relatórios detalhados</li>
+                                <li>Administrar colaboradores</li>
+                                <li>Configurar sistema</li>
+                                <li>Monitorar estatísticas</li>
+                            }
+                            else
+                            {
+                                <li>Explorar pets disponíveis</li>
+                                <li>Solicitar adoções</li>
+                                <li>Acompanhar status</li>
+                                <li>Gerenciar perfil</li>
+                                <li>Receber notificações</li>
+                            }
+                        </ul>
+                        <button class="profile-card-action" onclick="handleProfileSelection(this, '@perfil.ActionUrl')">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Acessar como @perfil.Nome
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.classList.add('overlay-active');
+            const cards = document.querySelectorAll('.profile-card');
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const destino = card.getAttribute('data-action');
+                    if (destino) {
+                        handleProfileSelection(card, destino);
+                    }
+                });
+                card.addEventListener('keydown', e => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        card.click();
+                    }
+                });
+            });
+            window.addEventListener('beforeunload', function() {
+                document.body.classList.remove('overlay-active');
+            });
+        });
+        function handleProfileSelection(element, url) {
+            element.style.pointerEvents = 'none';
+            element.style.opacity = '0.7';
+            setTimeout(() => {
+                window.location.href = url;
+            }, 180);
+        }
+    </script>
+} 
+} 
