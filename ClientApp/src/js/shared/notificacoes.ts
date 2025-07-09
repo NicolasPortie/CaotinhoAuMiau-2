@@ -366,5 +366,5 @@ window.carregarNotificacoes = carregarNotificacoes;
 window.marcarTodasComoLidas = marcarTodasComoLidas;
 
 document.addEventListener('DOMContentLoaded', function() {
-    inicializarComponenteNotificacoes();
-}); 
+    inicializarComponenteNotificacoes();}); 
+export {};

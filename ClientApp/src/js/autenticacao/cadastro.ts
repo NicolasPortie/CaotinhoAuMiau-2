@@ -1209,5 +1209,5 @@ function configurarNavbar() {
         } else {
             navbar.classList.remove('scrolled');
         }
-    });
-} 
+    });} 
+export {};

@@ -1997,3 +1997,5 @@ function configurarEventos() {
         configurarTooltipsBotoesDesabilitados();
     }
 }
+
+export {};

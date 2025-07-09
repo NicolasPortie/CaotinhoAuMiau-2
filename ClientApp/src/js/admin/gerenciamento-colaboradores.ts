@@ -856,3 +856,5 @@ function abrirModalExcluir(id, nome) {
     $('#modalExcluir').modal('show');
 }
 
+
+export {};

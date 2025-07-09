@@ -48,5 +48,5 @@ document.addEventListener('DOMContentLoaded', function() {
     if (cards.length === 1) {
         const unicoTipo = cards[0].id.replace('card-', '');
         selecionarPerfil(unicoTipo);
-    }
-}); 
+    }}); 
+export {};

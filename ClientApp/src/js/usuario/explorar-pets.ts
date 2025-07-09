@@ -104,7 +104,8 @@ function initExplorarPets() {
         usuarioIdAtual = dadosUsuario.dataset.usuarioId || '';
         usuarioNomeAtual = dadosUsuario.dataset.usuarioNome || '';
         usuarioTipoAtual = dadosUsuario.dataset.usuarioTipo || '';
-        
+
+        configurarMenuENotificacoes({
             logado: usuarioEstaLogado,
             id: usuarioIdAtual,
             nome: usuarioNomeAtual,
@@ -1470,3 +1471,5 @@ function forcarLimiteItensPorPagina() {
 }
 
 
+
+export {};

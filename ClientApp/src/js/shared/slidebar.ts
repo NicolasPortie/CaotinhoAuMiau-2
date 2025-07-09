@@ -193,5 +193,5 @@ window.addEventListener('resize', function() {
 
 window.alternarMenu = alternarMenu;
 window.abrirMenuLateral = abrirMenuLateral;
-window.fecharMenuLateral = fecharMenuLateral;
-window.realizarLogout = realizarLogout; 
+window.fecharMenuLateral = fecharMenuLateral;window.realizarLogout = realizarLogout; 
+export {};

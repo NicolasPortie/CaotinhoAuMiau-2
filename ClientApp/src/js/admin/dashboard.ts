@@ -255,8 +255,6 @@ function carregarDadosGraficos(filtroAdocoes = 'Anual', filtroUsuarios = 'Anual'
             </div>
         `;
     });
-
-        })
     fetch(`/GerenciamentoDashboard/DadosGraficos?periodoAdocoes=${encodeURIComponent(filtroAdocoes)}&periodoUsuarios=${encodeURIComponent(filtroUsuarios)}`)
         .then(response => {
             if (!response.ok) {
@@ -763,19 +761,14 @@ function validarFormularioAdministrador() {
 
 
 function realizarLogout() {
-    
-    if (confirm('Tem certeza que deseja sair do sistema?')) {
 
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
-            }
+    if (confirm('Tem certeza que deseja sair do sistema?')) {
+        fetch('/Autenticacao/Logout', {
+            method: 'GET',
+            credentials: 'include'
         })
         .then(response => {
-            if (response.ok) {
-                
+            if (response.ok || response.redirected) {
                 window.location.href = '/Login';
             } else {
                 mostrarAlerta('Erro ao realizar logout. Tente novamente.', 'erro');
@@ -1029,5 +1022,5 @@ function configurarModalAdmin() {
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    inicializarDashboard();
-});
+    inicializarDashboard();});
+export {};

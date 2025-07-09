@@ -528,3 +528,5 @@ document.addEventListener('DOMContentLoaded', function() {
     
     inicializarImagensEquipe();
 }); 
+
+export {};

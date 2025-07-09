@@ -75,5 +75,5 @@ function animarAoScrollar() {
     };
     
     animarElementos();
-    $(window).scroll(animarElementos);
-} 
+    $(window).scroll(animarElementos);} 
+export {};

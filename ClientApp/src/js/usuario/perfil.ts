@@ -642,5 +642,5 @@ document.addEventListener('DOMContentLoaded', () => {
             uploadBtn.querySelector('i').className = 'fas fa-camera';
         }
     });
-  }
-  
+  }  
+export {};

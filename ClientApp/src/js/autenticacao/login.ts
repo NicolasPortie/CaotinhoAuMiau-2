@@ -45,5 +45,5 @@ document.addEventListener('DOMContentLoaded', function() {
                 }, 500);
             });
         }, 5000);
-    }
-}); 
+    }}); 
+export {};

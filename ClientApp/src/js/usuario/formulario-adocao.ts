@@ -949,5 +949,5 @@ if (notificationsCloseBtn) {
 if (markAsReadBtn) {
     markAsReadBtn.addEventListener("click", function(e) {
         e.preventDefault();
-    });
-} 
+    });} 
+export {};

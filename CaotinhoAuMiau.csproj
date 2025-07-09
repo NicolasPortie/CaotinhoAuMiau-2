@@ -18,4 +18,10 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
+  <Target Name="BuildClientApp" BeforeTargets="Build">
+    <Exec WorkingDirectory="ClientApp" Command="npm install" />
+    <Exec WorkingDirectory="ClientApp" Command="npm run build" />
+    <Copy SourceFiles="ClientApp/dist/js/bundle.js" DestinationFolder="wwwroot/js" />
+  </Target>
+
 </Project>

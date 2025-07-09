@@ -925,5 +925,5 @@ function configurarNavegacaoAbas() {
     
     setTimeout(function() {
         $('.detalhes-aba.ativa').trigger('click');
-    }, 50);
-} 
+    }, 50);} 
+export {};

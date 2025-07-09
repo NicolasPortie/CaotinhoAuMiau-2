@@ -235,5 +235,5 @@ window.alternarMenu = alternarMenu;
 window.abrirMenuLateral = abrirMenuLateral;
 window.fecharMenuLateral = fecharMenuLateral;
 window.abrirPainelNotificacoes = abrirPainelNotificacoes;
-window.fecharPainelNotificacoes = fecharPainelNotificacoes;
-window.alternarNotificacoes = alternarNotificacoes; 
+window.fecharPainelNotificacoes = fecharPainelNotificacoes;window.alternarNotificacoes = alternarNotificacoes; 
+export {};

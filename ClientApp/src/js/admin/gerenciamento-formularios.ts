@@ -903,5 +903,5 @@ function obterIconeStatus(status) {
             return 'fas fa-check-double text-success';
         default:
             return 'fas fa-question-circle text-muted';
-    }
-}
+    }}
+export {};

@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "rootDir": "src/js",
+    "outDir": "dist/js",
+    "target": "es6",
+    "module": "esnext",
+    "moduleResolution": "node"
+  },
+  "include": ["src/js/**/*"]
+}
