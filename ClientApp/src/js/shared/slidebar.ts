@@ -1,4 +1,4 @@
-import { ocultarPainelNotificacoes } from './notificacoes.js';
+import { ocultarPainelNotificacoes } from './notificacoes';
 
 function abrirMenuLateral() {
     const menuLateral = document.querySelector('.menu-lateral');
