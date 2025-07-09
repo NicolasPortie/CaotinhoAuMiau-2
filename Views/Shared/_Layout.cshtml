@@ -50,46 +50,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://unpkg.com/imask"></script>
     
-    <script src="~/js/shared/navbar.js"></script>
-    <script src="~/js/shared/slidebar.js"></script>
-    <script src="~/js/shared/notificacoes.js"></script>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const btnMenuHamburguer = document.getElementById('btnMenuHamburguer');
-            if (btnMenuHamburguer) {
-                btnMenuHamburguer.addEventListener('click', function() {
-                    if (typeof alternarMenu === 'function') {
-                        alternarMenu();
-                    } else {
-                        console.error('Função alternarMenu não está disponível');
-                    }
-                });
-            }
-            
-            const notificacaoIcone = document.getElementById('notificacoes-icone');
-            if (notificacaoIcone) {
-                notificacaoIcone.addEventListener('click', function() {
-                    if (typeof togglePainelNotificacoes === 'function') {
-                        togglePainelNotificacoes();
-                    } else {
-                        console.error('Função togglePainelNotificacoes não está disponível');
-                    }
-                });
-            }
-            
-            const menuSobreposicao = document.querySelector('.menu-sobreposicao');
-            if (menuSobreposicao) {
-                menuSobreposicao.addEventListener('click', function() {
-                    if (typeof fecharMenuLateral === 'function') {
-                        fecharMenuLateral();
-                    } else {
-                        console.error('Função fecharMenuLateral não está disponível');
-                    }
-                });
-            }
-        });
-    </script>
+    <script src="~/js/bundle.js"></script>
     
     @RenderSection("Scripts", required: false)
 </body>
