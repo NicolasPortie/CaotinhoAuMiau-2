@@ -1,3 +1,4 @@
+import { servicoAdocao } from '../api/servicoAdocao';
 
 toastr.options = {
     closeButton: true,
@@ -502,52 +503,32 @@ function enviarFormulario(event) {
     }
     
     
-    $.ajax({
-        url: `/usuario/adocao/formulario/${petId}`,
-        type: 'POST',
-        data: new URLSearchParams(formData),
-        processData: false,
-        contentType: 'application/x-www-form-urlencoded',
-        headers: {
-            'RequestVerificationToken': formData.get('__RequestVerificationToken')
-        },
-        success: function(response) {
-            
-            if (response.success) {
-                
-                toastr.success(response.message);
-                
-                
+    const dados = Object.fromEntries(formData.entries());
+
+    servicoAdocao.criar(dados as any)
+        .then(response => {
+            const data = response.data;
+            if (data.success) {
+                toastr.success(data.message);
                 exibirModalConfirmacao();
             } else {
-                
-                toastr.error(response.message);
-                
-                
-                if (response.errors && response.errors.length > 0) {
-                    response.errors.forEach(function(erro) {
+                toastr.error(data.message);
+                if (data.errors && data.errors.length > 0) {
+                    data.errors.forEach(function(erro) {
                         toastr.warning(erro);
                     });
                 }
-                
-                
                 submitButton.disabled = false;
                 submitButton.innerHTML = '<i class="fas fa-paw"></i> Enviar Solicitação';
             }
-        },
-        error: function(xhr, status, error) {
-            console.error("Erro na requisição:", error);
-            console.error("Status:", status);
-            console.error("Resposta:", xhr.responseText);
-            
-            toastr.error("Ocorreu um erro ao enviar o formulário. Por favor, tente novamente.");
-            
-            
+        })
+        .catch(error => {
+            console.error('Erro na requisição:', error);
+            toastr.error('Ocorreu um erro ao enviar o formulário. Por favor, tente novamente.');
             submitButton.disabled = false;
             submitButton.innerHTML = '<i class="fas fa-paw"></i> Enviar Solicitação';
-        }
-    });
-    
+        });
+
     return false;
 }
 
