@@ -308,8 +308,8 @@ function configurarMenuENotificacoes() {
             e.stopPropagation();
             
             
-            if (typeof window.togglePainelNotificacoes === 'function') {
-                window.togglePainelNotificacoes();
+            if (typeof window.toggleNotificationPanel === 'function') {
+                window.toggleNotificationPanel();
             } else {
             }
         });
