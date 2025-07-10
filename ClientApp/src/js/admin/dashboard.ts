@@ -1,3 +1,4 @@
+import api from '../api/servicoAdocao';
 Chart.defaults.font.family = "'Inter', sans-serif";
 Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(17, 24, 39, 0.8)';
 Chart.defaults.plugins.tooltip.padding = 12;
@@ -255,14 +256,9 @@ function carregarDadosGraficos(filtroAdocoes = 'Anual', filtroUsuarios = 'Anual'
             </div>
         `;
     });
-    fetch(`/GerenciamentoDashboard/DadosGraficos?periodoAdocoes=${encodeURIComponent(filtroAdocoes)}&periodoUsuarios=${encodeURIComponent(filtroUsuarios)}`)
+    api.get(`/GerenciamentoDashboard/DadosGraficos?periodoAdocoes=${encodeURIComponent(filtroAdocoes)}&periodoUsuarios=${encodeURIComponent(filtroUsuarios)}`)
         .then(response => {
-            if (!response.ok) {
-                throw new Error('Falha ao carregar dados dos gráficos');
-            }
-            return response.json();
-        })
-        .then(dados => {
+            const dados = response.data;
 
             if (!dados || typeof dados !== 'object') {
                 throw new Error('Formato de dados inválido');
@@ -763,26 +759,14 @@ function validarFormularioAdministrador() {
 function realizarLogout() {
     
     if (confirm('Tem certeza que deseja sair do sistema?')) {
-        fetch('/Autenticacao/Logout', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
-            }
-        })
-        .then(response => {
-            if (response.ok) {
-                
+        api.post('/Autenticacao/Logout')
+            .then(() => {
                 window.location.href = '/Login';
-            } else {
+            })
+            .catch(erro => {
+                console.error('Erro ao fazer logout:', erro);
                 mostrarAlerta('Erro ao realizar logout. Tente novamente.', 'erro');
-            }
-        })
-        .catch(erro => {
-            console.error('Erro ao fazer logout:', erro);
-            mostrarAlerta('Erro ao realizar logout. Tente novamente.', 'erro');
-        });
+            });
     }
 }
 
@@ -799,14 +783,9 @@ function carregarAtividadesRecentes() {
     
     container.innerHTML = `<div class="text-center p-3"><i class="fas fa-spinner fa-spin me-2"></i> Carregando atividades...</div>`;
 
-    fetch('/GerenciamentoDashboard/AtividadesRecentes')
+    api.get('/GerenciamentoDashboard/AtividadesRecentes')
         .then(response => {
-            if (!response.ok) {
-                throw new Error('Falha ao carregar atividades recentes');
-            }
-            return response.json();
-        })
-        .then(dados => {
+            const dados = response.data;
             if (Array.isArray(dados) && dados.length > 0) {
                 atualizarListaAtividades(container, dados);
             } else {

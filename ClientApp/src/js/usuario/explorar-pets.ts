@@ -1,3 +1,4 @@
+import api from '../api/servicoAdocao';
 toastr.options = {
     "closeButton": true,
     "debug": false,
@@ -458,9 +459,9 @@ function abrirModalResponsabilidade(petId) {
     }
     
     
-    fetch('/usuario/adocao/verificar-adocoes-pendentes')
-        .then(response => response.json())
-        .then(data => {
+    api.get('/usuario/adocao/verificar-adocoes-pendentes')
+        .then(response => {
+            const data = response.data;
             if (data.temAdocoesPendentes) {
                 
                 abrirModal('modalAdocaoPendente');
