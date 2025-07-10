@@ -131,10 +131,10 @@ document.addEventListener('DOMContentLoaded', function() {
         notificacaoIcone.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            if (typeof togglePainelNotificacoes === 'function') {
-                togglePainelNotificacoes();
+            if (typeof toggleNotificationPanel === 'function') {
+                toggleNotificationPanel();
             } else {
-                console.error("Função togglePainelNotificacoes não está disponível");
+                console.error("Função toggleNotificationPanel não está disponível");
                 
                 const painelNotificacoes = document.getElementById('painel-notificacoes');
                 if (painelNotificacoes) {
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     
-    inicializarCampos();
+    initFields();
     
     
     inicializarNavegacaoPainel();
@@ -239,7 +239,7 @@ function fecharPainelNotificacoes() {
 
 
 
-function inicializarCampos() {
+function initFields() {
     
     
     const rendaMensal = document.getElementById('rendaMensal');
@@ -641,7 +641,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     
     
-    inicializarCampos();
+    initFields();
     
     
     inicializarNavegacaoPainel();

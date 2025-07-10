@@ -465,7 +465,7 @@
 
 @section Scripts {
     <script src="~/lib/vanilla-masker/vanilla-masker.js"></script>
-    <script src="~/js/usuario/formulario-adocao.js" asp-append-version="true"></script>
+    <script src="~/js/usuario/AdoptionForm.js" asp-append-version="true"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             VMasker(document.querySelector(".moeda-mask")).maskMoney({
@@ -478,8 +478,8 @@
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('notificacoes') === 'true') {
                 setTimeout(function() {
-                    if (typeof togglePainelNotificacoes === 'function') {
-                        togglePainelNotificacoes();
+                    if (typeof toggleNotificationPanel === 'function') {
+                        toggleNotificationPanel();
                     } else if (typeof abrirModalNotificacoes === 'function') {
                         abrirModalNotificacoes();
                     } else {
@@ -610,8 +610,8 @@
             });
             
             document.getElementById('btnAbrirNotificacoes')?.addEventListener('click', function() {
-                if (typeof togglePainelNotificacoes === 'function') {
-                    togglePainelNotificacoes();
+                if (typeof toggleNotificationPanel === 'function') {
+                    toggleNotificationPanel();
                 } else if (typeof abrirModalNotificacoes === 'function') {
                     abrirModalNotificacoes();
                 } else {
@@ -667,8 +667,8 @@
                 });
                 
                 window.abrirNotificacoes = function() {
-                    if (typeof togglePainelNotificacoes === 'function') {
-                        togglePainelNotificacoes();
+                    if (typeof toggleNotificationPanel === 'function') {
+                        toggleNotificationPanel();
                     } else if (typeof abrirModalNotificacoes === 'function') {
                         abrirModalNotificacoes();
                     } else {
@@ -696,8 +696,8 @@
                         modal.show();
                         
                         document.getElementById('btnAbrirNotificacoes')?.addEventListener('click', function() {
-                            if (typeof togglePainelNotificacoes === 'function') {
-                                togglePainelNotificacoes();
+                            if (typeof toggleNotificationPanel === 'function') {
+                                toggleNotificationPanel();
                             } else if (typeof abrirModalNotificacoes === 'function') {
                                 abrirModalNotificacoes();
                             } else {

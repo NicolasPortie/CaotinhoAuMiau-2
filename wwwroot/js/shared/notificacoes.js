@@ -43,7 +43,7 @@ function inicializarComponenteNotificacoes() {
                 }
             }
             
-            togglePainelNotificacoes();
+            toggleNotificationPanel();
         });
     });
     
@@ -51,7 +51,7 @@ function inicializarComponenteNotificacoes() {
     if (btnFechar) {
         btnFechar.addEventListener('click', function(e) {
             e.preventDefault();
-            ocultarPainelNotificacoes();
+            hideNotificationPanel();
         });
     }
     
@@ -68,7 +68,7 @@ function inicializarComponenteNotificacoes() {
     setInterval(verificarNotificacoes, 60000);
 }
 
-function togglePainelNotificacoes() {
+function toggleNotificationPanel() {
     const painel = document.getElementById('painel-notificacoes');
     if (!painel) {
         console.error('Painel de notificações não encontrado!');
@@ -77,13 +77,13 @@ function togglePainelNotificacoes() {
     
     
     if (painel.classList.contains('ativo')) {
-        ocultarPainelNotificacoes();
+        hideNotificationPanel();
     } else {
-        mostrarPainelNotificacoes();
+        showNotificationPanel();
     }
 }
 
-function mostrarPainelNotificacoes() {
+function showNotificationPanel() {
     const painel = document.getElementById('painel-notificacoes');
     if (!painel) {
         console.error('Painel de notificações não encontrado!');
@@ -111,7 +111,7 @@ function mostrarPainelNotificacoes() {
     }, 100);
 }
 
-function ocultarPainelNotificacoes() {
+function hideNotificationPanel() {
     const painel = document.getElementById('painel-notificacoes');
     if (!painel) return;
     
@@ -129,7 +129,7 @@ function fecharPainelAoClicarFora(e) {
     const icone = document.querySelector('.icone-notificacao');
     
     if (painel && !painel.contains(e.target) && (!icone || !icone.contains(e.target))) {
-        ocultarPainelNotificacoes();
+        hideNotificationPanel();
     }
 }
 
@@ -355,13 +355,13 @@ function exibirMensagem(mensagem, tipo) {
 }
 
 function abrirModalNotificacoes() {
-    mostrarPainelNotificacoes();
+        showNotificationPanel();
 }
 
 window.inicializarComponenteNotificacoes = inicializarComponenteNotificacoes;
-window.togglePainelNotificacoes = togglePainelNotificacoes;
-window.mostrarPainelNotificacoes = mostrarPainelNotificacoes;
-window.ocultarPainelNotificacoes = ocultarPainelNotificacoes;
+window.toggleNotificationPanel = toggleNotificationPanel;
+window.showNotificationPanel = showNotificationPanel;
+window.hideNotificationPanel = hideNotificationPanel;
 window.carregarNotificacoes = carregarNotificacoes;
 window.marcarTodasComoLidas = marcarTodasComoLidas;
 

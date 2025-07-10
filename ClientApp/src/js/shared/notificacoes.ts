@@ -43,7 +43,7 @@ function inicializarComponenteNotificacoes() {
                 }
             }
             
-            togglePainelNotificacoes();
+            toggleNotificationPanel();
         });
     });
     
@@ -51,7 +51,7 @@ function inicializarComponenteNotificacoes() {
     if (btnFechar) {
         btnFechar.addEventListener('click', function(e) {
             e.preventDefault();
-            ocultarPainelNotificacoes();
+            hideNotificationPanel();
         });
     }
     
@@ -68,7 +68,7 @@ function inicializarComponenteNotificacoes() {
     setInterval(verificarNotificacoes, 60000);
 }
 
-function togglePainelNotificacoes() {
+function toggleNotificationPanel() {
     const painel = document.getElementById('painel-notificacoes');
     if (!painel) {
         console.error('Painel de notificações não encontrado!');
@@ -77,13 +77,13 @@ function togglePainelNotificacoes() {
     
     
     if (painel.classList.contains('ativo')) {
-        ocultarPainelNotificacoes();
+        hideNotificationPanel();
     } else {
-        mostrarPainelNotificacoes();
+        showNotificationPanel();
     }
 }
 
-function mostrarPainelNotificacoes() {
+function showNotificationPanel() {
     const painel = document.getElementById('painel-notificacoes');
     if (!painel) {
         console.error('Painel de notificações não encontrado!');
@@ -104,14 +104,14 @@ function mostrarPainelNotificacoes() {
     if (lista) lista.style.display = 'none';
     if (semNotificacoes) semNotificacoes.style.display = 'none';
     
-    setTimeout(carregarNotificacoes, 100);
+        setTimeout(carregarNotificacoes, 100);
     
     setTimeout(function() {
         document.addEventListener('click', fecharPainelAoClicarFora);
     }, 100);
 }
 
-function ocultarPainelNotificacoes() {
+function hideNotificationPanel() {
     const painel = document.getElementById('painel-notificacoes');
     if (!painel) return;
     
@@ -129,7 +129,7 @@ function fecharPainelAoClicarFora(e) {
     const icone = document.querySelector('.icone-notificacao');
     
     if (painel && !painel.contains(e.target) && (!icone || !icone.contains(e.target))) {
-        ocultarPainelNotificacoes();
+        hideNotificationPanel();
     }
 }
 
@@ -355,14 +355,14 @@ function exibirMensagem(mensagem, tipo) {
 }
 
 function abrirModalNotificacoes() {
-    mostrarPainelNotificacoes();
+    showNotificationPanel();
 }
 
 export {
     inicializarComponenteNotificacoes,
-    togglePainelNotificacoes,
-    mostrarPainelNotificacoes,
-    ocultarPainelNotificacoes,
+    toggleNotificationPanel,
+    showNotificationPanel,
+    hideNotificationPanel,
     carregarNotificacoes,
     marcarTodasComoLidas
 };
