@@ -21,23 +21,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <style>
-        span[data-valmsg-for="CEP"],
-        span[data-valmsg-for="CPF"] {
-            display: none !important;
-        }
-        
-        
-        .validation-summary-errors ul li:contains("CPF deve ter 11 dígitos"),
-        .validation-summary-errors ul li:contains("CEP must be a string with a maximum length of 8") {
-            display: none !important;
-        }
-        
-        
-        jQuery.expr[':'].contains = function(a, i, m) {
-            return jQuery(a).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
-        };
-    </style>
 </head>
 <body>
     

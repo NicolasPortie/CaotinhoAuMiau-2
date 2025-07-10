@@ -22,102 +22,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <style>
-        
-        .usuario-dropdown {
-            position: relative;
-        }
-        
-        .usuario-menu-toggle {
-            cursor: pointer;
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-        
-        #dropdownUsuario {
-            transition: all 0.3s ease;
-            transform-origin: top right;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-10px);
-            display: none;
-            position: absolute;
-            z-index: 2000;
-            top: 45px;
-            right: 0;
-            width: 220px;
-            background: linear-gradient(145deg, #333333, #444444);
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 12px;
-            overflow: hidden;
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-        }
-        
-        #dropdownUsuario.visivel,
-        body.dropdown-aberto #dropdownUsuario {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-        
-        #dropdownUsuario a {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 15px;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            margin-bottom: 4px;
-            background-color: transparent;
-            transition: all 0.2s ease;
-        }
-        
-        #dropdownUsuario a:hover {
-            background-color: rgba(255, 255, 255, 0.1) !important;
-            transform: translateX(3px);
-        }
-        
-        #dropdownUsuario i {
-            font-size: 1.1rem;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 6px;
-        }
-        
-        #dropdownUsuario .fa-user {
-            background-color: rgba(255, 87, 34, 0.2);
-            color: #FF5722;
-        }
-        
-        #dropdownUsuario .fa-paw {
-            background-color: rgba(0, 176, 255, 0.2);
-            color: #00B0FF;
-        }
-        
-        #dropdownUsuario .fa-heart {
-            background-color: rgba(255, 64, 129, 0.2);
-            color: #FF4081;
-        }
-        
-        #dropdownUsuario .fa-sign-out-alt {
-            background-color: rgba(255, 193, 7, 0.2);
-            color: #FFC107;
-        }
-        
-        #dropdownUsuario .separador {
-            height: 1px;
-            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.1), transparent);
-            margin: 8px 0;
-        }
-    </style>
 </head>
 
 <body>
@@ -194,20 +98,6 @@
                                     @inicial
                                 </div>
                                 
-                                <style>
-                                    .avatar-inicial-sobre {
-                                        width: 40px;
-                                        height: 40px;
-                                        border-radius: 50%;
-                                        background-color: #FF6B00 !important;
-                                        color: white;
-                                        display: flex;
-                                        align-items: center;
-                                        justify-content: center;
-                                        font-weight: bold;
-                                        font-size: 1.2rem;
-                                    }
-                                </style>
                             }
                         </a>
                         
