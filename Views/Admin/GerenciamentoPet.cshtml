@@ -2,16 +2,10 @@
     Layout = null;
 }
 
-@model List<CaotinhoAuMiau.Models.Pet>
-@using System.Linq
+@model CaotinhoAuMiau.Models.ViewModels.Admin.GerenciamentoPetViewModel
 
 @{
     ViewData["Title"] = "Gerenciamento de Pets";
-    
-    var totalPets = Model?.Count ?? 0;
-    var totalCachorros = Model?.Count(p => p.Especie == "Cachorro") ?? 0;
-    var totalGatos = Model?.Count(p => p.Especie == "Gato") ?? 0;
-    var adotados = Model?.Count(p => p.Status == "Adotado") ?? 0;
 }
 
 <!DOCTYPE html>
@@ -50,7 +44,7 @@
                     </div>
                     <div class="d-flex flex-column align-items-start">
                         <span class="rotulo">Total de Pets</span>
-                        <span class="numero">@totalPets</span>
+                        <span class="numero">@Model.TotalPets</span>
                     </div>
                 </div>
             </div>
@@ -61,7 +55,7 @@
                     </div>
                     <div class="d-flex flex-column align-items-start">
                         <span class="rotulo">Cachorros</span>
-                        <span class="numero">@totalCachorros</span>
+                        <span class="numero">@Model.TotalCachorros</span>
                     </div>
                 </div>
             </div>
@@ -72,7 +66,7 @@
                     </div>
                     <div class="d-flex flex-column align-items-start">
                         <span class="rotulo">Gatos</span>
-                        <span class="numero">@totalGatos</span>
+                        <span class="numero">@Model.TotalGatos</span>
                     </div>
                 </div>
             </div>
@@ -83,7 +77,7 @@
                     </div>
                     <div class="d-flex flex-column align-items-start">
                         <span class="rotulo">Adotados</span>
-                        <span class="numero">@adotados</span>
+                        <span class="numero">@Model.TotalAdotados</span>
                     </div>
                 </div>
             </div>
@@ -122,64 +116,26 @@
         </div>
 
         <div class="pets-container">
-            <div class="pets-grid" id="listaPets" data-itens="@ViewBag.ItensPorPagina">
-                @if (Model != null && Model.Any())
+            <div class="pets-grid" id="listaPets" data-itens="@Model.ItensPorPagina">
+                @foreach (var pet in Model.Pets)
                 {
-                    foreach (var pet in Model)
-                    {
-                        <div class="cartao-pet @(pet.CadastroCompleto ? "" : "border-warning")" 
-                             data-id="@pet.Id" 
-                             data-especie="@pet.Especie.ToLower()" 
-                             data-status="@pet.Status.ToLower().Replace(" ", "_")"
+                    <div class="cartao-pet @(pet.CadastroCompleto ? "" : "border-warning")"
+                             data-id="@pet.Id"
+                             data-especie="@pet.Especie.ToLower()"
+                             data-status="@pet.StatusCss"
                              data-nome-arquivo-imagem="@pet.NomeArquivoImagem"
                              data-json="@System.Net.WebUtility.HtmlEncode(System.Text.Json.JsonSerializer.Serialize(pet))">
                             <div class="container-imagem">
-                                <div class="etiqueta-pet @(pet.CadastroCompleto ? pet.Status.ToLower().Replace(" ", "_") : "rascunho")">
-                                    @if(!pet.CadastroCompleto)
-                                    {
-                                        <text>Rascunho</text>
-                                    }
-                                    else if(pet.Status.ToLower() == "disponivel")
-                                    {
-                                        <text>Disponível</text>
-                                    }
-                                    else
-                                    {
-                                        @pet.Status
-                                    }
+                                <div class="etiqueta-pet @(pet.CadastroCompleto ? pet.StatusCss : "rascunho")">
+                                    @pet.Status
                                 </div>
-                                
-                                @if (!string.IsNullOrEmpty(pet.NomeArquivoImagem))
-                                {
-                                    <img src="/imagens/pets/@pet.NomeArquivoImagem" class="imagem-pet" alt="@pet.Nome" loading="lazy" importance="high" fetchpriority="high" onerror="this.style.display='none'; this.parentNode.querySelector('.sem-imagem') ? this.parentNode.querySelector('.sem-imagem').style.display='flex' : this.parentNode.innerHTML += '<div class=\'sem-imagem\'></div>'">
-                                }
-                                else
-                                {
-                                    <div class="sem-imagem"></div>
-                                }
+                                <img src="/imagens/pets/@pet.NomeArquivoImagem" class="imagem-pet" alt="@pet.Nome" onerror="this.style.display='none'; this.parentNode.innerHTML += '<div class=\'sem-imagem\'></div>'">
                             </div>
                             <div class="info-pet">
                                 <h3 class="nome-pet">@pet.Nome</h3>
                                 <div class="detalhes-pet">
                                     <span><i class="fas fa-paw"></i> @pet.Especie</span>
-                                    <span class="idade-pet"><i class="fas fa-birthday-cake"></i> 
-                                        @if (pet.Anos > 0 && pet.Meses > 0)
-                                        {
-                                            <text>@pet.Anos ano(s) e @pet.Meses mês(es)</text>
-                                        }
-                                        else if (pet.Anos > 0)
-                                        {
-                                            <text>@pet.Anos ano(s)</text>
-                                        }
-                                        else if (pet.Meses > 0)
-                                        {
-                                            <text>@pet.Meses mês(es)</text>
-                                        }
-                                        else
-                                        {
-                                            <text>0 ano(s)</text>
-                                        }
-                                    </span>
+                                    <span class="idade-pet"><i class="fas fa-birthday-cake"></i> @pet.IdadeTexto</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="etiquetas-pet">
@@ -207,19 +163,16 @@
                         </div>
                     }
                 }
-                else
-                {
-                    <div class="sem-registros">
-                        <div class="icone-vazio">
-                            <i class="fas fa-paw"></i>
-                        </div>
-                        <h3>Nenhum pet encontrado</h3>
-                        <p class="mb-4">Comece adicionando um novo pet no sistema.</p>
-                        <button type="button" class="botao-primario botao-adicionar" data-bs-toggle="modal" data-bs-target="#modalPet" onclick="resetarFormulario()">
-                            <i class="fas fa-plus me-2"></i> Adicionar Pet
-                        </button>
+                <div class="sem-registros @(Model.TemPets ? "d-none" : "")">
+                    <div class="icone-vazio">
+                        <i class="fas fa-paw"></i>
                     </div>
-                }
+                    <h3>Nenhum pet encontrado</h3>
+                    <p class="mb-4">Comece adicionando um novo pet no sistema.</p>
+                    <button type="button" class="botao-primario botao-adicionar" data-bs-toggle="modal" data-bs-target="#modalPet" onclick="resetarFormulario()">
+                        <i class="fas fa-plus me-2"></i> Adicionar Pet
+                    </button>
+                </div>
             </div>
             
             <div class="mensagem-sem-pets" style="display: none;">
@@ -231,96 +184,55 @@
             
             
             <div class="paginacao-container w-100">
-                <div class="paginacao mt-4">
-                    <nav aria-label="Navegação de páginas">
-                        <ul class="pagination justify-content-center flex-wrap">
-                            @if (ViewBag.PaginaAtual > 1)
-                            {
-                                <li class="page-item">
-                                    <a class="page-link" href="@Url.Action("Listar", "GerenciamentoPet", new { pagina = ViewBag.PaginaAtual - 1, itensPorPagina = ViewBag.ItensPorPagina })">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </a>
-                                </li>
-                            }
-                            else
-                            {
-                                <li class="page-item disabled">
-                                    <span class="page-link"><i class="fas fa-chevron-left"></i></span>
-                                </li>
-                            }
+            <div class="paginacao mt-4">
+                <nav aria-label="Navegação de páginas">
+                    <ul class="pagination justify-content-center flex-wrap">
+                            <li class="page-item @(Model.TemPaginaAnterior ? "" : "disabled")">
+                                <a class="page-link" href="@Url.Action("Listar", "GerenciamentoPet", new { pagina = Model.PaginaAtual - 1, itensPorPagina = Model.ItensPorPagina })">
+                                    <i class="fas fa-chevron-left"></i>
+                                </a>
+                            </li>
 
-                            @{int inicio = Math.Max(1, ViewBag.PaginaAtual - 2);
-                              int fim = Math.Min(ViewBag.TotalPaginas, ViewBag.PaginaAtual + 2);
-                              if (fim - inicio + 1 < 5 && ViewBag.TotalPaginas >= 5)
+                            @{int inicio = Math.Max(1, Model.PaginaAtual - 2);
+                              int fim = Math.Min(Model.TotalPaginas, Model.PaginaAtual + 2);
+                              if (fim - inicio + 1 < 5 && Model.TotalPaginas >= 5)
                               {
-                                  if (ViewBag.PaginaAtual <= 3)
+                                  if (Model.PaginaAtual <= 3)
                                   {
-                                      fim = Math.Min(5, ViewBag.TotalPaginas);
+                                      fim = Math.Min(5, Model.TotalPaginas);
                                   }
                                   else
                                   {
-                                      inicio = Math.Max(1, ViewBag.TotalPaginas - 4);
+                                      inicio = Math.Max(1, Model.TotalPaginas - 4);
                                   }
                               }}
                             @for (int i = inicio; i <= fim; i++)
                             {
-                                <li class="page-item @(i == ViewBag.PaginaAtual ? "active" : "")">
-                                    <a class="page-link" href="@Url.Action("Listar", "GerenciamentoPet", new { pagina = i, itensPorPagina = ViewBag.ItensPorPagina })">@i</a>
+                                <li class="page-item @(i == Model.PaginaAtual ? "active" : "")">
+                                    <a class="page-link" href="@Url.Action("Listar", "GerenciamentoPet", new { pagina = i, itensPorPagina = Model.ItensPorPagina })">@i</a>
                                 </li>
                             }
 
-                            @if (ViewBag.PaginaAtual < ViewBag.TotalPaginas)
-                            {
-                                <li class="page-item">
-                                    <a class="page-link" href="@Url.Action("Listar", "GerenciamentoPet", new { pagina = ViewBag.PaginaAtual + 1, itensPorPagina = ViewBag.ItensPorPagina })">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </a>
-                                </li>
-                            }
-                            else
-                            {
-                                <li class="page-item disabled">
-                                    <span class="page-link"><i class="fas fa-chevron-right"></i></span>
-                                </li>
-                            }
+                            <li class="page-item @(Model.TemProximaPagina ? "" : "disabled")">
+                                <a class="page-link" href="@Url.Action("Listar", "GerenciamentoPet", new { pagina = Model.PaginaAtual + 1, itensPorPagina = Model.ItensPorPagina })">
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            </li>
                         </ul>
                     </nav>
                 </div>
                 
                 <div class="paginacao-info mt-3 d-flex justify-content-between align-items-center">
                     <div class="info-paginacao">
-                        Exibindo <span>@Model.Count()</span> de <span>@ViewBag.TotalItens</span> pets
+                        Exibindo <span>@Model.Pets.Count()</span> de <span>@Model.TotalItens</span> pets
                     </div>
                     <div class="itens-por-pagina" style="display: flex !important; align-items: center;">
                         <span style="margin-right: 8px; white-space: nowrap; font-size: 14px;">Itens por página:</span>
                         <div class="dropdown">
                             <select id="selectItensPorPagina" class="form-select form-select-sm" style="width: auto; min-width: 60px; padding: 2px 24px 2px 8px; appearance: none; -webkit-appearance: none; -moz-appearance: none; border-radius: 4px; background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 16 16\'%3E%3Cpath fill=\'none\' stroke=\'%236B7280\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M2 5l6 6 6-6\'/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 16px 12px;">
-                                @if (ViewBag.ItensPorPagina == 14)
-                                {
-                                    <option value="14" selected>14</option>
-                                }
-                                else
-                                {
-                                    <option value="14">14</option>
-                                }
-                                
-                                @if (ViewBag.ItensPorPagina == 24)
-                                {
-                                    <option value="24" selected>24</option>
-                                }
-                                else
-                                {
-                                    <option value="24">24</option>
-                                }
-                                
-                                @if (ViewBag.ItensPorPagina == 48)
-                                {
-                                    <option value="48" selected>48</option>
-                                }
-                                else
-                                {
-                                    <option value="48">48</option>
-                                }
+                                <option value="14" selected="@(Model.ItensPorPagina == 14)">14</option>
+                                <option value="24" selected="@(Model.ItensPorPagina == 24)">24</option>
+                                <option value="48" selected="@(Model.ItensPorPagina == 48)">48</option>
                             </select>
                         </div>
                     </div>

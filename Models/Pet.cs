@@ -42,5 +42,17 @@ namespace CaotinhoAuMiau.Models
 
         public virtual ICollection<FormularioAdocao> FormulariosAdocao { get; set; } = new List<FormularioAdocao>();
         public virtual ICollection<Adocao> Adocoes { get; set; } = new List<Adocao>();
+        public string CalcularIdadeTexto()
+        {
+            if (Anos > 0 && Meses > 0) return $"{Anos} ano(s) e {Meses} mês(es)";
+            if (Anos > 0) return $"{Anos} ano(s)";
+            if (Meses > 0) return $"{Meses} mês(es)";
+            return "0 ano(s)";
+        }
+
+        public string ObterStatusCss()
+        {
+            return Status?.ToLower().Replace(" ", "_") ?? string.Empty;
+        }
     }
 } 

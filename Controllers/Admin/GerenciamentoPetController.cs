@@ -68,18 +68,45 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 .Take(itensPorPagina)
                 .ToListAsync();
 
-            ViewBag.PaginaAtual = pagina;
-            ViewBag.ItensPorPagina = itensPorPagina;
-            ViewBag.TotalPaginas = totalPaginas;
-            ViewBag.TotalItens = totalItens;
+            var totalCachorros = await query.CountAsync(p => p.Especie == "Cachorro");
+            var totalGatos = await query.CountAsync(p => p.Especie == "Gato");
+            var totalAdotados = await query.CountAsync(p => p.Status == "Adotado");
 
-            return View("~/Views/Admin/GerenciamentoPet.cshtml", pets);
+            var petCards = pets.Select(p => new PetCardViewModel
+            {
+                Id = p.Id,
+                Nome = p.Nome,
+                Especie = p.Especie ?? string.Empty,
+                Sexo = p.Sexo ?? string.Empty,
+                Porte = p.Porte ?? string.Empty,
+                IdadeTexto = p.CalcularIdadeTexto(),
+                CadastroCompleto = p.CadastroCompleto,
+                NomeArquivoImagem = p.NomeArquivoImagem,
+                Status = p.Status ?? string.Empty,
+                StatusCss = p.ObterStatusCss()
+            }).ToList();
+
+            var viewModel = new GerenciamentoPetViewModel
+            {
+                Pets = petCards,
+                PaginaAtual = pagina,
+                ItensPorPagina = itensPorPagina,
+                TotalPaginas = totalPaginas,
+                TotalItens = totalItens,
+                TotalPets = totalItens,
+                TotalCachorros = totalCachorros,
+                TotalGatos = totalGatos,
+                TotalAdotados = totalAdotados
+            };
+
+            return View("~/Views/Admin/GerenciamentoPet.cshtml", viewModel);
         }
 
         [HttpGet("criar")]
         public IActionResult ExibirFormularioCriacao()
         {
-            return View("~/Views/Admin/GerenciamentoPet.cshtml");
+            var vm = new GerenciamentoPetViewModel();
+            return View("~/Views/Admin/GerenciamentoPet.cshtml", vm);
         }
 
         [HttpPost("SalvarPet")]
