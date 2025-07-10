@@ -9,7 +9,7 @@ import {
 import * as slidebar from './shared/slidebar';
 import * as navbar from './shared/navbar';
 
-import './home/Home';
+import './home/home';
 import './home/sobre';
 
 import './autenticacao/cadastro';
@@ -21,7 +21,7 @@ import './usuario/explorar-pets';
 import './usuario/perfil';
 import './usuario/userAdoptions';
 
-import './formulario/AdoptionForm';
+import './formulario/FormularioAdocao';
 
 import './admin/dashboard';
 import './admin/gerenciamento-colaboradores';
