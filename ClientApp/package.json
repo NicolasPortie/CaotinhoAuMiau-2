@@ -8,8 +8,8 @@
     "build": "vite build",
     "build:css": "sass src/styles/main.scss dist/css/bundle.css",
     "dev:css": "sass --watch src/styles:dist/css",
-    "lint": "eslint 'src/**/*.{js,ts}'",
-    "format": "prettier --write 'src/**/*.{js,ts,css,scss,json,md,html,cshtml}'"
+    "lint": "eslint \"src/**/*.{js,ts}\"",
+    "format": "prettier --write \"src/**/*.{js,ts,css,scss,json,md}\""
   },
   "keywords": [],
   "author": "",
@@ -45,7 +45,7 @@
       "eslint --fix",
       "git add"
     ],
-    "src/**/*.{css,scss,json,md,html,cshtml}": [
+    "src/**/*.{css,scss,json,md}": [
       "prettier --write",
       "git add"
     ]
