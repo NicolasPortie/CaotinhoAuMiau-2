@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "build:css": "sass src/styles/main.scss dist/css/bundle.css",
+    "dev:css": "sass --watch src/styles:dist/css"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +17,7 @@
     "@types/bootstrap": "^5.2.10",
     "@types/jquery": "^3.5.32",
     "@types/toastr": "^2.1.43",
+    "sass": "^1.69.5",
     "typescript": "^5.8.3",
     "vite": "^7.0.3"
   }

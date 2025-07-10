@@ -1,0 +1,12 @@
+        span[data-valmsg-for="CEP"],
+        span[data-valmsg-for="CPF"] {
+            display: none !important;
+        }
+        
+        
+        .validation-summary-errors ul li:contains("CPF deve ter 11 dígitos"),
+        .validation-summary-errors ul li:contains("CEP must be a string with a maximum length of 8") {
+            display: none !important;
+        }
+        
+        
