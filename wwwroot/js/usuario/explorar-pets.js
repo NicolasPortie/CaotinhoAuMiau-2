@@ -442,7 +442,7 @@ function marcarTodasComoLidas() {
     exibirMensagem('Todas as notificações foram marcadas como lidas', 'success');
 }
 
-function abrirModalResponsabilidade(petId) {
+async function abrirModalResponsabilidade(petId) {
     if (!usuarioEstaLogado) {
         abrirModal('modalLoginCadastro');
         document.getElementById('petIdAutenticacao').value = petId || '';
@@ -455,23 +455,21 @@ function abrirModalResponsabilidade(petId) {
     }
     
     
-    fetch('/usuario/adocao/verificar-adocoes-pendentes')
-        .then(response => response.json())
-        .then(data => {
-            if (data.temAdocoesPendentes) {
-                
-                abrirModal('modalAdocaoPendente');
-                return;
-            }
-            
-            
-            document.getElementById('petIdResponsabilidade').value = petId || '';
-            abrirModal('modalResponsabilidade');
-        })
-        .catch(error => {
-            console.error('Erro ao verificar adoções:', error);
-            toastr.error('Ocorreu um erro ao verificar suas adoções. Por favor, tente novamente.');
-        });
+    try {
+        const response = await fetch('/usuario/adocao/verificar-adocoes-pendentes');
+        const data = await response.json();
+
+        if (data.temAdocoesPendentes) {
+            abrirModal('modalAdocaoPendente');
+            return;
+        }
+
+        document.getElementById('petIdResponsabilidade').value = petId || '';
+        abrirModal('modalResponsabilidade');
+    } catch (error) {
+        console.error('Erro ao verificar adoções:', error);
+        toastr.error('Ocorreu um erro ao verificar suas adoções. Por favor, tente novamente.');
+    }
 }
 
 function realizarLogout() {
