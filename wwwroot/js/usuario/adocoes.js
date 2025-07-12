@@ -369,88 +369,70 @@ function manipularErroCancelamento(error, btn) {
     }
 }
 
-function visualizarFormulario(id) {
+async function visualizarFormulario(id) {
     if (!id) {
         toastr.error('ID do formulário inválido');
         return;
     }
 
-    
     const modal = new bootstrap.Modal(document.getElementById('modalFormulario'));
     modal.show();
-    
-    
+
     const loadingDetalhes = document.getElementById('loadingDetalhes');
     const formularioDetalhes = document.getElementById('formularioDetalhes');
-    
+
     if (!loadingDetalhes || !formularioDetalhes) {
         console.error("Elementos DOM necessários não encontrados");
         return;
     }
-    
-    
+
     loadingDetalhes.style.display = 'flex';
     formularioDetalhes.style.display = 'none';
-    
-    
     formularioDetalhes.innerHTML = '';
-    
+
     const timeoutId = setTimeout(() => {
         console.warn("Carregamento demorado detectado");
         const spinnerAtual = loadingDetalhes.querySelector('.spinner-border');
         if (spinnerAtual && loadingDetalhes.style.display !== 'none') {
-            
             const mensagemCarregamento = document.createElement('div');
             mensagemCarregamento.className = 'mt-3 text-center text-muted';
             mensagemCarregamento.innerHTML = 'Carregamento em andamento, aguarde um momento...';
             loadingDetalhes.appendChild(mensagemCarregamento);
         }
     }, 3000);
-    
-    fetch(`/usuario/adocao/formulario-detalhes/${id}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Erro ao carregar detalhes: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            
-            if (data.status === "Aprovado") {
-                
-                
-                renderizarFormulario(data);
-                
-                
-                fetch(`/usuario/adocao/status-adocao/${id}`)
-                    .then(response => response.json())
-                    .then(statusData => {
-                        if (statusData.success && statusData.status) {
-                            
-                            data.status = statusData.status;
-                            
-                            renderizarFormulario(data);
-                        } else {
-                        }
-        })
-        .catch(error => {
-                        console.error("Erro ao buscar status da adoção:", error);
-                    })
-                    .finally(() => {
-                        clearTimeout(timeoutId);
-                    });
-            } else {
-                renderizarFormulario(data);
+
+    try {
+        const response = await fetch(`/usuario/adocao/formulario-detalhes/${id}`);
+        if (!response.ok) {
+            throw new Error(`Erro ao carregar detalhes: ${response.status}`);
+        }
+        const data = await response.json();
+
+        if (data.status === "Aprovado") {
+            renderizarFormulario(data);
+
+            try {
+                const statusResponse = await fetch(`/usuario/adocao/status-adocao/${id}`);
+                const statusData = await statusResponse.json();
+                if (statusData.success && statusData.status) {
+                    data.status = statusData.status;
+                    renderizarFormulario(data);
+                }
+            } catch (error) {
+                console.error("Erro ao buscar status da adoção:", error);
+            } finally {
                 clearTimeout(timeoutId);
             }
-        })
-        .catch(error => {
-            console.error('Erro:', error);
+        } else {
+            renderizarFormulario(data);
             clearTimeout(timeoutId);
-            
-            
-            loadingDetalhes.style.display = 'none';
-                formularioDetalhes.innerHTML = `
+        }
+    } catch (error) {
+        console.error('Erro:', error);
+        clearTimeout(timeoutId);
+
+        loadingDetalhes.style.display = 'none';
+        formularioDetalhes.innerHTML = `
                     <div class="alert alert-danger">
                         <i class="fas fa-exclamation-circle me-2"></i>
                     Não foi possível carregar os detalhes da adoção. Tente novamente mais tarde.
@@ -463,8 +445,8 @@ function visualizarFormulario(id) {
                         </button>
                     </div>
                 `;
-            formularioDetalhes.style.display = 'block';
-        });
+        formularioDetalhes.style.display = 'block';
+    }
 }
 
 function renderizarFormulario(formulario) {
@@ -948,7 +930,7 @@ function confirmarCancelamentoAdocao(adocaoId) {
 }
 
 
-function processarCancelamentoAdocao() {
+async function processarCancelamentoAdocao() {
     const adocaoId = document.getElementById('adocaoIdCancelar').value;
     const motivoCancelamento = document.getElementById('motivoCancelamento').value.trim();
     const erroMotivo = document.getElementById('erroMotivo');
@@ -978,22 +960,22 @@ function processarCancelamentoAdocao() {
     const token = document.getElementById('requestVerificationToken').value;
     
     
-    fetch(`${CONFIG.api.baseUrl}/cancelar-formulario-adocao/${adocaoId}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
-            'RequestVerificationToken': token
-        },
-        body: JSON.stringify(dados)
-    })
-    .then(response => {
+    try {
+        const response = await fetch(`${CONFIG.api.baseUrl}/cancelar-formulario-adocao/${adocaoId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'RequestVerificationToken': token
+            },
+            body: JSON.stringify(dados)
+        });
+
         if (!response.ok) {
             throw new Error(`Erro na requisição: ${response.status}`);
         }
-        return response.json();
-    })
-    .then(data => {
+
+        const data = await response.json();
         
         const modalCancelamento = bootstrap.Modal.getInstance(document.getElementById('modalCancelamento'));
         modalCancelamento.hide();
@@ -1054,15 +1036,13 @@ function processarCancelamentoAdocao() {
             btnConfirmarCancelamento.disabled = false;
             btnConfirmarCancelamento.innerHTML = '<i class="fas fa-times-circle me-2"></i>Confirmar Cancelamento';
         }
-    })
-    .catch(error => {
+    } catch (error) {
         console.error('Erro:', error);
         toastr.error('Ocorreu um erro ao processar o cancelamento. Por favor, tente novamente mais tarde.');
-        
-        
+
         btnConfirmarCancelamento.disabled = false;
         btnConfirmarCancelamento.innerHTML = '<i class="fas fa-times-circle me-2"></i>Confirmar Cancelamento';
-    });
+    }
 }
 
 
