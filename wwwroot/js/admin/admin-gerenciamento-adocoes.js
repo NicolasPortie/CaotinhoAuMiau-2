@@ -333,99 +333,109 @@ function preencherDetalhesAdocao(adocao, fromProfile = false) {
     configurarTimelineProgresso(adocao);
     
     
-    $('#detalhesNomePet').text(adocao.pet ? adocao.pet.nome : 'Não disponível');
-    $('#detalhesEspeciePet').text(adocao.pet ? adocao.pet.especie : '-');
-    $('#detalhesRacaPet').text(adocao.pet ? adocao.pet.raca : '-');
-    $('#detalhesIdadePet').text(adocao.pet ? adocao.pet.idade : '-');
-    $('#detalhesSexoPet').text(adocao.pet ? adocao.pet.sexo : '-');
-    $('#detalhesPortePet').text(adocao.pet ? adocao.pet.porte : '-');
+    document.getElementById('detalhesNomePet').textContent = adocao.pet ? adocao.pet.nome : 'Não disponível';
+    document.getElementById('detalhesEspeciePet').textContent = adocao.pet ? adocao.pet.especie : '-';
+    document.getElementById('detalhesRacaPet').textContent = adocao.pet ? adocao.pet.raca : '-';
+    document.getElementById('detalhesIdadePet').textContent = adocao.pet ? adocao.pet.idade : '-';
+    document.getElementById('detalhesSexoPet').textContent = adocao.pet ? adocao.pet.sexo : '-';
+    document.getElementById('detalhesPortePet').textContent = adocao.pet ? adocao.pet.porte : '-';
     
     
-    const petImagemContainer = $('#detalhesPetImagem');
-    petImagemContainer.empty();
+    const petImagemContainer = document.getElementById('detalhesPetImagem');
+    petImagemContainer.innerHTML = '';
     
     if (adocao.pet && adocao.pet.imagem) {
-        const img = $('<img>').attr('src', `/imagens/pets/${adocao.pet.imagem}`).attr('alt', adocao.pet.nome);
-        petImagemContainer.append(img);
+        const img = document.createElement('img');
+        img.src = `/imagens/pets/${adocao.pet.imagem}`;
+        img.alt = adocao.pet.nome;
+        petImagemContainer.appendChild(img);
     } else {
-        petImagemContainer.html('<i class="fas fa-paw"></i>');
+        petImagemContainer.innerHTML = '<i class="fas fa-paw"></i>';
     }
     
     
-    $('#detalhesNomeAdotante').text(adocao.usuario ? adocao.usuario.nome : 'Não disponível');
-    $('#detalhesEmailAdotante').text(adocao.usuario ? adocao.usuario.email : '-');
-    $('#detalhesTelefoneAdotante').text(adocao.usuario && adocao.usuario.telefone ? formatarTelefone(adocao.usuario.telefone) : '-');
-    $('#detalhesCpfAdotante').text(adocao.usuario && adocao.usuario.cpf ? formatarCPF(adocao.usuario.cpf) : '-');
+    document.getElementById('detalhesNomeAdotante').textContent = adocao.usuario ? adocao.usuario.nome : 'Não disponível';
+    document.getElementById('detalhesEmailAdotante').textContent = adocao.usuario ? adocao.usuario.email : '-';
+    document.getElementById('detalhesTelefoneAdotante').textContent = adocao.usuario && adocao.usuario.telefone ? formatarTelefone(adocao.usuario.telefone) : '-';
+    document.getElementById('detalhesCpfAdotante').textContent = adocao.usuario && adocao.usuario.cpf ? formatarCPF(adocao.usuario.cpf) : '-';
     
     
-    const adotanteAvatarContainer = $('#detalhesAdotanteAvatar');
-    adotanteAvatarContainer.empty();
+    const adotanteAvatarContainer = document.getElementById('detalhesAdotanteAvatar');
+    adotanteAvatarContainer.innerHTML = '';
     
     if (adocao.usuario && adocao.usuario.fotoPerfil) {
-        const img = $('<img>').attr('src', `/imagens/perfil/${adocao.usuario.fotoPerfil}`).attr('alt', adocao.usuario.nome);
-        adotanteAvatarContainer.append(img);
+        const img = document.createElement('img');
+        img.src = `/imagens/perfil/${adocao.usuario.fotoPerfil}`;
+        img.alt = adocao.usuario.nome;
+        adotanteAvatarContainer.appendChild(img);
     } else if (adocao.usuario && adocao.usuario.nome) {
-        adotanteAvatarContainer.text(adocao.usuario.nome.charAt(0).toUpperCase());
+        adotanteAvatarContainer.textContent = adocao.usuario.nome.charAt(0).toUpperCase();
     } else {
-        adotanteAvatarContainer.html('<i class="fas fa-user"></i>');
+        adotanteAvatarContainer.innerHTML = '<i class="fas fa-user"></i>';
     }
     
     
+    const botaoPerfil = document.getElementById('botaoVerPerfilCompleto');
     if (adocao.usuario) {
-        $('#botaoVerPerfilCompleto').show().off('click').on('click', function() {
-            $('#modalDetalhesAdocao').modal('hide');
-            setTimeout(() => {
-                abrirPerfilUsuario(adocao.usuario.id);
-            }, 500);
-        });
+        botaoPerfil.classList.remove('d-none');
+        botaoPerfil.onclick = () => {
+            bootstrap.Modal.getInstance(document.getElementById('modalDetalhesAdocao')).hide();
+            setTimeout(() => abrirPerfilUsuario(adocao.usuario.id), 500);
+        };
     } else {
-        $('#botaoVerPerfilCompleto').hide();
+        botaoPerfil.classList.add('d-none');
+        botaoPerfil.onclick = null;
     }
     
     
-    $('#detalhesDataEnvio').text(new Date(adocao.dataEnvio).toLocaleString('pt-BR'));
-    $('#detalhesDataResposta').text(adocao.dataResposta ? new Date(adocao.dataResposta).toLocaleString('pt-BR') : 'Pendente');
+    document.getElementById('detalhesDataEnvio').textContent = new Date(adocao.dataEnvio).toLocaleString('pt-BR');
+    document.getElementById('detalhesDataResposta').textContent = adocao.dataResposta ? new Date(adocao.dataResposta).toLocaleString('pt-BR') : 'Pendente';
     
     
-    const dataBuscaContainer = $('#detalhesDataBuscaContainer');
-    const dataFinalizacaoContainer = $('#detalhesDataFinalizacaoContainer');
+    const dataBuscaContainer = document.getElementById('detalhesDataBuscaContainer');
+    const dataFinalizacaoContainer = document.getElementById('detalhesDataFinalizacaoContainer');
     
     
     if (adocao.status === 'Aguardando buscar' && adocao.dataResposta) {
         const dataBusca = new Date(adocao.dataResposta).toLocaleString('pt-BR');
-        $('#detalhesDataBusca').text(dataBusca);
-        dataBuscaContainer.show();
+        document.getElementById('detalhesDataBusca').textContent = dataBusca;
+        dataBuscaContainer.classList.remove('d-none');
     } else {
-        dataBuscaContainer.hide();
+        dataBuscaContainer.classList.add('d-none');
     }
     
     
     if (adocao.status === 'Finalizada' && adocao.dataFinalizacao) {
         const dataFinalizacao = new Date(adocao.dataFinalizacao).toLocaleString('pt-BR');
-        $('#detalhesDataFinalizacao').text(dataFinalizacao);
-        dataFinalizacaoContainer.show();
+        document.getElementById('detalhesDataFinalizacao').textContent = dataFinalizacao;
+        dataFinalizacaoContainer.classList.remove('d-none');
     } else {
-        dataFinalizacaoContainer.hide();
+        dataFinalizacaoContainer.classList.add('d-none');
     }
     
     
     if (adocao.observacoes) {
-        $('#detalhesObservacoes').html(adocao.observacoes).show();
-        $('#detalhesObservacoesProcesso').html(adocao.observacoes).show();
+        document.getElementById('detalhesObservacoes').innerHTML = adocao.observacoes;
+        document.getElementById('detalhesObservacoesProcesso').innerHTML = adocao.observacoes;
     } else {
-        $('#detalhesObservacoes').html('<div class="sem-observacoes">Sem observações adicionais.</div>').show();
-        $('#detalhesObservacoesProcesso').html('<div class="sem-observacoes">Sem observações adicionais.</div>').show();
+        const vazio = '<div class="sem-observacoes">Sem observações adicionais.</div>';
+        document.getElementById('detalhesObservacoes').innerHTML = vazio;
+        document.getElementById('detalhesObservacoesProcesso').innerHTML = vazio;
     }
     
     
+    const footer = document.querySelector('#modalDetalhesAdocao .modal-footer');
+    const botaoVoltar = footer.querySelector('.botao-secundario');
     if (fromProfile) {
-        $('#modalDetalhesAdocao .modal-footer').prepend(`
-            <button type="button" class="botao-secundario me-auto" onclick="voltarParaPerfil()">
-                <i class="fas fa-arrow-left me-2"></i>Voltar ao perfil
-            </button>
-        `);
-    } else {
-        $('#modalDetalhesAdocao .modal-footer .botao-secundario').remove();
+        if (!botaoVoltar) {
+            footer.insertAdjacentHTML('afterbegin', `
+                <button type="button" class="botao-secundario me-auto" onclick="voltarParaPerfil()">
+                    <i class="fas fa-arrow-left me-2"></i>Voltar ao perfil
+                </button>
+            `);
+        }
+    } else if (botaoVoltar) {
+        botaoVoltar.remove();
     }
     
     
@@ -434,107 +444,79 @@ function preencherDetalhesAdocao(adocao, fromProfile = false) {
 
 
 function configurarTimelineProgresso(adocao) {
-    
-    $('.timeline-progresso-item').removeClass('ativo concluido atual rejeitado');
-    $('.timeline-progresso-linha').removeClass('ativa');
-    
-    
-    $('#timelineDataSolicitacao').text(new Date(adocao.dataEnvio).toLocaleDateString('pt-BR'));
-    
-    
-    $('#timelineSolicitacao').addClass('concluido');
+
+    document.querySelectorAll('.timeline-progresso-item').forEach(el => el.classList.remove('ativo', 'concluido', 'atual', 'rejeitado'));
+    document.querySelectorAll('.timeline-progresso-linha').forEach(el => el.classList.remove('ativa'));
+
+    document.getElementById('timelineDataSolicitacao').textContent = new Date(adocao.dataEnvio).toLocaleDateString('pt-BR');
+
+    document.getElementById('timelineSolicitacao').classList.add('concluido');
     
     
     switch(adocao.status) {
         case 'Pendente':
-            
             break;
-            
         case 'Rejeitada':
-            
-            $('#timelineAprovacao').addClass('rejeitado');
-            $('#timelineDataAprovacao').text(adocao.dataResposta ? new Date(adocao.dataResposta).toLocaleDateString('pt-BR') : '');
+            document.getElementById('timelineAprovacao').classList.add('rejeitado');
+            document.getElementById('timelineDataAprovacao').textContent = adocao.dataResposta ? new Date(adocao.dataResposta).toLocaleDateString('pt-BR') : '';
             break;
-            
         case 'Cancelada':
-            
             if (adocao.dataResposta) {
-                $('#timelineAprovacao').addClass('concluido');
-                $('#timelineDataAprovacao').text(new Date(adocao.dataResposta).toLocaleDateString('pt-BR'));
-                
-                
-                if (adocao.status === 'Aguardando buscar') {
-                    $('#timelineBusca').addClass('rejeitado');
-                    $('#timelineDataBusca').text(adocao.dataResposta ? new Date(adocao.dataResposta).toLocaleDateString('pt-BR') : '');
-                } else {
-                    $('#timelineBusca').addClass('rejeitado');
-                }
+                document.getElementById('timelineAprovacao').classList.add('concluido');
+                document.getElementById('timelineDataAprovacao').textContent = new Date(adocao.dataResposta).toLocaleDateString('pt-BR');
+                document.getElementById('timelineBusca').classList.add('rejeitado');
+                document.getElementById('timelineDataBusca').textContent = adocao.dataResposta ? new Date(adocao.dataResposta).toLocaleDateString('pt-BR') : '';
             } else {
-                $('#timelineAprovacao').addClass('rejeitado');
+                document.getElementById('timelineAprovacao').classList.add('rejeitado');
             }
             break;
-            
         case 'Aprovado':
         case 'Em Processo':
-            
-            $('#timelineAprovacao').addClass('concluido');
-            $('#timelineDataAprovacao').text(adocao.dataResposta ? new Date(adocao.dataResposta).toLocaleDateString('pt-BR') : '');
-            
-            $('.timeline-progresso-linha:eq(0)').addClass('ativa');
+            document.getElementById('timelineAprovacao').classList.add('concluido');
+            document.getElementById('timelineDataAprovacao').textContent = adocao.dataResposta ? new Date(adocao.dataResposta).toLocaleDateString('pt-BR') : '';
+            document.querySelectorAll('.timeline-progresso-linha')[0].classList.add('ativa');
             break;
-            
         case 'Aguardando buscar':
-            
-            $('#timelineAprovacao').addClass('concluido');
-            $('#timelineDataAprovacao').text(adocao.dataResposta ? new Date(adocao.dataResposta).toLocaleDateString('pt-BR') : '');
-            
-            $('#timelineBusca').addClass('atual');
-            $('#timelineDataBusca').text(adocao.dataResposta ? new Date(adocao.dataResposta).toLocaleDateString('pt-BR') : '');
-            
-            $('.timeline-progresso-linha:eq(0), .timeline-progresso-linha:eq(1)').addClass('ativa');
+            document.getElementById('timelineAprovacao').classList.add('concluido');
+            document.getElementById('timelineDataAprovacao').textContent = adocao.dataResposta ? new Date(adocao.dataResposta).toLocaleDateString('pt-BR') : '';
+            document.getElementById('timelineBusca').classList.add('atual');
+            document.getElementById('timelineDataBusca').textContent = adocao.dataResposta ? new Date(adocao.dataResposta).toLocaleDateString('pt-BR') : '';
+            document.querySelectorAll('.timeline-progresso-linha')[0].classList.add('ativa');
+            document.querySelectorAll('.timeline-progresso-linha')[1].classList.add('ativa');
             break;
-            
         case 'Finalizada':
-            
-            $('#timelineAprovacao').addClass('concluido');
-            $('#timelineDataAprovacao').text(adocao.dataResposta ? new Date(adocao.dataResposta).toLocaleDateString('pt-BR') : '');
-            
-            $('#timelineBusca').addClass('concluido');
-            $('#timelineDataBusca').text(adocao.dataResposta ? new Date(adocao.dataResposta).toLocaleDateString('pt-BR') : '');
-            
-            $('#timelineFinalizacao').addClass('concluido');
-            $('#timelineDataFinalizacao').text(adocao.dataFinalizacao ? new Date(adocao.dataFinalizacao).toLocaleDateString('pt-BR') : '');
-            
-            $('.timeline-progresso-linha').addClass('ativa');
+            document.getElementById('timelineAprovacao').classList.add('concluido');
+            document.getElementById('timelineDataAprovacao').textContent = adocao.dataResposta ? new Date(adocao.dataResposta).toLocaleDateString('pt-BR') : '';
+            document.getElementById('timelineBusca').classList.add('concluido');
+            document.getElementById('timelineDataBusca').textContent = adocao.dataResposta ? new Date(adocao.dataResposta).toLocaleDateString('pt-BR') : '';
+            document.getElementById('timelineFinalizacao').classList.add('concluido');
+            document.getElementById('timelineDataFinalizacao').textContent = adocao.dataFinalizacao ? new Date(adocao.dataFinalizacao).toLocaleDateString('pt-BR') : '';
+            document.querySelectorAll('.timeline-progresso-linha').forEach(el => el.classList.add('ativa'));
             break;
     }
 }
 
 
 function voltarParaPerfil() {
-    
-    $('#modalDetalhesAdocao').modal('hide');
-    
-    
-    $('#modalDetalhesAdocao').on('hidden.bs.modal', function (e) {
-        $('#perfilUsuarioModal').modal('show');
-        
-        $('#modalDetalhesAdocao').off('hidden.bs.modal');
-    });
+    const detalhesEl = document.getElementById('modalDetalhesAdocao');
+    bootstrap.Modal.getInstance(detalhesEl).hide();
+
+    const handleHidden = () => {
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('perfilUsuarioModal')).show();
+        detalhesEl.removeEventListener('hidden.bs.modal', handleHidden);
+    };
+    detalhesEl.addEventListener('hidden.bs.modal', handleHidden);
 }
 
 
 function mostrarModalAcao(id, acao) {
-    
-    
-    $('#idAdocaoAcao').val(id);
-    $('#tipoAcao').val(acao);
-    $('#observacaoAcao').val('');
-    $('#erroObservacao').hide();
-    
-    
+    document.getElementById('idAdocaoAcao').value = id;
+    document.getElementById('tipoAcao').value = acao;
+    document.getElementById('observacaoAcao').value = '';
+    document.getElementById('erroObservacao').style.display = 'none';
+
     const precisaObservacao = (acao === 'rejeitar' || acao === 'cancelar');
-    $('#campoObservacao').toggle(precisaObservacao);
+    document.getElementById('campoObservacao').style.display = precisaObservacao ? 'block' : 'none';
     
     
     let titulo = "Confirmar Ação";
@@ -570,36 +552,39 @@ function mostrarModalAcao(id, acao) {
     }
     
     
-    $('#tituloModalAcaoAdocao').text(titulo);
-    $('#textoConfirmacaoAcao').text(mensagem);
-    $('#modalAcaoHeader').removeClass().addClass('modal-header ' + corCabecalho);
-    
-    
-    $('#modalAcaoAdocao').modal('show');
+    document.getElementById('tituloModalAcaoAdocao').textContent = titulo;
+    document.getElementById('textoConfirmacaoAcao').textContent = mensagem;
+    const header = document.getElementById('modalAcaoHeader');
+    header.className = 'modal-header ' + corCabecalho;
+
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('modalAcaoAdocao')).show();
 }
 
 
-function executarAcao() {
-    const id = $('#idAdocaoAcao').val();
-    const acao = $('#tipoAcao').val();
-    const observacao = $('#observacaoAcao').val();
+async function executarAcao() {
+    const id = document.getElementById('idAdocaoAcao').value;
+    const acao = document.getElementById('tipoAcao').value;
+    const observacao = document.getElementById('observacaoAcao').value;
     
     
     if ((acao === 'rejeitar' || acao === 'cancelar') && !observacao.trim()) {
-        $('#erroObservacao').show();
+        document.getElementById('erroObservacao').style.display = 'block';
         return;
     }
     
     
-    $('#botaoConfirmarAcao').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Processando...');
+    const botaoConfirmar = document.getElementById('botaoConfirmarAcao');
+    botaoConfirmar.disabled = true;
+    botaoConfirmar.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processando...';
     
     
-    const token = $('input[name="__RequestVerificationToken"]').val();
+    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
     
     
     let url = '';
     let metodo = 'POST';
-    let dados = { __RequestVerificationToken: token };
+    const dados = new URLSearchParams();
+    dados.append('__RequestVerificationToken', token);
     
     switch(acao) {
         case 'aprovar':
@@ -607,7 +592,7 @@ function executarAcao() {
             break;
         case 'rejeitar':
             url = URL_API_REJEITAR_ADOCAO + id;
-            dados.motivo = observacao;
+            dados.append('motivo', observacao);
             break;
         case 'aguardandoBuscar':
             url = URL_API_AGUARDANDO_BUSCAR + id;
@@ -615,93 +600,69 @@ function executarAcao() {
         case 'finalizar':
             url = URL_API_FINALIZAR_ADOCAO + id;
             if (observacao) {
-                dados.observacao = observacao;
+                dados.append('observacao', observacao);
             }
             break;
         case 'cancelar':
             url = URL_API_CANCELAR_ADOCAO + id;
-            dados.motivo = observacao;
+            dados.append('motivo', observacao);
             break;
     }
     
     
-    $.ajax({
-        url: url,
-        type: metodo,
-        data: dados,
-        success: function(resposta) {
-            
-            $('#botaoConfirmarAcao').prop('disabled', false).html('Confirmar');
-            
-            
-            $('#modalAcaoAdocao').modal('hide');
-            
-            if (resposta.sucesso) {
-                
-                toastr.success(resposta.mensagem);
-                
-                
-                setTimeout(function() {
-                    window.location.reload();
-                }, 1500);
-            } else {
-                
-                toastr.error(resposta.mensagem);
-            }
-        },
-        error: function(xhr, status, error) {
-            
-            $('#botaoConfirmarAcao').prop('disabled', false).html('Confirmar');
-            
-            
-            toastr.error("Ocorreu um erro: " + error);
+    try {
+        const resposta = await fetch(url, {
+            method: metodo,
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: dados
+        });
+        const resultado = await resposta.json();
+
+        botaoConfirmar.disabled = false;
+        botaoConfirmar.innerHTML = 'Confirmar';
+        bootstrap.Modal.getInstance(document.getElementById('modalAcaoAdocao')).hide();
+
+        if (resultado.sucesso) {
+            toastr.success(resultado.mensagem);
+            setTimeout(() => { window.location.reload(); }, 1500);
+        } else {
+            toastr.error(resultado.mensagem);
         }
-    });
+    } catch (error) {
+        botaoConfirmar.disabled = false;
+        botaoConfirmar.innerHTML = 'Confirmar';
+        toastr.error('Ocorreu um erro: ' + error);
+    }
 }
 
 
-function abrirPerfilUsuario(usuarioId) {
-    
-    
-    $('#spinnerPerfilUsuario').show();
-    $('#conteudoPerfilUsuario').hide();
-    
-    
-    $.ajax({
-        url: URL_API_OBTER_PERFIL_USUARIO,
-        type: 'GET',
-        data: { id: usuarioId },
-        success: function(usuario) {
-            if (usuario) {
-                renderizarPerfilUsuario(usuario);
-            } else {
-                toastr.error("Não foi possível carregar os dados do usuário");
-            }
-        },
-        error: function(xhr, status, error) {
-            toastr.error("Erro ao carregar perfil: " + error);
+async function abrirPerfilUsuario(usuarioId) {
+    document.getElementById('spinnerPerfilUsuario').style.display = '';
+    document.getElementById('conteudoPerfilUsuario').style.display = 'none';
+
+    try {
+        const respUsuario = await fetch(`${URL_API_OBTER_PERFIL_USUARIO}?id=${usuarioId}`);
+        const usuario = await respUsuario.json();
+        if (usuario) {
+            renderizarPerfilUsuario(usuario);
+        } else {
+            toastr.error('Não foi possível carregar os dados do usuário');
         }
-    });
-    
-    
-    $.ajax({
-        url: URL_API_ESTATISTICAS_ADOCAO_USUARIO,
-        type: 'GET',
-        data: { id: usuarioId },
-        success: function(estatisticas) {
-            preencherEstatisticasUsuario(estatisticas);
-        }
-    });
-    
-    
-    $.ajax({
-        url: URL_API_HISTORICO_ADOCOES_USUARIO,
-        type: 'GET',
-        data: { id: usuarioId },
-        success: function(historico) {
-            preencherHistoricoAdocoesUsuario(historico, usuarioId);
-        }
-    });
+    } catch (error) {
+        toastr.error('Erro ao carregar perfil: ' + error);
+    }
+
+    try {
+        const respEst = await fetch(`${URL_API_ESTATISTICAS_ADOCAO_USUARIO}?id=${usuarioId}`);
+        const estatisticas = await respEst.json();
+        preencherEstatisticasUsuario(estatisticas);
+    } catch {}
+
+    try {
+        const respHist = await fetch(`${URL_API_HISTORICO_ADOCOES_USUARIO}?id=${usuarioId}`);
+        const historico = await respHist.json();
+        preencherHistoricoAdocoesUsuario(historico, usuarioId);
+    } catch {}
 }
 
 
@@ -734,15 +695,15 @@ function renderizarPerfilUsuario(usuario) {
     }
     
     
-    $('#nomeCompletoUsuario').text(usuario.nome || '-');
-    $('#emailUsuario').text(usuario.email || '-');
-    $('#cpfUsuario').text(formatarCPF(usuario.cpf));
-    $('#telefoneUsuario').text(formatarTelefone(usuario.telefone));
+    document.getElementById('nomeCompletoUsuario').textContent = usuario.nome || '-';
+    document.getElementById('emailUsuario').textContent = usuario.email || '-';
+    document.getElementById('cpfUsuario').textContent = formatarCPF(usuario.cpf);
+    document.getElementById('telefoneUsuario').textContent = formatarTelefone(usuario.telefone);
     
     
     if (usuario.dataNascimento) {
         const dataNascimento = new Date(usuario.dataNascimento);
-        $('#dataNascimentoUsuario').text(dataNascimento.toLocaleDateString('pt-BR'));
+        document.getElementById('dataNascimentoUsuario').textContent = dataNascimento.toLocaleDateString('pt-BR');
         
         
         const hoje = new Date();
@@ -751,32 +712,32 @@ function renderizarPerfilUsuario(usuario) {
         if (m < 0 || (m === 0 && hoje.getDate() < dataNascimento.getDate())) {
             idade--;
         }
-        $('#idadeUsuario').text(idade + ' anos');
+        document.getElementById('idadeUsuario').textContent = idade + ' anos';
     } else {
-        $('#dataNascimentoUsuario').text('-');
-        $('#idadeUsuario').text('-');
+        document.getElementById('dataNascimentoUsuario').textContent = '-';
+        document.getElementById('idadeUsuario').textContent = '-';
     }
     
     
     if (usuario.dataCadastro) {
         const dataCadastro = new Date(usuario.dataCadastro);
-        $('#dataCadastroUsuario').text(dataCadastro.toLocaleDateString('pt-BR'));
+        document.getElementById('dataCadastroUsuario').textContent = dataCadastro.toLocaleDateString('pt-BR');
     } else {
-        $('#dataCadastroUsuario').text('-');
+        document.getElementById('dataCadastroUsuario').textContent = '-';
     }
     
     
-    $('#logradouroUsuario').text(usuario.logradouro || '-');
-    $('#numeroUsuario').text(usuario.numero || '-');
-    $('#bairroUsuario').text(usuario.bairro || '-');
-    $('#complementoUsuario').text(usuario.complemento || '-');
-    $('#cepUsuario').text(formatarCEP(usuario.cep));
-    $('#cidadeUsuario').text(usuario.cidade || '-');
-    $('#estadoUsuario').text(usuario.estado || '-');
+    document.getElementById('logradouroUsuario').textContent = usuario.logradouro || '-';
+    document.getElementById('numeroUsuario').textContent = usuario.numero || '-';
+    document.getElementById('bairroUsuario').textContent = usuario.bairro || '-';
+    document.getElementById('complementoUsuario').textContent = usuario.complemento || '-';
+    document.getElementById('cepUsuario').textContent = formatarCEP(usuario.cep);
+    document.getElementById('cidadeUsuario').textContent = usuario.cidade || '-';
+    document.getElementById('estadoUsuario').textContent = usuario.estado || '-';
     
     
-    $('#spinnerPerfilUsuario').hide();
-    $('#conteudoPerfilUsuario').show();
+    document.getElementById('spinnerPerfilUsuario').style.display = 'none';
+    document.getElementById('conteudoPerfilUsuario').style.display = '';
     
     
     const modal = new bootstrap.Modal(document.getElementById('perfilUsuarioModal'));
@@ -785,34 +746,31 @@ function renderizarPerfilUsuario(usuario) {
 
 
 function preencherEstatisticasUsuario(estatisticas) {
-    $('#estatisticaTotal').text(estatisticas.total || 0);
-    $('#estatisticaAprovadas').text(estatisticas.aprovadas || 0);
-    $('#estatisticaRejeitadas').text(estatisticas.rejeitadas || 0);
-    $('#estatisticaCanceladas').text(estatisticas.canceladas || 0);
-    $('#estatisticaExpiradas').text(estatisticas.expiradas || 0);
+    document.getElementById('estatisticaTotal').textContent = estatisticas.total || 0;
+    document.getElementById('estatisticaAprovadas').textContent = estatisticas.aprovadas || 0;
+    document.getElementById('estatisticaRejeitadas').textContent = estatisticas.rejeitadas || 0;
+    document.getElementById('estatisticaCanceladas').textContent = estatisticas.canceladas || 0;
+    document.getElementById('estatisticaExpiradas').textContent = estatisticas.expiradas || 0;
 }
 
 
 function preencherHistoricoAdocoesUsuario(historico, usuarioId) {
-    const container = $('#historicoAdocoesUsuarioContainer');
-    
-    
-    container.empty();
-    
+    const container = document.getElementById('historicoAdocoesUsuarioContainer');
+
+    container.innerHTML = '';
+
     if (!historico || historico.length === 0) {
-        container.html(`
+        container.innerHTML = `
             <div class="text-center py-4">
                 <i class="fas fa-heart-broken fa-3x text-muted mb-3"></i>
                 <p class="mb-0">Este usuário ainda não realizou nenhuma adoção.</p>
-            </div>
-        `);
+            </div>`;
         return;
     }
-    
-    
-    const historicoContainer = $('<div class="historico-adocoes-container"></div>');
-    
-    
+
+    const historicoContainer = document.createElement('div');
+    historicoContainer.className = 'historico-adocoes-container';
+
     historico.forEach(function(item) {
         const dataAdocao = new Date(item.dataAdocao).toLocaleDateString('pt-BR');
         
@@ -835,13 +793,12 @@ function preencherHistoricoAdocoesUsuario(historico, usuarioId) {
         }
         
         
-        const itemHistorico = $(`
+        const template = `
             <div class="historico-adocao-item">
                 <div class="historico-pet-img-container">
-                    ${item.imagemPet ? 
-                        `<img src="${item.imagemPet}" alt="${item.nomePet}" class="historico-pet-img">` : 
-                        `<div class="historico-default-img"><i class="fas fa-paw"></i></div>`
-                    }
+                    ${item.imagemPet ?
+                        `<img src="${item.imagemPet}" alt="${item.nomePet}" class="historico-pet-img">` :
+                        `<div class="historico-default-img"><i class="fas fa-paw"></i></div>`}
                 </div>
                 <div class="historico-pet-info">
                     <div class="historico-pet-nome">${item.nomePet || 'Pet não identificado'}</div>
@@ -851,54 +808,50 @@ function preencherHistoricoAdocoesUsuario(historico, usuarioId) {
                     </div>
                 </div>
                 <div class="historico-acoes">
-                    <button class="btn btn-sm btn-outline-primary" 
-                            onclick="verDetalhes(${item.id}, true)" 
-                            title="Ver detalhes da adoção">
+                    <button class="btn btn-sm btn-outline-primary" onclick="verDetalhes(${item.id}, true)" title="Ver detalhes da adoção">
                         <i class="fas fa-eye me-1"></i> Detalhes
                     </button>
                 </div>
-            </div>
-        `);
-        
-        historicoContainer.append(itemHistorico);
+            </div>`;
+
+        historicoContainer.insertAdjacentHTML('beforeend', template);
     });
-    
-    
-    container.append(historicoContainer);
+
+    container.appendChild(historicoContainer);
 }
 
 
 function configurarNavegacaoAbas() {
-    
-    
-    $('.detalhes-aba').off('click');
-    
-    
-    $('.detalhes-aba').on('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        const painelAlvo = $(this).data('painel');
-        
-        
-        $('.detalhes-aba').removeClass('ativa');
-        $(this).addClass('ativa');
-        
-        
-        $('.detalhes-painel').removeClass('ativo').hide();
-        $('#' + painelAlvo).addClass('ativo').show();
+    const abas = document.querySelectorAll('.detalhes-aba');
+    const paineis = document.querySelectorAll('.detalhes-painel');
+
+    abas.forEach(aba => {
+        aba.onclick = e => {
+            e.preventDefault();
+            const painelAlvo = aba.dataset.painel;
+            abas.forEach(a => a.classList.remove('ativa'));
+            aba.classList.add('ativa');
+            paineis.forEach(p => {
+                p.classList.remove('ativo');
+                p.style.display = 'none';
+            });
+            const painel = document.getElementById(painelAlvo);
+            painel.classList.add('ativo');
+            painel.style.display = '';
+        };
     });
-    
-    
-    if ($('.detalhes-aba.ativa').length === 0 && $('.detalhes-aba').length > 0) {
-        $('.detalhes-aba').first().addClass('ativa');
-        const primeiroPainel = $('.detalhes-aba').first().data('painel');
-        $('.detalhes-painel').removeClass('ativo').hide();
-        $('#' + primeiroPainel).addClass('ativo').show();
+
+    if (!document.querySelector('.detalhes-aba.ativa') && abas.length > 0) {
+        abas[0].classList.add('ativa');
+        paineis.forEach(p => { p.classList.remove('ativo'); p.style.display = 'none'; });
+        const primeiroPainel = abas[0].dataset.painel;
+        const painel = document.getElementById(primeiroPainel);
+        painel.classList.add('ativo');
+        painel.style.display = '';
     }
-    
-    
-    setTimeout(function() {
-        $('.detalhes-aba.ativa').trigger('click');
+
+    setTimeout(() => {
+        const ativa = document.querySelector('.detalhes-aba.ativa');
+        if (ativa) ativa.click();
     }, 50);
-} 
+}
