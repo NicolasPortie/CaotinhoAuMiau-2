@@ -41,14 +41,19 @@ document.addEventListener('DOMContentLoaded', () => {
   
   
   function inicializarAbas() {
-    document.querySelectorAll('.tabs__button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const tabId = btn.dataset.tab;
-        document.querySelectorAll('.tabs__button').forEach(b => b.classList.remove('tabs__button--active'));
-        document.querySelectorAll('.tabs__panel').forEach(p => p.classList.remove('tabs__panel--active'));
-        btn.classList.add('tabs__button--active');
-        document.getElementById(tabId)?.classList.add('tabs__panel--active');
-      });
+    const tabsContainer = document.querySelector('.tabs');
+    if (!tabsContainer) return;
+
+    // uso de delegação para lidar com múltiplos botões de forma performática
+    tabsContainer.addEventListener('click', e => {
+      const btn = e.target.closest('.tabs__button');
+      if (!btn) return;
+
+      const tabId = btn.dataset.tab;
+      document.querySelectorAll('.tabs__button').forEach(b => b.classList.remove('tabs__button--active'));
+      document.querySelectorAll('.tabs__panel').forEach(p => p.classList.remove('tabs__panel--active'));
+      btn.classList.add('tabs__button--active');
+      document.getElementById(tabId)?.classList.add('tabs__panel--active');
     });
   }
   
@@ -115,53 +120,51 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (!cepInput) return;
     
-    const buscarCep = () => {
+    const buscarCep = async () => {
       const cep = cepInput.value.replace(/\D/g, '');
       if (cep.length !== 8) {
         mostrarNotificacao('Digite um CEP válido com 8 dígitos', 'error');
         return;
       }
-      
+
       if (btnBuscarCep) {
         btnBuscarCep.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando...';
         btnBuscarCep.disabled = true;
       }
-      
-      fetch(`https://viacep.com.br/ws/${cep}/json/`)
-        .then(res => res.json())
-        .then(data => {
-          if (!data.erro) {
-            const fieldMapping = {
-              'logradouro': data.logradouro,
-              'bairro': data.bairro,
-              'cidade': data.localidade,
-              'estado': data.uf
-            };
-            
-            Object.keys(fieldMapping).forEach(field => {
-              const el = document.getElementById(field);
-              if (el && fieldMapping[field]) {
-                el.value = fieldMapping[field];
-              }
-            });
-            
-            document.getElementById('numero')?.focus();
-            
-            mostrarNotificacao('Endereço encontrado com sucesso!', 'success');
-          } else {
-            mostrarNotificacao('CEP não encontrado', 'error');
-          }
-        })
-        .catch(err => {
-          console.error('Error fetching address:', err);
-          mostrarNotificacao('Erro ao buscar o CEP', 'error');
-        })
-        .finally(() => {
-          if (btnBuscarCep) {
-            btnBuscarCep.innerHTML = '<i class="fas fa-search"></i> Buscar CEP';
-            btnBuscarCep.disabled = false;
-          }
-        });
+
+      try {
+        const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+        const data = await res.json();
+        if (!data.erro) {
+          const fieldMapping = {
+            'logradouro': data.logradouro,
+            'bairro': data.bairro,
+            'cidade': data.localidade,
+            'estado': data.uf
+          };
+
+          Object.keys(fieldMapping).forEach(field => {
+            const el = document.getElementById(field);
+            if (el && fieldMapping[field]) {
+              el.value = fieldMapping[field];
+            }
+          });
+
+          document.getElementById('numero')?.focus();
+
+          mostrarNotificacao('Endereço encontrado com sucesso!', 'success');
+        } else {
+          mostrarNotificacao('CEP não encontrado', 'error');
+        }
+      } catch (err) {
+        console.error('Error fetching address:', err);
+        mostrarNotificacao('Erro ao buscar o CEP', 'error');
+      } finally {
+        if (btnBuscarCep) {
+          btnBuscarCep.innerHTML = '<i class="fas fa-search"></i> Buscar CEP';
+          btnBuscarCep.disabled = false;
+        }
+      }
     };
     
     if (btnBuscarCep) {
@@ -469,65 +472,66 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
   
-  function removerFotoPerfil() {
+  async function removerFotoPerfil() {
     const removeBtn = document.querySelector('.perfil__avatar-remove');
     if (!removeBtn) return;
-    
+
     const originalHTML = removeBtn.innerHTML;
     removeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     removeBtn.style.pointerEvents = 'none';
-    
+
     const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-    
-    fetch('/usuario/perfil/remover-foto', {
+
+    try {
+      const response = await fetch('/usuario/perfil/remover-foto', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-Requested-With': 'XMLHttpRequest'
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-Requested-With': 'XMLHttpRequest'
         },
         body: `__RequestVerificationToken=${token}`
-    })
-    .then(response => {
-        if (response.redirected) {
-            window.location.href = response.url;
-        } else {
-            return response.json();
-        }
-    })
-    .then(data => {
-        if (data && !data.success) {
-            mostrarNotificacao(data.message || 'Erro ao remover foto de perfil', 'error');
-            removeBtn.innerHTML = originalHTML;
-            removeBtn.style.pointerEvents = 'auto';
-        } else {
-            const container = document.querySelector('.perfil__avatar');
-            const img = container.querySelector('img');
-            
-            if (img) {
-                const nome = document.querySelector('.perfil__name').textContent.trim();
-                const inicial = nome.charAt(0).toUpperCase();
-                
-                const initialAvatar = document.createElement('div');
-                initialAvatar.className = 'perfil__avatar-initial';
-                initialAvatar.innerHTML = `<span>${inicial}</span>`;
-                
-                img.replaceWith(initialAvatar);
-            }
-            
-            container.querySelector('.perfil__avatar-upload')?.remove();
-            container.querySelector('.perfil__avatar-remove')?.remove();
-            
-            mostrarNotificacao('Foto de perfil removida com sucesso!', 'success');
-            
-            fecharModal('modalConfirmarRemoverFoto');
-        }
-    })
-    .catch(error => {
-        console.error('Erro ao remover foto de perfil:', error);
-        mostrarNotificacao('Erro de conexão ao remover foto de perfil', 'error');
+      });
+
+      const data = response.redirected ? null : await response.json();
+
+      if (response.redirected) {
+        window.location.href = response.url;
+        return;
+      }
+
+      if (data && !data.success) {
+        mostrarNotificacao(data.message || 'Erro ao remover foto de perfil', 'error');
         removeBtn.innerHTML = originalHTML;
         removeBtn.style.pointerEvents = 'auto';
-    });
+        return;
+      }
+
+      const container = document.querySelector('.perfil__avatar');
+      const img = container.querySelector('img');
+
+      if (img) {
+        const nome = document.querySelector('.perfil__name').textContent.trim();
+        const inicial = nome.charAt(0).toUpperCase();
+
+        const initialAvatar = document.createElement('div');
+        initialAvatar.className = 'perfil__avatar-initial';
+        initialAvatar.innerHTML = `<span>${inicial}</span>`;
+
+        img.replaceWith(initialAvatar);
+      }
+
+      container.querySelector('.perfil__avatar-upload')?.remove();
+      container.querySelector('.perfil__avatar-remove')?.remove();
+
+      mostrarNotificacao('Foto de perfil removida com sucesso!', 'success');
+
+      fecharModal('modalConfirmarRemoverFoto');
+    } catch (error) {
+      console.error('Erro ao remover foto de perfil:', error);
+      mostrarNotificacao('Erro de conexão ao remover foto de perfil', 'error');
+      removeBtn.innerHTML = originalHTML;
+      removeBtn.style.pointerEvents = 'auto';
+    }
   }
   
   
@@ -557,7 +561,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
   
-    function uploadFotoPerfil(event) {
+    async function uploadFotoPerfil(event) {
     const file = event.target.files[0];
     if (!file) return;
     
@@ -581,39 +585,39 @@ document.addEventListener('DOMContentLoaded', () => {
     if (uploadBtn) {
         uploadBtn.querySelector('i').className = 'fas fa-spinner fa-spin';
     }
-    
-    fetch('/usuario/perfil/atualizarFoto', {
-        method: 'POST',
-        body: formData,
-        headers: {'X-Requested-With': 'XMLHttpRequest'}
-    })
-    .then(res => res.json())
-    .then(data => {
+
+    try {
+        const res = await fetch('/usuario/perfil/atualizarFoto', {
+            method: 'POST',
+            body: formData,
+            headers: {'X-Requested-With': 'XMLHttpRequest'}
+        });
+        const data = await res.json();
         if (data.success) {
             const reader = new FileReader();
             reader.onload = e => {
                 let container = document.querySelector('.perfil__avatar');
                 let initialAvatar = container.querySelector('.perfil__avatar-initial');
                 let img = container.querySelector('img');
-                
+
                 if (initialAvatar && !img) {
                     initialAvatar.remove();
                     img = document.createElement('img');
                     img.alt = 'Foto de perfil';
                     container.prepend(img);
                 }
-                
+
                 if (img) {
                     img.src = e.target.result;
                 }
 
                 if (!container.querySelector('.perfil__avatar-upload')) {
-                    const uploadBtn = document.createElement('div');
-                    uploadBtn.className = 'perfil__avatar-upload';
-                    uploadBtn.setAttribute('onclick', "document.getElementById('uploadFoto').click()");
-                    uploadBtn.setAttribute('title', 'Alterar foto');
-                    uploadBtn.innerHTML = '<i class="fas fa-camera"></i>';
-                    container.appendChild(uploadBtn);
+                    const novoUploadBtn = document.createElement('div');
+                    novoUploadBtn.className = 'perfil__avatar-upload';
+                    novoUploadBtn.setAttribute('onclick', "document.getElementById('uploadFoto').click()");
+                    novoUploadBtn.setAttribute('title', 'Alterar foto');
+                    novoUploadBtn.innerHTML = '<i class="fas fa-camera"></i>';
+                    container.appendChild(novoUploadBtn);
                 }
 
                 if (!container.querySelector('.perfil__avatar-remove')) {
@@ -626,21 +630,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             };
             reader.readAsDataURL(file);
-            
+
             mostrarNotificacao('Foto de perfil atualizada com sucesso!', 'success');
         } else {
             mostrarNotificacao(data.message || 'Erro ao atualizar a foto de perfil', 'error');
         }
-    })
-    .catch(err => {
+    } catch (err) {
         console.error('Error updating profile photo:', err);
         mostrarNotificacao('Erro de conexão ao atualizar a foto de perfil', 'error');
-    })
-    .finally(() => {
-        const uploadBtn = document.querySelector('.perfil__avatar-upload');
-        if (uploadBtn) {
-            uploadBtn.querySelector('i').className = 'fas fa-camera';
+    } finally {
+        const finalUploadBtn = document.querySelector('.perfil__avatar-upload');
+        if (finalUploadBtn) {
+            finalUploadBtn.querySelector('i').className = 'fas fa-camera';
         }
-    });
+    }
   }
   
