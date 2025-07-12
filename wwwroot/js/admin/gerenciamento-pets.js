@@ -78,50 +78,57 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function gerenciarItensPorPagina() {
-    $('.paginacao-container').css('display', 'block');
-    $('.paginacao-info').css('display', 'flex');
-    $('.itens-por-pagina').css('display', 'flex');
-    
+    const contPaginacao = document.querySelector('.paginacao-container');
+    const infoPaginacao = document.querySelector('.paginacao-info');
+    const itensPorPaginaEl = document.querySelector('.itens-por-pagina');
+    if (contPaginacao) contPaginacao.style.display = 'block';
+    if (infoPaginacao) infoPaginacao.style.display = 'flex';
+    if (itensPorPaginaEl) itensPorPaginaEl.style.display = 'flex';
+
     const urlParams = new URLSearchParams(window.location.search);
     const itensPorPaginaUrl = urlParams.get('itensPorPagina');
     const itensPorPaginaLocalStorage = localStorage.getItem('adminPetsItensPorPagina');
-    
-    if (itensPorPaginaUrl) {
-        $('#selectItensPorPagina').val(itensPorPaginaUrl);
-    } else if (itensPorPaginaLocalStorage) {
-        $('#selectItensPorPagina').val(itensPorPaginaLocalStorage);
-    }
-    
-    const itensPorPagina = $('#selectItensPorPagina').val();
-    $('#listaPets').attr('data-itens', itensPorPagina);
-    
-    $('#selectItensPorPagina').off('change').on('change', function() {
-        const itensPorPagina = $(this).val();
-        const urlAtual = new URL(window.location.href);
-        
-        localStorage.setItem('adminPetsItensPorPagina', itensPorPagina);
-        
-        urlAtual.searchParams.set('itensPorPagina', itensPorPagina);
-        urlAtual.searchParams.set('pagina', 1);
-        
-        const imagensAtuais = {};
-        document.querySelectorAll('.imagem-pet').forEach(img => {
-            if (img.src && img.complete && !img.naturalWidth == 0) {
-                const cardId = img.closest('.cartao-pet')?.getAttribute('data-id');
-                if (cardId) {
-                    imagensAtuais[cardId] = img.src;
+
+    const select = document.getElementById('selectItensPorPagina');
+    if (select) {
+        if (itensPorPaginaUrl) {
+            select.value = itensPorPaginaUrl;
+        } else if (itensPorPaginaLocalStorage) {
+            select.value = itensPorPaginaLocalStorage;
+        }
+
+        const itensPorPagina = select.value;
+        const lista = document.getElementById('listaPets');
+        if (lista) lista.setAttribute('data-itens', itensPorPagina);
+
+        select.addEventListener('change', () => {
+            const valor = select.value;
+            const urlAtual = new URL(window.location.href);
+
+            localStorage.setItem('adminPetsItensPorPagina', valor);
+
+            urlAtual.searchParams.set('itensPorPagina', valor);
+            urlAtual.searchParams.set('pagina', 1);
+
+            const imagensAtuais = {};
+            document.querySelectorAll('.imagem-pet').forEach(img => {
+                if (img.src && img.complete && !img.naturalWidth == 0) {
+                    const cardId = img.closest('.cartao-pet')?.getAttribute('data-id');
+                    if (cardId) {
+                        imagensAtuais[cardId] = img.src;
+                    }
                 }
-            }
+            });
+
+            sessionStorage.setItem('imagensPets', JSON.stringify(imagensAtuais));
+
+            document.querySelectorAll('.cartao-pet').forEach(card => card.classList.add('mudando-layout'));
+
+            setTimeout(() => {
+                window.location.href = urlAtual.toString();
+            }, 300);
         });
-        
-        sessionStorage.setItem('imagensPets', JSON.stringify(imagensAtuais));
-        
-        $('.cartao-pet').addClass('mudando-layout');
-        
-        setTimeout(() => {
-            window.location.href = urlAtual.toString();
-        }, 300);
-    });
+    }
 }
 
 function restaurarImagensPreCarregadas() {
@@ -205,13 +212,19 @@ function garantirCarregamentoImagens() {
 
 function inicializarPagina() {
     configElementosDOM();
-    
+
     if (window.location.pathname.includes('/Admin/GerenciamentoPets/Details/')) {
-        $('.carousel').carousel();
+        document.querySelectorAll('.carousel').forEach(el => {
+            try {
+                new bootstrap.Carousel(el);
+            } catch (e) {
+                console.error('Erro ao inicializar carousel:', e);
+            }
+        });
         return;
     }
-    
-    if ($('.pets-grid').length === 0) return;
+
+    if (!document.querySelector('.pets-grid')) return;
     
     carregarPets();
     
@@ -223,15 +236,17 @@ function inicializarPagina() {
 }
 
 function removerTodosIndicadoresCarregamento() {
-    $('.carregando-overlay').fadeOut(300, function() {
-        $(this).remove();
+    document.querySelectorAll('.carregando-overlay').forEach(el => {
+        el.style.transition = 'opacity 0.3s';
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 300);
     });
-    $('.pets-grid').addClass('layout-pronto');
+    document.querySelectorAll('.pets-grid').forEach(el => el.classList.add('layout-pronto'));
 }
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', function() {
     inicializarPagina();
-    
+
     setTimeout(removerTodosIndicadoresCarregamento, 5000);
 });
 
@@ -495,7 +510,10 @@ function enviarViaXHR(formData, isRascunho = false) {
                         
                         
                         resetarFormulario();
-                        $('#modalPet').modal('hide');
+                        const modalInstance = bootstrap.Modal.getInstance(document.getElementById('modalPet'));
+                        if (modalInstance) {
+                            modalInstance.hide();
+                        }
                         
                         
                         setTimeout(() => {
@@ -1353,7 +1371,7 @@ function preCarregarImagens() {
         const total = imagens.length;
         
         const finalizarCarregamento = () => {
-            $('.pets-grid').addClass('layout-pronto');
+            document.querySelectorAll('.pets-grid').forEach(el => el.classList.add('layout-pronto'));
         };
         
         setTimeout(finalizarCarregamento, 3000);
@@ -1495,9 +1513,12 @@ function filtrarPets() {
         infoPaginacao.innerHTML = `Exibindo <span>${petsVisiveis}</span> de <span>${cardsPets.length}</span> pets`;
     }
     
-    $('.paginacao-container').css('display', 'block');
-    $('.paginacao-info').css('display', 'flex');
-    $('.itens-por-pagina').css('display', 'flex');
+    const contPag = document.querySelector('.paginacao-container');
+    const infoPag = document.querySelector('.paginacao-info');
+    const itensPag = document.querySelector('.itens-por-pagina');
+    if (contPag) contPag.style.display = 'block';
+    if (infoPag) infoPag.style.display = 'flex';
+    if (itensPag) itensPag.style.display = 'flex';
 }
 
 
@@ -1917,9 +1938,12 @@ function configurarComportamentoModais() {
 
 function garantirVisibilidadeElementosPaginacao() {
     const observer = new MutationObserver(function() {
-        $('.paginacao-container').css('display', 'block');
-        $('.paginacao-info').css('display', 'flex');
-        $('.itens-por-pagina').css('display', 'flex');
+        const cont = document.querySelector('.paginacao-container');
+        const info = document.querySelector('.paginacao-info');
+        const itens = document.querySelector('.itens-por-pagina');
+        if (cont) cont.style.display = 'block';
+        if (info) info.style.display = 'flex';
+        if (itens) itens.style.display = 'flex';
     });
     
     observer.observe(document.body, { childList: true, subtree: true });
@@ -1955,36 +1979,39 @@ function configElementosDOM() {
     
     restaurarImagensPreCarregadas();
     
-    $(window).on('load', function() {
+    window.addEventListener('load', function() {
         if (typeof configurarTratamentoErroImagens === 'function') {
             configurarTratamentoErroImagens();
         }
         if (typeof garantirCarregamentoImagens === 'function') {
             garantirCarregamentoImagens();
         }
-        
+
         setTimeout(() => {
-            $('.pets-grid').addClass('layout-pronto');
+            document.querySelectorAll('.pets-grid').forEach(el => el.classList.add('layout-pronto'));
         }, 200);
     });
-    
-    $('.imagem-pet').on('load', function() {
-        $(this).attr('data-loaded', 'true');
-        $(this).css('display', 'block');
-        
-        const container = $(this).closest('.container-imagem');
-        if (container.find('.sem-imagem').length) {
-            container.find('.sem-imagem').hide();
-        }
-        
-        const cardId = $(this).closest('.cartao-pet').attr('data-id');
-        if (cardId) {
-            try {
-                const imagensCache = JSON.parse(sessionStorage.getItem('imagensPets') || '{}');
-                imagensCache[cardId] = $(this).attr('src');
-                sessionStorage.setItem('imagensPets', JSON.stringify(imagensCache));
-            } catch (e) {}
-        }
+
+    document.querySelectorAll('.imagem-pet').forEach(img => {
+        img.addEventListener('load', function() {
+            img.setAttribute('data-loaded', 'true');
+            img.style.display = 'block';
+
+            const container = img.closest('.container-imagem');
+            if (container) {
+                const sem = container.querySelector('.sem-imagem');
+                if (sem) sem.style.display = 'none';
+            }
+
+            const cardId = img.closest('.cartao-pet')?.getAttribute('data-id');
+            if (cardId) {
+                try {
+                    const imagensCache = JSON.parse(sessionStorage.getItem('imagensPets') || '{}');
+                    imagensCache[cardId] = img.getAttribute('src');
+                    sessionStorage.setItem('imagensPets', JSON.stringify(imagensCache));
+                } catch (e) {}
+            }
+        });
     });
 }
 
