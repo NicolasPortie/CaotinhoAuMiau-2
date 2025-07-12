@@ -1,14 +1,23 @@
+let menuHamburguer;
+let menuLateral;
+let menuSobreposicao;
+let painelNotificacoes;
+
+const painelAtivo = () =>
+    painelNotificacoes &&
+    (painelNotificacoes.classList.contains('ativo') ||
+     painelNotificacoes.style.display === 'block');
+
 document.addEventListener('DOMContentLoaded', () => {
-    
-    const menuHamburguer = document.querySelector('.menu-hamburguer');
-    const menuLateral = document.querySelector('.menu-lateral');
-    const menuSobreposicao = document.querySelector('.menu-sobreposicao');
+
+    menuHamburguer = document.querySelector('.menu-hamburguer');
+    menuLateral = document.querySelector('.menu-lateral');
+    menuSobreposicao = document.querySelector('.menu-sobreposicao');
+    painelNotificacoes = document.getElementById('painel-notificacoes');
+
     const iconeNotificacao = document.querySelector('.icone-notificacao');
     const sinoSvg = document.querySelector('.sino-svg');
     const contadorNotificacoes = document.querySelector('.contador-notificacoes');
-    const dotPulse = document.querySelector('.ponto-pulsante');
-    const logoLink = document.querySelector('.logo-link');
-    const pataSvg = document.querySelector('.pata-svg');
     
     if (sinoSvg && contadorNotificacoes) {
         sinoSvg.classList.add('animacao-sino');
@@ -56,7 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
             alternarNotificacoes();
         });
-    } else {
     }
     
     const overlayNotificacoes = document.querySelector('.overlay-notificacoes');
@@ -83,22 +91,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            const painelNotificacoes = document.getElementById('painel-notificacoes');
-            if (painelNotificacoes && (painelNotificacoes.classList.contains('ativo') || 
-                painelNotificacoes.style.display === 'block')) {
-                fecharPainelNotificacoes();
-            }
+        if (e.key === 'Escape' && painelAtivo()) {
+            fecharPainelNotificacoes();
         }
     });
-    
+
     document.addEventListener('click', (e) => {
-        const painelNotificacoes = document.getElementById('painel-notificacoes');
         const iconeNotif = document.querySelector('.icone-notificacao');
-        
-        if (painelNotificacoes && 
-            (painelNotificacoes.classList.contains('ativo') || painelNotificacoes.style.display === 'block') && 
-            !painelNotificacoes.contains(e.target) && 
+
+        if (painelAtivo() &&
+            !painelNotificacoes.contains(e.target) &&
             (!iconeNotif || !iconeNotif.contains(e.target))) {
             fecharPainelNotificacoes();
         }
@@ -107,11 +109,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 const alternarMenu = () => {
-    const menuHamburguer = document.querySelector('.menu-hamburguer');
-    const menuLateral = document.querySelector('.menu-lateral');
-    const menuSobreposicao = document.querySelector('.menu-sobreposicao');
     
-    if (!menuLateral || !menuSobreposicao) {
+    if (!menuLateral || !menuSobreposicao || !menuHamburguer) {
         console.error("Elementos do menu não encontrados");
         return;
     }
@@ -138,7 +137,6 @@ const alternarMenu = () => {
 
 
 const abrirPainelNotificacoes = () => {
-    const painelNotificacoes = document.getElementById('painel-notificacoes');
     if (!painelNotificacoes) {
         console.error("[NAVBAR.JS] Painel de notificações não encontrado");
         return;
@@ -159,7 +157,6 @@ const abrirPainelNotificacoes = () => {
 
 
 const fecharPainelNotificacoes = () => {
-    const painelNotificacoes = document.getElementById('painel-notificacoes');
     if (!painelNotificacoes) {
         return;
     }
@@ -173,31 +170,24 @@ const fecharPainelNotificacoes = () => {
 
 
 const abrirMenuLateral = () => {
-    const menuHamburguer = document.querySelector('.menu-hamburguer');
-    const menuLateral = document.querySelector('.menu-lateral');
-    const menuSobreposicao = document.querySelector('.menu-sobreposicao');
-    
-    if (menuLateral && menuSobreposicao) {
+
+    if (menuHamburguer && menuLateral && menuSobreposicao) {
         menuHamburguer.classList.add('ativo');
         menuLateral.classList.add('ativo');
         menuSobreposicao.classList.add('ativo');
         document.body.classList.add('menu-aberto');
-        
-        const painelNotificacoes = document.querySelector('.painel-notificacoes');
-        if (painelNotificacoes && painelNotificacoes.classList.contains('ativo')) {
+
+        if (painelAtivo()) {
             fecharPainelNotificacoes();
         }
-        
+
     }
 };
 
 
 const fecharMenuLateral = () => {
-    const menuHamburguer = document.querySelector('.menu-hamburguer');
-    const menuLateral = document.querySelector('.menu-lateral');
-    const menuSobreposicao = document.querySelector('.menu-sobreposicao');
-    
-    if (menuLateral && menuSobreposicao) {
+
+    if (menuHamburguer && menuLateral && menuSobreposicao) {
         menuHamburguer.classList.remove('ativo');
         menuLateral.classList.remove('ativo');
         menuSobreposicao.classList.remove('ativo');
@@ -212,17 +202,13 @@ const fecharMenuLateral = () => {
 
 
 const alternarNotificacoes = () => {
-    const painelNotificacoes = document.getElementById('painel-notificacoes');
     if (!painelNotificacoes) {
         console.error("[NAVBAR.JS] Painel de notificações não encontrado");
         return;
     }
     
     
-    const estaAtivo = painelNotificacoes.classList.contains('ativo') || 
-                      painelNotificacoes.style.display === 'block';
-    
-    if (estaAtivo) {
+    if (painelAtivo()) {
         fecharPainelNotificacoes();
     } else {
         abrirPainelNotificacoes();
