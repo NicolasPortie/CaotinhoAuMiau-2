@@ -246,7 +246,7 @@ function atualizarDadosGraficoUsuarios(filtro) {
 }
 
 
-function carregarDadosGraficos(filtroAdocoes = 'Anual', filtroUsuarios = 'Anual') {
+async function carregarDadosGraficos(filtroAdocoes = 'Anual', filtroUsuarios = 'Anual') {
 
     document.querySelectorAll('.area-grafico').forEach(area => {
         area.innerHTML = `
@@ -256,82 +256,78 @@ function carregarDadosGraficos(filtroAdocoes = 'Anual', filtroUsuarios = 'Anual'
         `;
     });
 
-        })
-    fetch(`/GerenciamentoDashboard/DadosGraficos?periodoAdocoes=${encodeURIComponent(filtroAdocoes)}&periodoUsuarios=${encodeURIComponent(filtroUsuarios)}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Falha ao carregar dados dos gráficos');
+    try {
+        const response = await fetch(`/GerenciamentoDashboard/DadosGraficos?periodoAdocoes=${encodeURIComponent(filtroAdocoes)}&periodoUsuarios=${encodeURIComponent(filtroUsuarios)}`);
+        if (!response.ok) {
+            throw new Error('Falha ao carregar dados dos gráficos');
+        }
+        const dados = await response.json();
+
+        if (!dados || typeof dados !== 'object') {
+            throw new Error('Formato de dados inválido');
+        }
+
+        try {
+            const adocoes = (dados.adocoesPorMes || []).map(item => ({
+                mes: item.Mes || item.mes,
+                total: item.Quantidade ?? item.total
+            }));
+
+            const especies = (dados.especiesDistribuicao || dados.petsEspecie || []).map(item => ({
+                especie: item.Especie || item.especie,
+                total: item.Quantidade ?? item.total
+            }));
+
+            const usuarios = (dados.usuariosPorMes || []).map(item => ({
+                mes: item.Mes || item.mes,
+                total: item.Quantidade ?? item.total
+            }));
+
+            const status = (dados.statusFormularios || []).map(item => ({
+                status: item.Status || item.status,
+                total: item.Quantidade ?? item.total
+            }));
+
+            if (adocoes.length) {
+                atualizarGraficoAdocoes(adocoes, filtroAdocoes);
             }
-            return response.json();
-        })
-        .then(dados => {
 
-            if (!dados || typeof dados !== 'object') {
-                throw new Error('Formato de dados inválido');
+            if (especies.length) {
+                atualizarGraficoPetsEspecie(especies);
             }
 
-            try {
-                const adocoes = (dados.adocoesPorMes || []).map(item => ({
-                    mes: item.Mes || item.mes,
-                    total: item.Quantidade ?? item.total
-                }));
-
-                const especies = (dados.especiesDistribuicao || dados.petsEspecie || []).map(item => ({
-                    especie: item.Especie || item.especie,
-                    total: item.Quantidade ?? item.total
-                }));
-
-                const usuarios = (dados.usuariosPorMes || []).map(item => ({
-                    mes: item.Mes || item.mes,
-                    total: item.Quantidade ?? item.total
-                }));
-
-                const status = (dados.statusFormularios || []).map(item => ({
-                    status: item.Status || item.status,
-                    total: item.Quantidade ?? item.total
-                }));
-
-                if (adocoes.length) {
-                    atualizarGraficoAdocoes(adocoes, filtroAdocoes);
-                }
-
-                if (especies.length) {
-                    atualizarGraficoPetsEspecie(especies);
-                }
-
-                if (usuarios.length) {
-                    atualizarGraficoUsuarios(usuarios, filtroUsuarios);
-                }
-
-                if (status.length) {
-                    atualizarGraficoStatusFormularios(status);
-                }
-
-                if (dados.estatisticas) {
-                    atualizarCardEstatisticas(dados.estatisticas);
-                }
-
-            } catch (erro) {
-                console.error('Erro ao processar dados dos gráficos:', erro);
-                document.querySelectorAll('.area-grafico').forEach(area => {
-                    area.innerHTML = `
-                        <div class="erro-grafico">
-                            Erro ao processar dados. Tente novamente.
-                        </div>
-                    `;
-                });
+            if (usuarios.length) {
+                atualizarGraficoUsuarios(usuarios, filtroUsuarios);
             }
-        })
-        .catch(erro => {
-            console.error('Erro ao carregar dados dos gráficos:', erro);
+
+            if (status.length) {
+                atualizarGraficoStatusFormularios(status);
+            }
+
+            if (dados.estatisticas) {
+                atualizarCardEstatisticas(dados.estatisticas);
+            }
+
+        } catch (erro) {
+            console.error('Erro ao processar dados dos gráficos:', erro);
             document.querySelectorAll('.area-grafico').forEach(area => {
                 area.innerHTML = `
                     <div class="erro-grafico">
-                        ${erro.message || 'Erro ao carregar dados. Tente novamente.'}
+                        Erro ao processar dados. Tente novamente.
                     </div>
                 `;
             });
+        }
+    } catch (erro) {
+        console.error('Erro ao carregar dados dos gráficos:', erro);
+        document.querySelectorAll('.area-grafico').forEach(area => {
+            area.innerHTML = `
+                <div class="erro-grafico">
+                    ${erro.message || 'Erro ao carregar dados. Tente novamente.'}
+                </div>
+            `;
         });
+    }
 }
 
 
@@ -762,29 +758,23 @@ function validarFormularioAdministrador() {
 }
 
 
-function realizarLogout() {
-    
-    if (confirm('Tem certeza que deseja sair do sistema?')) {
-
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
-            }
-        })
-        .then(response => {
-            if (response.ok) {
-                
-                window.location.href = '/Login';
-            } else {
-                mostrarAlerta('Erro ao realizar logout. Tente novamente.', 'erro');
-            }
-        })
-        .catch(erro => {
-            console.error('Erro ao fazer logout:', erro);
-            mostrarAlerta('Erro ao realizar logout. Tente novamente.', 'erro');
+async function realizarLogout() {
+    if (!confirm('Tem certeza que deseja sair do sistema?')) {
+        return;
+    }
+    try {
+        const response = await fetch('/Autenticacao/Logout', {
+            method: 'GET',
+            credentials: 'include'
         });
+        if (response.ok || response.redirected) {
+            window.location.href = '/Login';
+        } else {
+            mostrarAlerta('Erro ao realizar logout. Tente novamente.', 'erro');
+        }
+    } catch (erro) {
+        console.error('Erro ao fazer logout:', erro);
+        mostrarAlerta('Erro ao realizar logout. Tente novamente.', 'erro');
     }
 }
 
@@ -794,31 +784,27 @@ function aplicarMascaras() {
 }
 
 
-function carregarAtividadesRecentes() {
+async function carregarAtividadesRecentes() {
     const container = document.querySelector('.lista-atividade');
     if (!container) return;
-    
-    
+
     container.innerHTML = `<div class="text-center p-3"><i class="fas fa-spinner fa-spin me-2"></i> Carregando atividades...</div>`;
 
-    fetch('/GerenciamentoDashboard/AtividadesRecentes')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Falha ao carregar atividades recentes');
-            }
-            return response.json();
-        })
-        .then(dados => {
-            if (Array.isArray(dados) && dados.length > 0) {
-                atualizarListaAtividades(container, dados);
-            } else {
-                container.innerHTML = `<div class="text-center p-3">Nenhuma atividade recente encontrada.</div>`;
-            }
-        })
-        .catch(erro => {
-            console.error('Erro ao carregar atividades recentes:', erro);
-            container.innerHTML = `<div class="text-center p-3 text-danger"><i class="fas fa-exclamation-circle me-2"></i> Erro ao carregar atividades.</div>`;
-        });
+    try {
+        const response = await fetch('/GerenciamentoDashboard/AtividadesRecentes');
+        if (!response.ok) {
+            throw new Error('Falha ao carregar atividades recentes');
+        }
+        const dados = await response.json();
+        if (Array.isArray(dados) && dados.length > 0) {
+            atualizarListaAtividades(container, dados);
+        } else {
+            container.innerHTML = `<div class="text-center p-3">Nenhuma atividade recente encontrada.</div>`;
+        }
+    } catch (erro) {
+        console.error('Erro ao carregar atividades recentes:', erro);
+        container.innerHTML = `<div class="text-center p-3 text-danger"><i class="fas fa-exclamation-circle me-2"></i> Erro ao carregar atividades.</div>`;
+    }
 }
 
 
