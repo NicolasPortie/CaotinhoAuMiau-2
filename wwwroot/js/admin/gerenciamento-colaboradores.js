@@ -96,14 +96,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    document.querySelectorAll('.pagination .page-link').forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const url = link.getAttribute('href');
-            if (url) {
-                window.location.href = url;
-            }
-        });
+    // Delegação de evento para lidar com a paginação
+    document.addEventListener('click', function(e) {
+        const link = e.target.closest('.pagination .page-link');
+        if (!link) return;
+        e.preventDefault();
+        const url = link.getAttribute('href');
+        if (url) {
+            window.location.href = url;
+        }
     });
 });
 
@@ -113,14 +114,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 function configurarLimpezaErrosFormulario() {
-    document.querySelectorAll('input, select, textarea').forEach(el => {
-        ['input', 'change', 'focus'].forEach(evt => {
-            el.addEventListener(evt, () => {
-                el.classList.remove('is-invalid');
-                const feedback = document.getElementById(el.id + '-erro');
-                if (feedback) feedback.textContent = '';
-            });
-        });
+    // Delegação de eventos para remover mensagens de erro dos campos
+    ['input', 'change', 'focus'].forEach(evt => {
+        document.addEventListener(evt, function(event) {
+            const el = event.target.closest('input, select, textarea');
+            if (!el) return;
+            el.classList.remove('is-invalid');
+            const feedback = document.getElementById(el.id + '-erro');
+            if (feedback) feedback.textContent = '';
+        }, true);
     });
 
     document.addEventListener('click', function(e) {
@@ -190,10 +192,12 @@ function inicializarModalColaborador() {
         });
     });
 
-    document.querySelectorAll('.toggle-password').forEach(btn => {
-        btn.addEventListener('click', function() {
+    // Delegação de evento para botões que alternam a visibilidade da senha
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('.toggle-password');
+        if (btn) {
             alternarVisibilidadeSenha(btn.dataset.target);
-        });
+        }
     });
 
     const imagemInput = document.getElementById('colaboradorImagem');
