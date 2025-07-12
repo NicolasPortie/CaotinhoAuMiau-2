@@ -1,14 +1,3 @@
-:root {
-    --primary-color: #FF6B00;
-    --secondary-color: #FF8533;
-    --text-color: #333333;
-    --background-color: #FFFFFF;
-    --white-color: #FFFFFF;
-    --error-color: #DC3545;
-    --success-color: #28A745;
-}
-
-html {
     font-size: 16px;
     height: 100%;
     background: url('/imagens/Imagens CaotinhoAuMiau/fundo.jpg') no-repeat center center fixed;
@@ -23,7 +12,7 @@ body {
     min-height: 100%;
     display: flex;
     flex-direction: column;
-    color: var(--white-color);
+    color: var(--color-white);
     overflow-x: hidden;
 }
 .banner {
@@ -33,7 +22,7 @@ body {
     align-items: center;
     justify-content: center;
     text-align: center;
-    color: var(--white-color);
+    color: var(--color-white);
     position: relative;
 }
 
@@ -104,7 +93,7 @@ body {
     font-size: 4.5rem;
     font-weight: 800;
     margin-bottom: 1.5rem;
-    color: var(--white-color);
+    color: var(--color-white);
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     line-height: 1.2;
     letter-spacing: -0.5px;
@@ -114,7 +103,7 @@ body {
 .subtitulo-banner {
     font-size: 1.6rem;
     margin-bottom: 2.5rem;
-    color: var(--white-color);
+    color: var(--color-white);
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
     opacity: 0.95;
     max-width: 80%;
@@ -134,7 +123,7 @@ body {
     text-decoration: none;
     padding: 1rem 2rem;
     border-radius: 50px;
-    background: linear-gradient(45deg, #FF8533, #FF6B00);
+    background: linear-gradient(45deg, var(--color-primary-light), var(--color-primary));
     color: white;
     border: none;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -161,7 +150,7 @@ body {
 .botao-banner:hover {
     transform: translateY(-5px) scale(1.05);
     box-shadow: 0 15px 25px rgba(255, 107, 0, 0.4), 0 0 20px rgba(255, 107, 0, 0.4);
-    background: linear-gradient(45deg, #FF6B00, #E55C00);
+    background: linear-gradient(45deg, var(--color-primary), #E55C00);
     color: white;
     text-decoration: none;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -260,7 +249,7 @@ body {
     text-align: center;
     font-size: 2.5rem;
     margin-bottom: 3rem;
-    color: var(--white-color);
+    color: var(--color-white);
     font-weight: 700;
 }
 
@@ -282,18 +271,18 @@ body {
 
 .cartao-motivo i, .cartao-passo i {
     font-size: 2.5rem;
-    color: var(--primary-color);
+    color: var(--color-primary);
     margin-bottom: 1rem;
 }
 
 .cartao-motivo h4, .cartao-passo h4 {
-    color: var(--white-color);
+    color: var(--color-white);
     font-size: 1.5rem;
     margin-bottom: 1rem;
 }
 
 .cartao-motivo p, .cartao-passo p {
-    color: var(--white-color);
+    color: var(--color-white);
     opacity: 0.9;
     margin: 0;
 }
@@ -301,8 +290,8 @@ body {
 .numero-passo {
     width: 40px;
     height: 40px;
-    background-color: var(--primary-color);
-    color: var(--white-color);
+    background-color: var(--color-primary);
+    color: var(--color-white);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -320,19 +309,19 @@ body {
 
 .item-contador {
     text-align: center;
-    color: var(--white-color);
+    color: var(--color-white);
 }
 
 .numero-contador {
     font-size: 3.5rem;
     font-weight: 700;
-    color: var(--white-color);
+    color: var(--color-white);
     margin-bottom: 0.5rem;
 }
 
 .texto-contador {
     font-size: 1.2rem;
-    color: var(--white-color);
+    color: var(--color-white);
     opacity: 0.9;
 }
 
@@ -351,7 +340,7 @@ body {
 .formulario-newsletter input {
     background-color: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    color: var(--white-color);
+    color: var(--color-white);
     padding: 0.75rem 1.5rem;
     border-radius: 50px;
     font-size: 1rem;
@@ -362,7 +351,7 @@ body {
 }
 
 .botao-newsletter {
-    background: linear-gradient(45deg, #FF8533, #FF6B00);
+    background: linear-gradient(45deg, var(--color-primary-light), var(--color-primary));
     color: white;
     border: none;
     padding: 0.75rem 1.5rem;
@@ -372,7 +361,7 @@ body {
 }
 
 .botao-newsletter:hover {
-    background: linear-gradient(45deg, #FF6B00, #E55C00);
+    background: linear-gradient(45deg, var(--color-primary), #E55C00);
     transform: translateY(-2px);
 }
 
@@ -380,14 +369,14 @@ body {
 .rodape {
     background-color: rgba(0, 0, 0, 0.8);
     padding: 3rem 0;
-    color: var(--white-color);
+    color: var(--color-white);
 }
 
 .titulo-rodape {
     font-size: 1.5rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
-    color: var(--white-color);
+    color: var(--color-white);
 }
 
 .texto-rodape {
@@ -402,13 +391,13 @@ body {
 }
 
 .link-social {
-    color: var(--white-color);
+    color: var(--color-white);
     font-size: 1.5rem;
     transition: color 0.3s ease;
 }
 
 .link-social:hover {
-    color: var(--primary-color);
+    color: var(--color-primary);
 }
 
 .links-rodape {
@@ -422,14 +411,14 @@ body {
 }
 
 .links-rodape a {
-    color: var(--white-color);
+    color: var(--color-white);
     text-decoration: none;
     opacity: 0.8;
     transition: all 0.3s ease;
 }
 
 .links-rodape a:hover {
-    color: var(--primary-color);
+    color: var(--color-primary);
     opacity: 1;
 }
 
@@ -447,7 +436,7 @@ body {
 }
 
 .contato-rodape i {
-    color: var(--primary-color);
+    color: var(--color-primary);
     font-size: 1.2rem;
 }
 
@@ -551,7 +540,7 @@ body {
 .avatar-usuario {
     width: 2.5rem;
     height: 2.5rem;
-    background: var(--primary-color);
+    background: var(--color-primary);
     color: white;
     border-radius: 50%;
     display: flex;
@@ -618,7 +607,7 @@ body {
     align-items: center;
     gap: 14px;
     padding: 13px 18px;
-    color: #FFFFFF;
+    color: var(--color-white);
     text-decoration: none;
     font-size: 0.95rem;
     font-weight: 500;
@@ -637,7 +626,7 @@ body {
     left: 0;
     width: 4px;
     height: 100%;
-    background: var(--primary-color);
+    background: var(--color-primary);
     transform: scaleY(0);
     transition: transform 0.25s ease;
     border-radius: 0 4px 4px 0;
@@ -663,7 +652,7 @@ body {
 
 .item-menu-suspenso:hover {
     background: rgba(255, 107, 0, 0.15);
-    color: var(--primary-color);
+    color: var(--color-primary);
     transform: translateX(3px);
 }
 
@@ -673,7 +662,7 @@ body {
 }
 
 .item-menu-suspenso:hover i {
-    color: var(--primary-color);
+    color: var(--color-primary);
     transform: translateX(-2px) scale(1.1);
 }
 
@@ -715,14 +704,14 @@ body {
 .mensagem-boas-vindas h1 {
     font-size: 3rem;
     font-weight: 700;
-    color: var(--white-color);
+    color: var(--color-white);
     margin-bottom: 1rem;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .mensagem-boas-vindas p {
     font-size: 1.2rem;
-    color: var(--white-color);
+    color: var(--color-white);
     opacity: 0.9;
     margin-bottom: 2rem;
     line-height: 1.6;
@@ -751,19 +740,19 @@ body {
 
 .icone-estatistica {
     font-size: 2rem;
-    color: var(--primary-color);
+    color: var(--color-primary);
     margin-bottom: 1rem;
 }
 
 .info-estatistica h3 {
     font-size: 2.5rem;
     font-weight: 700;
-    color: var(--white-color);
+    color: var(--color-white);
     margin-bottom: 0.5rem;
 }
 
 .info-estatistica p {
-    color: var(--white-color);
+    color: var(--color-white);
     opacity: 0.9;
     margin: 0;
 }
@@ -776,7 +765,7 @@ body {
 
 .sugestao-pet p {
     font-size: 1.2rem;
-    color: var(--white-color);
+    color: var(--color-white);
     opacity: 0.9;
     display: flex;
     align-items: center;
@@ -785,7 +774,7 @@ body {
 }
 
 .sugestao-pet i {
-    color: var(--primary-color);
+    color: var(--color-primary);
     font-size: 1.5rem;
 }
 
@@ -812,7 +801,7 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    background: linear-gradient(45deg, #FF8533, #FF6B00);
+    background: linear-gradient(45deg, var(--color-primary-light), var(--color-primary));
     color: white;
     padding: 0.5rem 1rem;
     border-radius: 50px;
@@ -845,7 +834,7 @@ body {
 }
 
 .botao-admin {
-    background: linear-gradient(45deg, #FF8533, #FF6B00);
+    background: linear-gradient(45deg, var(--color-primary-light), var(--color-primary));
     color: white;
     border: none;
     padding: 0.75rem 1.5rem;
@@ -856,7 +845,7 @@ body {
 }
 
 .botao-admin:focus, .botao-admin:active, .botao-admin:hover {
-    background: linear-gradient(45deg, #FF6B00, #E55C00);
+    background: linear-gradient(45deg, var(--color-primary), #E55C00);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
 }
@@ -883,7 +872,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    background: linear-gradient(45deg, #FF8533, #FF6B00);
+    background: linear-gradient(45deg, var(--color-primary-light), var(--color-primary));
     color: white;
     border: none;
     padding: 0.75rem 1.5rem;
@@ -895,7 +884,7 @@ body {
 }
 
 .botao-primario:hover {
-    background: linear-gradient(45deg, #FF6B00, #E55C00);
+    background: linear-gradient(45deg, var(--color-primary), #E55C00);
     transform: translateY(-2px);
 }
 
@@ -917,7 +906,7 @@ body {
 
 .botao-secundario:hover {
     background: white;
-    color: var(--primary-color);
+    color: var(--color-primary);
 }
 
 
@@ -998,7 +987,7 @@ body {
 }
 
 .navbar-brand {
-    color: #FF6B00;
+    color: var(--color-primary);
     font-size: 2rem;
     font-weight: 700;
     font-family: 'Baloo 2', sans-serif;
@@ -1016,7 +1005,7 @@ body {
 }
 
 .navbar-brand:hover {
-    color: #FF8533;
+    color: var(--color-primary-light);
 }
 
 .navbar-links {
@@ -1026,7 +1015,7 @@ body {
 }
 
 .navbar-link {
-    color: #FFFFFF;
+    color: var(--color-white);
     text-decoration: none;
     font-weight: 600;
     transition: color 0.3s ease;
@@ -1043,7 +1032,7 @@ body {
 }
 
 .navbar-link:hover {
-    color: #FF6B00;
+    color: var(--color-primary);
 }
 
 .navbar-link::after {
@@ -1053,7 +1042,7 @@ body {
     left: 0;
     width: 0;
     height: 2px;
-    background-color: #FF6B00;
+    background-color: var(--color-primary);
     transition: all 0.3s ease;
 }
 
