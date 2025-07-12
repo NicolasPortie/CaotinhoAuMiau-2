@@ -1,4 +1,4 @@
-    font-family: 'Poppins', sans-serif;
+    font-family: var(--font-primary);
     background-color: var(--color-light);
     min-height: 100vh;
     display: flex;
@@ -11,7 +11,7 @@
     flex: 1;
     padding: 1.5rem 2rem;
     min-height: 100vh;
-    background: var(--gray-50);
+    background: var(--color-gray-50);
 }
 
 
@@ -28,10 +28,10 @@
 .titulo-pagina {
     font-size: 1.8rem;
     font-weight: 700;
-    color: var(--gray-900);
+    color: var(--color-gray-900);
     margin: 0;
     line-height: 1.2;
-    font-family: 'Poppins', sans-serif;
+    font-family: var(--font-primary);
 }
 
 .titulo-pagina i {
@@ -68,7 +68,7 @@
     overflow: hidden;
     min-height: 140px;
     justify-content: flex-start;
-    border: 1px solid var(--gray-100);
+    border: 1px solid var(--color-gray-100);
 }
 
 .cartao-status::before {
@@ -132,21 +132,21 @@
 
 .cartao-status .rotulo {
     font-size: 1rem;
-    color: var(--gray-600);
+    color: var(--color-gray-600);
     font-weight: 500;
     margin-bottom: 0.5rem;
     display: block;
     text-align: left;
-    font-family: 'Poppins', sans-serif;
+    font-family: var(--font-primary);
 }
 
 .cartao-status .numero {
     font-size: 2.4rem;
     font-weight: 700;
-    color: var(--gray-900);
+    color: var(--color-gray-900);
     line-height: 1.2;
     text-align: left;
-    font-family: 'Poppins', sans-serif;
+    font-family: var(--font-primary);
 }
 
 
@@ -170,13 +170,13 @@
     justify-content: space-between;
     align-items: center;
     padding: 1.5rem;
-    border-bottom: 1px solid var(--gray-200);
+    border-bottom: 1px solid var(--color-gray-200);
 }
 
 .texto-titulo-grafico {
     font-size: 1.1rem;
     font-weight: 600;
-    color: var(--gray-900);
+    color: var(--color-gray-900);
 }
 
 .titulo-grafico i {
@@ -190,7 +190,7 @@
 
 .filtro-grafico, .filtro-grafico-usuarios {
     padding: 0.3rem 0.8rem;
-    background: var(--gray-100);
+    background: var(--color-gray-100);
     border-radius: 20px;
     font-size: 0.85rem;
     cursor: pointer;
@@ -221,7 +221,7 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    color: var(--gray-500);
+    color: var(--color-gray-500);
     font-size: 0.9rem;
     text-align: center;
     padding: 2rem;
@@ -231,7 +231,7 @@
     content: '';
     width: 40px;
     height: 40px;
-    border: 3px solid var(--gray-300);
+    border: 3px solid var(--color-gray-300);
     border-top-color: var(--color-secondary);
     border-radius: 50%;
     margin-bottom: 1rem;
@@ -285,10 +285,10 @@
 .titulo-atividade {
     font-size: 1.1rem;
     font-weight: 600;
-    color: var(--gray-900);
+    color: var(--color-gray-900);
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid var(--gray-200);
+    border-bottom: 1px solid var(--color-gray-200);
 }
 
 .titulo-atividade i {
@@ -303,7 +303,7 @@
 .item-atividade {
     display: flex;
     padding: 1rem 0;
-    border-bottom: 1px solid var(--gray-100);
+    border-bottom: 1px solid var(--color-gray-100);
 }
 
 .item-atividade:last-child {
@@ -341,13 +341,13 @@
 
 .acao-atividade {
     font-weight: 500;
-    color: var(--gray-900);
+    color: var(--color-gray-900);
     margin-bottom: 0.25rem;
 }
 
 .data-atividade {
     font-size: 0.85rem;
-    color: var(--gray-500);
+    color: var(--color-gray-500);
 }
 
 .botao-acao-flutuante {
