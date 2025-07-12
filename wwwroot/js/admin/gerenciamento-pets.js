@@ -307,7 +307,7 @@ async function salvarPetComoRascunho() {
         }
         
         
-        await enviarViaXHR(formData, true);
+        await enviarPetRequest(formData, true);
         
         
         camposApenasCadastroCompleto.forEach(element => {
@@ -375,7 +375,7 @@ async function salvarPet() {
         }
         
         
-        await enviarViaXHR(formData, false);
+        await enviarPetRequest(formData, false);
     } catch (error) {
         console.error('Erro ao salvar pet:', error);
         toastr.error('Ocorreu um erro ao salvar o pet. Por favor, tente novamente.');
@@ -478,124 +478,83 @@ async function validarFormulario() {
     return valido;
 }
 
-function enviarViaXHR(formData, isRascunho = false) {
-    return new Promise((resolve, reject) => {
-        
-        const tokenElement = document.querySelector('input[name="__RequestVerificationToken"]');
-        const token = tokenElement ? tokenElement.value : '';
-        
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', '/admin/pets/SalvarPet');
-        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-        
-        
-        xhr.upload.onprogress = function(e) {
-            if (e.lengthComputable) {
-                const percentComplete = (e.loaded / e.total) * 100;
-            }
-        };
-        
-        
-        xhr.onload = function() {
-            if (xhr.status >= 200 && xhr.status < 300) {
-                try {
-                    const response = JSON.parse(xhr.responseText);
-                    
-                    if (response.sucesso) {
-                        if (isRascunho) {
-                            toastr.success('Rascunho salvo com sucesso!');
-                        } else {
-                            toastr.success('Pet salvo com sucesso!');
-                        }
-                        
-                        
-                        resetarFormulario();
-                        const modalInstance = bootstrap.Modal.getInstance(document.getElementById('modalPet'));
-                        if (modalInstance) {
-                            modalInstance.hide();
-                        }
-                        
-                        
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 1500);
-                        
-                        resolve(response);
-                    } else {
-                        console.error('Erro ao salvar pet:', response);
-                        
-                        if (response.erros) {
-                            
-                            Object.keys(response.erros).forEach(campo => {
-                                const mensagem = response.erros[campo];
-                                const elemento = document.getElementById(campo);
-                                
-                                if (elemento) {
-                                    const containerErro = elemento.nextElementSibling;
-                                    if (containerErro && containerErro.classList.contains('mensagem-erro')) {
-                                        containerErro.textContent = mensagem;
-                                        containerErro.style.display = 'block';
-                                    }
-                                }
-                                
-                                toastr.error(mensagem);
-                            });
-                        } else {
-                            
-                            toastr.error(response.mensagem || 'Erro ao salvar o pet');
-                        }
-                        
-                        reject(new Error(response.mensagem || 'Erro ao salvar'));
-                    }
-                } catch (error) {
-                    console.error('Erro ao analisar resposta:', error);
-                    
-                    
-                    let mensagemErro = 'Falha ao processar a resposta do servidor';
-                    
-                    try {
-                        const errorResponse = JSON.parse(xhr.responseText);
-                        if (errorResponse.mensagem) {
-                            mensagemErro = errorResponse.mensagem;
-                        }
-                    } catch (e) {
-                        console.error('Erro ao analisar resposta de erro:', e);
-                    }
-                    
-                    reject(new Error(mensagemErro));
+async function enviarPetRequest(formData, isRascunho = false) {
+    const tokenElement = document.querySelector('input[name="__RequestVerificationToken"]');
+    const token = tokenElement ? tokenElement.value : '';
+
+    if (token) {
+        formData.append('__RequestVerificationToken', token);
+    }
+
+    try {
+        const resposta = await fetch('/admin/pets/SalvarPet', {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        });
+
+        if (!resposta.ok) {
+            let mensagemErro = 'Erro ao salvar. Por favor, tente novamente.';
+            try {
+                const erro = await resposta.json();
+                if (erro.message) {
+                    mensagemErro = erro.message;
                 }
-            } else {
-                console.error('Erro HTTP:', xhr.status, xhr.responseText);
-                let mensagemErro = 'Erro ao salvar. Por favor, tente novamente.';
-                
-                try {
-                    
-                    const errorResponse = JSON.parse(xhr.responseText);
-                    if (errorResponse.message) {
-                        mensagemErro = errorResponse.message;
-                    }
-                } catch (e) {
-                    
-                }
-                
-                toastr.error(mensagemErro);
-                reject(new Error(`Erro HTTP: ${xhr.status} - ${mensagemErro}`));
-            }
-        };
-        
-        xhr.onerror = function() {
-            toastr.error('Erro de conexão. Por favor, verifique sua internet e tente novamente.');
-            reject(new Error('Erro de conexão'));
-        };
-        
-        
-        if (token) {
-            formData.append('__RequestVerificationToken', token);
+            } catch (_) { }
+
+            toastr.error(mensagemErro);
+            throw new Error(`Erro HTTP: ${resposta.status}`);
         }
-        
-        
-        xhr.send(formData);
-    });
+
+        const data = await resposta.json();
+
+        if (data.sucesso) {
+            if (isRascunho) {
+                toastr.success('Rascunho salvo com sucesso!');
+            } else {
+                toastr.success('Pet salvo com sucesso!');
+            }
+
+            resetarFormulario();
+            const modalInstance = bootstrap.Modal.getInstance(document.getElementById('modalPet'));
+            if (modalInstance) {
+                modalInstance.hide();
+            }
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+
+            return data;
+        }
+
+        if (data.erros) {
+            Object.keys(data.erros).forEach(campo => {
+                const mensagem = data.erros[campo];
+                const elemento = document.getElementById(campo);
+                if (elemento) {
+                    const containerErro = elemento.nextElementSibling;
+                    if (containerErro && containerErro.classList.contains('mensagem-erro')) {
+                        containerErro.textContent = mensagem;
+                        containerErro.style.display = 'block';
+                    }
+                }
+                toastr.error(mensagem);
+            });
+        } else {
+            toastr.error(data.mensagem || 'Erro ao salvar o pet');
+        }
+
+        throw new Error(data.mensagem || 'Erro ao salvar');
+    } catch (erro) {
+        console.error('Erro ao enviar pet:', erro);
+        if (!erro.message.includes('conexão')) {
+            toastr.error('Ocorreu um erro ao salvar o pet. Por favor, tente novamente.');
+        }
+        throw erro;
+    }
 }
 
 function inicializarUploadImagem() {
@@ -1608,63 +1567,52 @@ function confirmarExclusao(petId) {
 }
 
 
-function excluirPet(petId) {
+async function excluirPet(petId) {
     if (!petId) {
         toastr.error("ID do pet inválido");
         return;
     }
-    
-    
+
     if (modalConfirmacaoExclusao) {
         modalConfirmacaoExclusao.hide();
     }
-    
-    
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', `/admin/pets/excluir/${petId}`);
-    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-    
-    
+
     const tokenElement = document.querySelector('input[name="__RequestVerificationToken"]');
     const token = tokenElement ? tokenElement.value : '';
-    if (token) {
-        xhr.setRequestHeader('RequestVerificationToken', token);
-    }
-    
-    xhr.onload = function() {
-        if (xhr.status >= 200 && xhr.status < 300) {
-            try {
-                const response = JSON.parse(xhr.responseText);
-                if (response.sucesso) {
-                    toastr.success('Pet excluído com sucesso!');
-                    
-                    
-                    const cardPet = document.querySelector(`.cartao-pet[data-id="${petId}"]`);
-                    if (cardPet) {
-                        cardPet.remove();
-                    }
-                    
-                    
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1500);
-                } else {
-                    toastr.error(response.mensagem || 'Erro ao excluir pet');
-                }
-            } catch (error) {
-                console.error('Erro ao processar resposta:', error);
-                toastr.error('Erro ao processar resposta do servidor');
+
+    try {
+        const resposta = await fetch(`/admin/pets/excluir/${petId}`, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'RequestVerificationToken': token
             }
-        } else {
-            toastr.error(`Erro ao excluir pet: ${xhr.status}`);
+        });
+
+        if (!resposta.ok) {
+            toastr.error(`Erro ao excluir pet: ${resposta.status}`);
+            return;
         }
-    };
-    
-    xhr.onerror = function() {
+
+        const data = await resposta.json();
+        if (data.sucesso) {
+            toastr.success('Pet excluído com sucesso!');
+
+            const cardPet = document.querySelector(`.cartao-pet[data-id="${petId}"]`);
+            if (cardPet) {
+                cardPet.remove();
+            }
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        } else {
+            toastr.error(data.mensagem || 'Erro ao excluir pet');
+        }
+    } catch (error) {
+        console.error('Erro ao excluir pet:', error);
         toastr.error('Erro de conexão ao tentar excluir o pet');
-    };
-    
-    xhr.send();
+    }
 }
 
 
@@ -1776,37 +1724,39 @@ function inicializarManipuladoresEventos() {
         filtroStatus.addEventListener('change', filtrarPets);
     }
     
-    document.querySelectorAll('.botao-acao').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            const id = this.getAttribute('data-pet-id');
-            if (!id) return;
-            
-            this.classList.add('clicked');
-            setTimeout(() => this.classList.remove('clicked'), 200);
-            
-            if (this.classList.contains('visualizar')) {
-                visualizarPet(id);
-            } else if (this.classList.contains('editar')) {
-                abrirModalEdicao(id);
-            } else if (this.classList.contains('excluir')) {
-                confirmarExclusao(id);
+    const listaPets = document.getElementById('listaPets');
+    if (listaPets) {
+        listaPets.addEventListener('click', function(e) {
+            const botao = e.target.closest('.botao-acao');
+            if (botao) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const id = botao.getAttribute('data-pet-id');
+                if (!id) return;
+
+                botao.classList.add('clicked');
+                setTimeout(() => botao.classList.remove('clicked'), 200);
+
+                if (botao.classList.contains('visualizar')) {
+                    visualizarPet(id);
+                } else if (botao.classList.contains('editar')) {
+                    abrirModalEdicao(id);
+                } else if (botao.classList.contains('excluir')) {
+                    confirmarExclusao(id);
+                }
+                return;
+            }
+
+            const card = e.target.closest('.cartao-pet');
+            if (card && !e.target.closest('.botao-acao')) {
+                const id = card.getAttribute('data-id');
+                if (id) {
+                    visualizarPet(id);
+                }
             }
         });
-    });
-    
-    document.querySelectorAll('.cartao-pet').forEach(card => {
-        card.addEventListener('click', function(e) {
-            if (e.target.closest('.botao-acao')) return;
-            
-            const id = this.getAttribute('data-id');
-            if (id) {
-                visualizarPet(id);
-            }
-        });
-    });
+    }
     
     const btnConfirmarExclusao = document.getElementById('btnConfirmarExclusao');
     if (btnConfirmarExclusao) {
