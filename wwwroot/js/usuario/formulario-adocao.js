@@ -244,16 +244,19 @@ function inicializarCampos() {
     
     const rendaMensal = document.getElementById('rendaMensal');
     if (rendaMensal) {
-        $(rendaMensal).maskMoney({
-            prefix: 'R$ ',
-            thousands: '.',
-            decimal: ',',
-            allowZero: false,
-            allowNegative: false
-        });
-        
-        
-        $(rendaMensal).trigger('mask.maskMoney');
+        if (window.VMasker) {
+            // Aplica máscara de moeda usando a biblioteca VanillaMasker
+            VMasker(rendaMensal).maskMoney({
+                precision: 2,
+                separator: ',',
+                delimiter: '.',
+                unit: 'R$ '
+            });
+            // Garante que o valor atual seja formatado
+            rendaMensal.dispatchEvent(new Event('input'));
+        } else {
+            console.error('Biblioteca VMasker não encontrada');
+        }
     }
     
     
@@ -445,7 +448,7 @@ function exibirModalConfirmacao() {
 
 
 
-function enviarFormulario(event) {
+async function enviarFormulario(event) {
     event.preventDefault();
     
     
@@ -502,57 +505,44 @@ function enviarFormulario(event) {
     }
     
     
-    $.ajax({
-        url: `/usuario/adocao/formulario/${petId}`,
-        type: 'POST',
-        data: new URLSearchParams(formData),
-        processData: false,
-        contentType: 'application/x-www-form-urlencoded',
-        headers: {
-            'RequestVerificationToken': formData.get('__RequestVerificationToken')
-        },
-        success: function(response) {
-            
-            if (response.success) {
-                
-                toastr.success(response.message);
-                
-                
-                exibirModalConfirmacao();
-            } else {
-                
-                toastr.error(response.message);
-                
-                
-                if (response.errors && response.errors.length > 0) {
-                    response.errors.forEach(function(erro) {
-                        toastr.warning(erro);
-                    });
-                }
-                
-                
-                submitButton.disabled = false;
-                submitButton.innerHTML = '<i class="fas fa-paw"></i> Enviar Solicitação';
+    try {
+        const response = await fetch(`/usuario/adocao/formulario/${petId}` , {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': formData.get('__RequestVerificationToken')
+            },
+            body: formData
+        });
+
+        if (!response.ok) {
+            throw new Error(`Código de status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+            toastr.success(data.message);
+            exibirModalConfirmacao();
+        } else {
+            toastr.error(data.message);
+            if (data.errors && data.errors.length > 0) {
+                data.errors.forEach(erro => toastr.warning(erro));
             }
-        },
-        error: function(xhr, status, error) {
-            console.error("Erro na requisição:", error);
-            console.error("Status:", status);
-            console.error("Resposta:", xhr.responseText);
-            
-            toastr.error("Ocorreu um erro ao enviar o formulário. Por favor, tente novamente.");
-            
-            
             submitButton.disabled = false;
             submitButton.innerHTML = '<i class="fas fa-paw"></i> Enviar Solicitação';
         }
-    });
+    } catch (error) {
+        console.error('Erro na requisição:', error);
+        toastr.error('Ocorreu um erro ao enviar o formulário. Por favor, tente novamente.');
+        submitButton.disabled = false;
+        submitButton.innerHTML = '<i class="fas fa-paw"></i> Enviar Solicitação';
+    }
     
     return false;
 }
 
 
-function manipularEnvio(event) {
+async function manipularEnvio(event) {
     
     
     if (event && event.preventDefault) {
@@ -581,7 +571,7 @@ function manipularEnvio(event) {
     form.classList.add('was-validated');
     
     
-    return enviarFormulario(event);
+    return await enviarFormulario(event);
 }
 
 
@@ -661,7 +651,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     if (form) {
         form.addEventListener("submit", function(event) {
-            return manipularEnvio(event);
+            manipularEnvio(event);
         });
     }
     
