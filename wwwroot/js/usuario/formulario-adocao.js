@@ -100,6 +100,14 @@ const requiredInputs = document.querySelectorAll("input[required], textarea[requ
 const submitButton = document.querySelector(".botao-enviar");
 const cancelButton = document.querySelector(".botao-voltar");
 
+// Opções padrão para a máscara de valores monetários
+const maskMoneyOptions = {
+    precision: 2,
+    separator: ',',
+    delimiter: '.',
+    unit: 'R$ '
+};
+
 
 document.addEventListener('DOMContentLoaded', function() {
     
@@ -246,12 +254,8 @@ function inicializarCampos() {
     if (rendaMensal) {
         if (window.VMasker) {
             // Aplica máscara de moeda usando a biblioteca VanillaMasker
-            VMasker(rendaMensal).maskMoney({
-                precision: 2,
-                separator: ',',
-                delimiter: '.',
-                unit: 'R$ '
-            });
+            // substituindo o antigo plugin jQuery maskMoney
+            VMasker(rendaMensal).maskMoney(maskMoneyOptions);
             // Garante que o valor atual seja formatado
             rendaMensal.dispatchEvent(new Event('input'));
         } else {
