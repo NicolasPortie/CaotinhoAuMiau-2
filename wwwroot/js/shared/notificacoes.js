@@ -29,23 +29,35 @@ function escapeHtml(text) {
 }
 
 function inicializarComponenteNotificacoes() {
-    
+
     const iconesNotificacao = document.querySelectorAll('.icone-notificacao');
     iconesNotificacao.forEach(icone => {
         icone.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            
+
             const menuLateral = document.querySelector('.menu-lateral');
             if (menuLateral && menuLateral.classList.contains('ativo')) {
                 if (typeof fecharMenuLateral === 'function') {
                     fecharMenuLateral();
                 }
             }
-            
+
             togglePainelNotificacoes();
         });
     });
+
+    const lista = document.getElementById('lista-notificacoes');
+    if (lista) {
+        lista.addEventListener('click', function(e) {
+            const notificacao = e.target.closest('.notificacao');
+            if (notificacao && notificacao.dataset.id &&
+                notificacao.classList.contains('notificacao-nao-lida')) {
+                marcarComoLida(notificacao.dataset.id);
+                notificacao.classList.remove('notificacao-nao-lida');
+            }
+        });
+    }
     
     const btnFechar = document.getElementById('fechar-notificacoes');
     if (btnFechar) {
@@ -133,35 +145,33 @@ function fecharPainelAoClicarFora(e) {
     }
 }
 
-function verificarNotificacoes() {
+async function verificarNotificacoes() {
     const usuarioId = document.getElementById('usuarioId')?.value;
-    
+
     if (!usuarioId || usuarioId === '0') {
         return;
     }
-    
-    
-    fetch('/api/Notificacao/nao-lidas', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        credentials: 'include'
-    })
-    .then(response => {
+
+    try {
+        const response = await fetch('/api/Notificacao/nao-lidas', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            credentials: 'include'
+        });
+
         if (!response.ok) {
             throw new Error('Falha ao obter notificações');
         }
-        return response.json();
-    })
-    .then(quantidade => {
+
+        const quantidade = await response.json();
         atualizarContadorNotificacoes(quantidade);
-    })
-    .catch(error => {
+    } catch (error) {
         console.error('Erro ao verificar notificações:', error);
         ocultarContadorNotificacoes();
-    });
+    }
 }
 
 function atualizarContadorNotificacoes(quantidade) {
@@ -200,51 +210,50 @@ function ocultarContadorNotificacoes() {
     });
 }
 
-function carregarNotificacoes() {
+async function carregarNotificacoes() {
     const carregando = document.getElementById('carregando-notificacoes');
     const lista = document.getElementById('lista-notificacoes');
     const semNotificacoes = document.getElementById('sem-notificacoes');
-    
+
     if (!lista) return;
-    
-    fetch('/api/Notificacao', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        credentials: 'include'
-    })
-    .then(response => {
+
+    try {
+        const response = await fetch('/api/Notificacao', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            credentials: 'include'
+        });
+
         if (!response.ok) {
             throw new Error('Falha ao obter notificações');
         }
-        return response.json();
-    })
-    .then(notificacoes => {
+
+        const notificacoes = await response.json();
         if (carregando) carregando.style.display = 'none';
-        
+
         if (notificacoes && notificacoes.length > 0) {
             lista.innerHTML = '';
-            
+
             notificacoes.forEach(notificacao => {
                 lista.appendChild(criarItemNotificacao(notificacao));
             });
-            
+
             lista.style.display = 'block';
             if (semNotificacoes) semNotificacoes.style.display = 'none';
         } else {
-            if (lista) lista.style.display = 'none';
+            lista.style.display = 'none';
             if (semNotificacoes) semNotificacoes.style.display = 'flex';
         }
-    })
-    .catch(error => {
+    } catch (error) {
         console.error('Erro ao carregar notificações:', error);
         if (carregando) carregando.style.display = 'none';
         if (lista) lista.style.display = 'none';
         if (semNotificacoes) semNotificacoes.style.display = 'flex';
         semNotificacoes.innerHTML = '<i class="fas fa-exclamation-triangle"></i><p>Erro ao carregar notificações</p>';
-    });
+    }
 }
 
 function criarItemNotificacao(dados) {
@@ -269,13 +278,7 @@ function criarItemNotificacao(dados) {
         <small style="color: #999; font-size: 0.8rem;">Há ${dataFormatada}</small>
     `;
     
-    div.addEventListener('click', function() {
-        const id = this.getAttribute('data-id');
-        if (id && !dados.lida) {
-            marcarComoLida(id);
-            this.classList.remove('notificacao-nao-lida');
-        }
-    });
+
     
     return div;
 }
@@ -296,45 +299,52 @@ function formatarData(data) {
     return `${data.getDate().toString().padStart(2, '0')}/${(data.getMonth() + 1).toString().padStart(2, '0')}/${data.getFullYear()}`;
 }
 
-function marcarComoLida(id) {
-    fetch(`/api/Notificacao/marcar-como-lida/${id}`, {
-        method: 'POST',
-        credentials: 'include'
-    })
-    .then(response => {
+async function marcarComoLida(id) {
+    try {
+        const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+        const response = await fetch(`/api/Notificacao/marcar-como-lida/${id}`, {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': token
+            },
+            credentials: 'include'
+        });
+
         if (!response.ok) {
             throw new Error('Falha ao marcar notificação como lida');
         }
-        
+
         verificarNotificacoes();
-    })
-    .catch(error => {
+    } catch (error) {
         console.error('Erro ao marcar notificação como lida:', error);
-    });
+    }
 }
 
-function marcarTodasComoLidas() {
-    fetch('/api/Notificacao/marcar-todas-como-lidas', {
-        method: 'POST',
-        credentials: 'include'
-    })
-    .then(response => {
+async function marcarTodasComoLidas() {
+    try {
+        const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+        const response = await fetch('/api/Notificacao/marcar-todas-como-lidas', {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': token
+            },
+            credentials: 'include'
+        });
+
         if (!response.ok) {
             throw new Error('Falha ao marcar todas notificações como lidas');
         }
-        
-        const itensNotificacao = document.querySelectorAll('.item-notificacao');
-        itensNotificacao.forEach(item => {
+
+        document.querySelectorAll('.item-notificacao').forEach(item => {
             item.classList.remove('notificacao-nao-lida');
         });
-        
+
         ocultarContadorNotificacoes();
         verificarNotificacoes();
-    })
-    .catch(error => {
+    } catch (error) {
         console.error('Erro ao marcar todas notificações como lidas:', error);
         exibirMensagem('Erro ao marcar notificações como lidas', 'error');
-    });
+    }
 }
 
 function exibirMensagem(mensagem, tipo) {
