@@ -5,11 +5,6 @@ document.addEventListener('DOMContentLoaded', function() {
     configurarNavbar();
     
     
-    if (typeof $ === 'undefined') {
-        console.error("jQuery não está carregado!");
-        return;
-    }
-    
     
     if (typeof VMasker === 'undefined') {
         console.error("Vanilla Masker não está carregado! Tentando carregar dinamicamente...");
@@ -366,75 +361,63 @@ function formatarCEP(elemento, valor) {
     }
 }
 
-function buscarCEP(cep) {
-    
-    
+async function buscarCEP(cep) {
+
     const feedback = document.getElementById('cep-feedback');
     if (feedback) {
         feedback.textContent = 'Buscando CEP...';
         feedback.className = 'feedback-validacao processando';
         feedback.style.display = 'block';
     }
-    
-    
+
     if (cep.length !== 8) {
-        console.error("CEP inválido:", cep);
+        console.error('CEP inválido:', cep);
         if (feedback) {
             feedback.textContent = 'CEP deve ter 8 dígitos';
             feedback.className = 'feedback-validacao invalido';
         }
         return;
     }
-    
-    
-    fetch(`https://viacep.com.br/ws/${cep}/json/`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Erro na requisição do CEP");
-            }
-            return response.json();
-        })
-        .then(data => {
-            
-            
-            if (data.erro) {
-                console.error("CEP não encontrado");
-                if (feedback) {
-                    feedback.textContent = 'CEP não encontrado';
-                    feedback.className = 'feedback-validacao invalido';
-                }
-                return;
-            }
-            
-            
-            if (data.logradouro) document.getElementById('logradouro').value = data.logradouro;
-            if (data.bairro) document.getElementById('bairro').value = data.bairro;
-            if (data.localidade) document.getElementById('cidade').value = data.localidade;
-            if (data.uf) document.getElementById('estado').value = data.uf;
-            
-            
-            document.getElementById('numero').focus();
-            
-            
+
+    try {
+        const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+        if (!response.ok) {
+            throw new Error('Erro na requisição do CEP');
+        }
+
+        const data = await response.json();
+
+        if (data.erro) {
+            console.error('CEP não encontrado');
             if (feedback) {
-                feedback.textContent = 'CEP encontrado';
-                feedback.className = 'feedback-validacao valido';
-                
-                
-                setTimeout(() => {
-                    feedback.style.display = 'none';
-                }, 3000);
-            }
-        })
-        .catch(error => {
-            console.error("Erro ao buscar CEP:", error);
-            
-            
-            if (feedback) {
-                feedback.textContent = 'Erro ao buscar CEP';
+                feedback.textContent = 'CEP não encontrado';
                 feedback.className = 'feedback-validacao invalido';
             }
-        });
+            return;
+        }
+
+        if (data.logradouro) document.getElementById('logradouro').value = data.logradouro;
+        if (data.bairro) document.getElementById('bairro').value = data.bairro;
+        if (data.localidade) document.getElementById('cidade').value = data.localidade;
+        if (data.uf) document.getElementById('estado').value = data.uf;
+
+        document.getElementById('numero').focus();
+
+        if (feedback) {
+            feedback.textContent = 'CEP encontrado';
+            feedback.className = 'feedback-validacao valido';
+
+            setTimeout(() => {
+                feedback.style.display = 'none';
+            }, 3000);
+        }
+    } catch (error) {
+        console.error('Erro ao buscar CEP:', error);
+        if (feedback) {
+            feedback.textContent = 'Erro ao buscar CEP';
+            feedback.className = 'feedback-validacao invalido';
+        }
+    }
 }
 
 
