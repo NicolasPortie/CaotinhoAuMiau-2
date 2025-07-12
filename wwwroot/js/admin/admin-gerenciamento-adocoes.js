@@ -17,7 +17,7 @@ const URL_API_ESTATISTICAS_ADOCAO_USUARIO = "/admin/adocoes/ObterEstatisticasAdo
 const URL_API_HISTORICO_ADOCOES_USUARIO = "/admin/adocoes/ObterHistoricoAdocoesUsuario";
 
 
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded", () => {
     
     
     toastr.options = toastrConfig;
@@ -28,166 +28,152 @@ $(document).ready(function() {
     
     aplicarFormatacaoTabela();
     
-    $(document).on('click', '.pagination .page-link', function(e) {
-        e.preventDefault();
-        var url = $(this).attr('href');
-        if (url) {
-            window.location.href = url;
+    document.addEventListener('click', function(e) {
+        const link = e.target.closest('.pagination .page-link');
+        if (link) {
+            e.preventDefault();
+            const url = link.getAttribute('href');
+            if (url) {
+                window.location.href = url;
+            }
         }
-        return false;
     });
 });
 
 
 function inicializarEventos() {
-    
-    $('#pesquisaAdocao').on('keyup', function() {
-        filtrarTabela();
+    document.getElementById('pesquisaAdocao').addEventListener('keyup', filtrarTabela);
+    document.getElementById('filtroStatus').addEventListener('change', filtrarTabela);
+    document.getElementById('filtroData').addEventListener('change', filtrarTabela);
+    document.getElementById('btnLimparFiltros').addEventListener('click', limparFiltros);
+
+    document.addEventListener('click', event => {
+        const botaoPerfil = event.target.closest('.botao-ver-perfil');
+        if (botaoPerfil) {
+            const usuarioId = botaoPerfil.dataset.usuarioId;
+            abrirPerfilUsuario(usuarioId);
+        }
     });
-    
-    
-    $('#filtroStatus').on('change', function() {
-        filtrarTabela();
+
+    const modalDetalhes = document.getElementById('modalDetalhesAdocao');
+    modalDetalhes.addEventListener('hidden.bs.modal', () => {
+        document.querySelector('.carregando-detalhes').classList.remove('d-none');
+        document.querySelector('.detalhes-adocao-container').classList.add('d-none');
+
+        ['detalhesNomePet','detalhesEspeciePet','detalhesRacaPet','detalhesIdadePet','detalhesSexoPet','detalhesPortePet'].forEach(id => {
+            document.getElementById(id).textContent = '-';
+        });
+        ['detalhesStatusAdocao','detalhesDataEnvio','detalhesDataResposta','detalhesNomeAdotante','detalhesEmailAdotante','detalhesTelefoneAdotante','detalhesCpfAdotante'].forEach(id => {
+            document.getElementById(id).textContent = '-';
+        });
+        document.getElementById('detalhesObservacoes').innerHTML = '';
+
+        document.querySelectorAll('.timeline-progresso-item').forEach(el => el.classList.remove('ativo','concluido','atual','rejeitado'));
+        document.querySelectorAll('.timeline-progresso-linha').forEach(el => el.classList.remove('ativa'));
+        ['timelineDataSolicitacao','timelineDataAprovacao','timelineDataBusca','timelineDataFinalizacao'].forEach(id => {
+            document.getElementById(id).textContent = '';
+        });
+
+        document.getElementById('detalhesDataBuscaContainer').classList.add('d-none');
+        document.getElementById('detalhesDataFinalizacaoContainer').classList.add('d-none');
+        document.getElementById('detalhesPrazoBusca').classList.add('d-none');
+
+        document.getElementById('detalhesPetImagem').innerHTML = '<i class="fas fa-paw"></i>';
+        document.getElementById('detalhesAdotanteAvatar').innerHTML = '<i class="fas fa-user"></i>';
     });
-    
-    
-    $('#filtroData').on('change', function() {
-        filtrarTabela();
+
+    modalDetalhes.addEventListener('shown.bs.modal', () => {
+        setTimeout(configurarNavegacaoAbas, 200);
     });
-    
-    
-    $('#btnLimparFiltros').on('click', function() {
-        limparFiltros();
-    });
-    
-    
-    $('.botao-ver-perfil').on('click', function() {
-        const usuarioId = $(this).data('usuario-id');
-        abrirPerfilUsuario(usuarioId);
-    });
-    
-    
-    $('#modalDetalhesAdocao').on('hidden.bs.modal', function() {
-        
-        $('.carregando-detalhes').show();
-        $('.detalhes-adocao-container').hide();
-        
-        
-        $('#detalhesNomePet, #detalhesEspeciePet, #detalhesRacaPet, #detalhesIdadePet, #detalhesSexoPet, #detalhesPortePet').text('-');
-        $('#detalhesStatusAdocao, #detalhesDataEnvio, #detalhesDataResposta').text('-');
-        $('#detalhesNomeAdotante, #detalhesEmailAdotante, #detalhesTelefoneAdotante, #detalhesCpfAdotante').text('-');
-        $('#detalhesObservacoes').html('');
-        
-        $('.timeline-progresso-item').removeClass('ativo concluido atual rejeitado');
-        $('.timeline-progresso-linha').removeClass('ativa');
-        $('#timelineDataSolicitacao, #timelineDataAprovacao, #timelineDataBusca, #timelineDataFinalizacao').text('');
-        
-        $('#detalhesDataBuscaContainer, #detalhesDataFinalizacaoContainer').hide();
-        
-        
-        $('#detalhesPrazoBusca').hide();
-        
-        
-        $('#detalhesPetImagem').html('<i class="fas fa-paw"></i>');
-        $('#detalhesAdotanteAvatar').html('<i class="fas fa-user"></i>');
-    });
-    
-    
-    $('#modalDetalhesAdocao').on('shown.bs.modal', function() {
-        
-        setTimeout(function() {
-            configurarNavegacaoAbas();
-        }, 200);
-    });
-    
-    
-    $(document).on('click', '.detalhes-aba', function(e) {
-        e.preventDefault();
-        
-        const painelAlvo = $(this).data('painel');
-        
-        
-        $('.detalhes-aba').removeClass('ativa');
-        $(this).addClass('ativa');
-        
-        
-        $('.detalhes-painel').removeClass('ativo');
-        $('#' + painelAlvo).addClass('ativo');
+
+    document.addEventListener('click', event => {
+        const aba = event.target.closest('.detalhes-aba');
+        if (aba) {
+            event.preventDefault();
+            const painelAlvo = aba.dataset.painel;
+            document.querySelectorAll('.detalhes-aba').forEach(a => a.classList.remove('ativa'));
+            aba.classList.add('ativa');
+            document.querySelectorAll('.detalhes-painel').forEach(p => p.classList.remove('ativo'));
+            document.getElementById(painelAlvo).classList.add('ativo');
+        }
     });
 }
 
 
 function aplicarFormatacaoTabela() {
-    
-    $('.tabela tr').each(function() {
-        const status = $(this).find('.indicador-status').text().trim();
-        formatarIndicadorStatus($(this).find('.indicador-status'), status);
+    document.querySelectorAll('.tabela tr').forEach(tr => {
+        const indicador = tr.querySelector('.indicador-status');
+        const status = indicador ? indicador.textContent.trim() : '';
+        formatarIndicadorStatus(indicador, status);
     });
 }
 
 
 function formatarIndicadorStatus(elemento, status) {
-    elemento.removeClass('pendente aprovado finalizada rejeitada cancelada em-processo aguardando-buscar');
+    if (!elemento) return;
+    elemento.classList.remove('pendente','aprovado','finalizada','rejeitada','cancelada','em-processo','aguardando-buscar');
     
     
     switch(status.toLowerCase()) {
         case 'pendente':
-            elemento.addClass('pendente');
+            elemento.classList.add('pendente');
             break;
         case 'aprovado':
-            elemento.addClass('aprovado');
+            elemento.classList.add('aprovado');
             break;
         case 'finalizada':
-            elemento.addClass('finalizada');
+            elemento.classList.add('finalizada');
             break;
         case 'rejeitada':
-            elemento.addClass('rejeitada');
+            elemento.classList.add('rejeitada');
             break;
         case 'cancelada':
-            elemento.addClass('cancelada');
+            elemento.classList.add('cancelada');
             break;
         case 'em processo':
-            elemento.addClass('em-processo');
+            elemento.classList.add('em-processo');
             break;
         case 'aguardando buscar':
-            elemento.addClass('aguardando-buscar');
-            break;
+            elemento.classList.add('aguardando-buscar');
+        break;
     }
 }
 
 
 function filtrarTabela() {
-    const textoPesquisa = $('#pesquisaAdocao').val().toLowerCase();
-    const statusFiltro = $('#filtroStatus').val();
-    const dataFiltro = $('#filtroData').val();
+    const textoPesquisa = document.getElementById('pesquisaAdocao').value.toLowerCase();
+    const statusFiltro = document.getElementById('filtroStatus').value;
+    const dataFiltro = document.getElementById('filtroData').value;
     
     let temRegistros = false;
     
-    $('.tabela tbody tr').each(function() {
-        const linha = $(this);
-        const conteudoLinha = linha.text().toLowerCase();
-        const statusLinha = linha.data('status');
-        const dataAdocao = new Date(linha.find('td:nth-child(3) span:first').text().split('/').reverse().join('-'));
+    document.querySelectorAll('.tabela tbody tr').forEach(linha => {
+        const conteudoLinha = linha.textContent.toLowerCase();
+        const statusLinha = linha.dataset.status;
+        const spanData = linha.querySelector('td:nth-child(3) span:first-child');
+        const dataAdocao = spanData ? new Date(spanData.textContent.split('/').reverse().join('-')) : new Date();
         
         let mostrarPorTexto = conteudoLinha.indexOf(textoPesquisa) > -1;
         let mostrarPorStatus = statusFiltro === 'Todos' || statusLinha === statusFiltro;
         let mostrarPorData = verificarFiltroData(dataAdocao, dataFiltro);
         
         if (mostrarPorTexto && mostrarPorStatus && mostrarPorData) {
-            linha.show();
+            linha.classList.remove('d-none');
             temRegistros = true;
         } else {
-            linha.hide();
+            linha.classList.add('d-none');
         }
     });
     
     
+    const tabela = document.querySelector('.tabela');
+    const msgSem = document.querySelector('.mensagem-sem-adocoes');
     if (temRegistros) {
-        $('.tabela').show();
-        $('.mensagem-sem-adocoes').hide();
+        tabela.classList.remove('d-none');
+        msgSem.classList.add('d-none');
     } else {
-        $('.tabela').hide();
-        $('.mensagem-sem-adocoes').show();
+        tabela.classList.add('d-none');
+        msgSem.classList.remove('d-none');
     }
 }
 
@@ -215,9 +201,9 @@ function verificarFiltroData(data, filtro) {
 
 
 function limparFiltros() {
-    $('#pesquisaAdocao').val('');
-    $('#filtroStatus').val('Todos');
-    $('#filtroData').val('');
+    document.getElementById('pesquisaAdocao').value = '';
+    document.getElementById('filtroStatus').value = 'Todos';
+    document.getElementById('filtroData').value = '';
     
     filtrarTabela();
 }
@@ -244,86 +230,75 @@ function formatarCEP(cep) {
 }
 
 
-function verDetalhes(id, fromProfile = false) {
-    
-    
+async function verDetalhes(id, fromProfile = false) {
     if (fromProfile) {
-        $('#perfilUsuarioModal').modal('hide');
+        const perfilModalEl = document.getElementById('perfilUsuarioModal');
+        const perfilModal = bootstrap.Modal.getInstance(perfilModalEl);
+        if (perfilModal) perfilModal.hide();
     }
-    
-    
-    const modal = $('#modalDetalhesAdocao');
-    modal.modal('show');
-    
-    
-    $('.carregando-detalhes').show();
-    $('.detalhes-adocao-container').hide();
-    
-    
-    $.ajax({
-        url: URL_API_DETALHES_ADOCAO + id,
-        type: 'GET',
-        success: function(resposta) {
-            if (resposta && resposta.id) {
-                preencherDetalhesAdocao(resposta, fromProfile);
-                
-                
-                setTimeout(function() {
-                    configurarNavegacaoAbas();
-                }, 100);
-            } else {
-                $('.carregando-detalhes').html(`
-                    <div class="alert alert-danger m-3">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        Não foi possível carregar os detalhes da adoção. ${resposta.mensagem || 'Tente novamente mais tarde.'}
-                    </div>
-                `);
-            }
-        },
-        error: function(xhr, status, error) {
-            $('.carregando-detalhes').html(`
+
+    const modalEl = document.getElementById('modalDetalhesAdocao');
+    const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+    modal.show();
+
+    const carregando = document.querySelector('.carregando-detalhes');
+    const container = document.querySelector('.detalhes-adocao-container');
+    carregando.classList.remove('d-none');
+    container.classList.add('d-none');
+
+    try {
+        const resp = await fetch(URL_API_DETALHES_ADOCAO + id);
+        if (!resp.ok) throw new Error(resp.statusText);
+        const dados = await resp.json();
+        if (dados && dados.id) {
+            preencherDetalhesAdocao(dados, fromProfile);
+            setTimeout(configurarNavegacaoAbas, 100);
+        } else {
+            carregando.innerHTML = `
                 <div class="alert alert-danger m-3">
                     <i class="fas fa-exclamation-triangle me-2"></i>
-                    Erro ao carregar detalhes: ${error}
-                </div>
-            `);
+                    Não foi possível carregar os detalhes da adoção. ${dados.mensagem || 'Tente novamente mais tarde.'}
+                </div>`;
         }
-    });
+    } catch (error) {
+        carregando.innerHTML = `
+            <div class="alert alert-danger m-3">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Erro ao carregar detalhes: ${error}
+            </div>`;
+    }
 }
 
 
 function preencherDetalhesAdocao(adocao, fromProfile = false) {
-    
-    $('.carregando-detalhes').hide();
-    $('.detalhes-adocao-container').show();
-    
-    
-    const statusElement = $('#detalhesStatusAdocao');
-    statusElement.text(adocao.status);
-    
-    
-    statusElement.removeClass('sucesso alerta perigo destaque');
+    document.querySelector('.carregando-detalhes').classList.add('d-none');
+    document.querySelector('.detalhes-adocao-container').classList.remove('d-none');
+
+    const statusElement = document.getElementById('detalhesStatusAdocao');
+    statusElement.textContent = adocao.status;
+
+    statusElement.classList.remove('sucesso','alerta','perigo','destaque');
     switch(adocao.status) {
         case 'Finalizada':
-            statusElement.addClass('sucesso');
+            statusElement.classList.add('sucesso');
             break;
         case 'Aguardando buscar':
-            statusElement.addClass('alerta');
+            statusElement.classList.add('alerta');
             break;
         case 'Rejeitada':
         case 'Cancelada':
-            statusElement.addClass('perigo');
+            statusElement.classList.add('perigo');
             break;
         case 'Em Processo':
         case 'Aprovado':
         case 'Pendente':
         default:
-            statusElement.addClass('destaque');
+            statusElement.classList.add('destaque');
             break;
     }
     
     
-    const prazoElement = $('#detalhesPrazoBusca');
+    const prazoElement = document.getElementById('detalhesPrazoBusca');
     
     if (adocao.status === 'Aguardando buscar' && adocao.dataResposta) {
         const dataLimite = new Date(adocao.dataResposta);
@@ -332,26 +307,26 @@ function preencherDetalhesAdocao(adocao, fromProfile = false) {
         const diasRestantes = Math.ceil((dataLimite - hoje) / (1000 * 60 * 60 * 24));
         
         
-        prazoElement.removeClass('sucesso alerta perigo');
+        prazoElement.classList.remove('sucesso','alerta','perigo');
         
         
         if (diasRestantes <= 0) {
-            prazoElement.text('Prazo expirado');
-            prazoElement.addClass('perigo');
+            prazoElement.textContent = 'Prazo expirado';
+            prazoElement.classList.add('perigo');
         } else if (diasRestantes <= 2) {
-            prazoElement.text(`${diasRestantes} dias`);
-            prazoElement.addClass('perigo');
+            prazoElement.textContent = `${diasRestantes} dias`;
+            prazoElement.classList.add('perigo');
         } else if (diasRestantes <= 5) {
-            prazoElement.text(`${diasRestantes} dias`);
-            prazoElement.addClass('alerta');
+            prazoElement.textContent = `${diasRestantes} dias`;
+            prazoElement.classList.add('alerta');
         } else {
-            prazoElement.text(`${diasRestantes} dias`);
-            prazoElement.addClass('sucesso');
+            prazoElement.textContent = `${diasRestantes} dias`;
+            prazoElement.classList.add('sucesso');
         }
         
-        prazoElement.show();
+        prazoElement.classList.remove('d-none');
     } else {
-        prazoElement.hide();
+        prazoElement.classList.add('d-none');
     }
     
     
