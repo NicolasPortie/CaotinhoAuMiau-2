@@ -1698,49 +1698,47 @@ function gerarHTMLDetalhesFormulario(data) {
     return html;
 }
 
-function obterDetalhesFormulario(formularioId) {
-    
-    $('#spinnerDetalhesFormulario').show();
-    
-    $('#detalhesFormulario').hide();
-    
-    
-    $('#modalDetalhesFormulario').modal('show');
-    
-    
-    $.ajax({
-        url: '/Usuario/Adocao/DetalhesFormulario',
-        type: 'GET',
-        data: { formularioId: formularioId },
-        dataType: 'json',
-        success: function(response) {
-            
-            $('#spinnerDetalhesFormulario').hide();
-            
-            if (response.success) {
-                
-                const htmlDetalhes = gerarHTMLDetalhesFormulario(response.data);
-                
-                
-                $('#detalhesFormulario').html(htmlDetalhes).show();
-            } else {
-                
-                toastr.error(response.message || 'Não foi possível carregar os detalhes do formulário.');
-                $('#modalDetalhesFormulario').modal('hide');
-            }
-        },
-        error: function(xhr, status, error) {
-            
-            $('#spinnerDetalhesFormulario').hide();
-            
-            
-            toastr.error('Ocorreu um erro ao buscar os detalhes do formulário. Tente novamente mais tarde.');
-            $('#modalDetalhesFormulario').modal('hide');
-            
-            
-            console.error('Erro ao buscar detalhes do formulário:', error);
+async function obterDetalhesFormulario(formularioId) {
+
+    const spinner = document.getElementById('spinnerDetalhesFormulario');
+    const detalhes = document.getElementById('detalhesFormulario');
+    const modalEl = document.getElementById('modalDetalhesFormulario');
+
+    if (spinner) spinner.style.display = 'block';
+    if (detalhes) detalhes.style.display = 'none';
+
+    const modalInstance = modalEl ? new bootstrap.Modal(modalEl) : null;
+    if (modalInstance) modalInstance.show();
+
+    try {
+        const response = await fetch(`/Usuario/Adocao/DetalhesFormulario?formularioId=${encodeURIComponent(formularioId)}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Erro ao carregar detalhes: ${response.status}`);
         }
-    });
+
+        const data = await response.json();
+
+        if (spinner) spinner.style.display = 'none';
+
+        if (data.success) {
+            const htmlDetalhes = gerarHTMLDetalhesFormulario(data.data);
+            if (detalhes) {
+                detalhes.innerHTML = htmlDetalhes;
+                detalhes.style.display = 'block';
+            }
+        } else {
+            toastr.error(data.message || 'Não foi possível carregar os detalhes do formulário.');
+            if (modalInstance) modalInstance.hide();
+        }
+    } catch (error) {
+        if (spinner) spinner.style.display = 'none';
+        toastr.error('Ocorreu um erro ao buscar os detalhes do formulário. Tente novamente mais tarde.');
+        if (modalInstance) modalInstance.hide();
+        console.error('Erro ao buscar detalhes do formulário:', error);
+    }
 }
 
 
@@ -1822,20 +1820,23 @@ function normalizarStatusParaClasse(status) {
     }
 }
 
-$(document).ready(function() {
-    // Manipulador para o seletor de itens por página
-    $('#selectItensPorPagina').change(function() {
-        var itensPorPagina = $(this).val();
-        window.location.href = '/usuario/adocoes?pagina=1&itensPorPagina=' + itensPorPagina;
-    });
-    
-    // Corrigir problema de paginação
-    $(document).on('click', '.pagination .page-link', function(e) {
+document.addEventListener('DOMContentLoaded', () => {
+    const seletorItens = document.getElementById('selectItensPorPagina');
+    if (seletorItens) {
+        seletorItens.addEventListener('change', function () {
+            const itensPorPagina = this.value;
+            window.location.href = `/usuario/adocoes?pagina=1&itensPorPagina=${itensPorPagina}`;
+        });
+    }
+
+    document.addEventListener('click', function (e) {
+        const link = e.target.closest('.pagination .page-link');
+        if (!link) return;
+
         e.preventDefault();
-        var url = $(this).attr('href');
+        const url = link.getAttribute('href');
         if (url) {
             window.location.href = url;
         }
-        return false;
     });
 });
