@@ -16,6 +16,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    const tabelaForm = document.querySelector('.tabela-formularios tbody');
+    if (tabelaForm) {
+        tabelaForm.addEventListener('click', event => {
+            const botao = event.target.closest('.botao-visualizar, .botao-contorno-primario');
+            if (botao) {
+                const linha = botao.closest('tr');
+                const id = linha?.dataset.id;
+                if (id) {
+                    event.preventDefault();
+                    visualizarFormulario(id);
+                }
+            }
+        });
+    }
+
     const modalEl = document.getElementById('modalDetalhesFormulario');
     if (modalEl) {
         modalEl.addEventListener('hide.bs.modal', e => {
@@ -146,7 +161,7 @@ function limparAlertasModal() {
 }
 
 
-function visualizarFormulario(id) {
+async function visualizarFormulario(id) {
 
 
     limparAlertasModal();
@@ -173,13 +188,12 @@ function visualizarFormulario(id) {
     }
     modalDetalhesFormulario.show();
 
-    (async () => {
-        try {
-            const response = await fetch(`/admin/formularios-adocao/detalhes/${id}`);
-            if (!response.ok) throw new Error('Falha ao obter detalhes');
-            const text = await response.text();
-            let resposta;
-            try { resposta = JSON.parse(text); } catch { resposta = { html: text }; }
+    try {
+        const response = await fetch(`/admin/formularios-adocao/detalhes/${id}`);
+        if (!response.ok) throw new Error('Falha ao obter detalhes');
+        const text = await response.text();
+        let resposta;
+        try { resposta = JSON.parse(text); } catch { resposta = { html: text }; }
 
             let formulario = resposta.formulario || resposta.data || resposta.resultado;
             if (!formulario && resposta.id !== undefined) formulario = resposta;
@@ -206,21 +220,27 @@ function visualizarFormulario(id) {
                 obsInput.readOnly = false;
             }
 
-            document.getElementById('botaoAprovarNoModal').onclick = exibirConfirmacaoAprovacao;
-            document.getElementById('botaoRejeitarNoModal').onclick = exibirConfirmacaoRejeicao;
-            document.getElementById('botaoCancelarAprovacao').onclick = resetarPaineisConfirmacao;
-            document.getElementById('botaoCancelarRejeicao').onclick = resetarPaineisConfirmacao;
-            document.getElementById('botaoConfirmarAprovacao').onclick = aprovarFormularioConfirmado;
-            document.getElementById('botaoConfirmarRejeicao').onclick = rejeitarFormularioConfirmado;
-        } catch (erro) {
-            document.getElementById('conteudoDetalhesFormulario').innerHTML = `
-                <div class="alert alert-danger">
-                    <i class="fas fa-times-circle me-2"></i>
-                    Ocorreu um erro ao carregar os detalhes do formulário.
-                </div>`;
-            console.error('Erro na requisição:', erro);
-        }
-    })();
+            const botaoAprovar = document.getElementById('botaoAprovarNoModal');
+            const botaoRejeitar = document.getElementById('botaoRejeitarNoModal');
+            const botaoCancelaAprov = document.getElementById('botaoCancelarAprovacao');
+            const botaoCancelaRej = document.getElementById('botaoCancelarRejeicao');
+            const botaoConfAprov = document.getElementById('botaoConfirmarAprovacao');
+            const botaoConfRej = document.getElementById('botaoConfirmarRejeicao');
+
+            botaoAprovar.addEventListener('click', exibirConfirmacaoAprovacao, { once: true });
+            botaoRejeitar.addEventListener('click', exibirConfirmacaoRejeicao, { once: true });
+            botaoCancelaAprov.addEventListener('click', resetarPaineisConfirmacao, { once: true });
+            botaoCancelaRej.addEventListener('click', resetarPaineisConfirmacao, { once: true });
+            botaoConfAprov.addEventListener('click', aprovarFormularioConfirmado, { once: true });
+            botaoConfRej.addEventListener('click', rejeitarFormularioConfirmado, { once: true });
+    } catch (erro) {
+        document.getElementById('conteudoDetalhesFormulario').innerHTML = `
+            <div class="alert alert-danger">
+                <i class="fas fa-times-circle me-2"></i>
+                Ocorreu um erro ao carregar os detalhes do formulário.
+            </div>`;
+        console.error('Erro na requisição:', erro);
+    }
 }
 
 
@@ -493,7 +513,7 @@ function resetarPaineisConfirmacao() {
     
 }
 
-function aprovarFormularioConfirmado() {
+async function aprovarFormularioConfirmado() {
 
     const formularioId = document.getElementById('formularioIdAtual').value;
     const observacaoAdmin = document.getElementById('observacaoAdmin').value;
@@ -502,45 +522,43 @@ function aprovarFormularioConfirmado() {
     botao.disabled = true;
     botao.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processando...';
 
-    (async () => {
-        try {
-            const formData = new FormData();
-            formData.append('observacao', observacaoAdmin);
-            formData.append('__RequestVerificationToken', document.querySelector('input[name="__RequestVerificationToken"]').value);
+    try {
+        const formData = new FormData();
+        formData.append('observacao', observacaoAdmin);
+        formData.append('__RequestVerificationToken', document.querySelector('input[name="__RequestVerificationToken"]').value);
 
-            const response = await fetch(`/admin/formularios-adocao/Aprovar/${formularioId}`, {
-                method: 'POST',
-                body: formData
-            });
+        const response = await fetch(`/admin/formularios-adocao/Aprovar/${formularioId}`, {
+            method: 'POST',
+            body: formData
+        });
 
-            const resposta = await response.json();
-            botao.disabled = false;
-            botao.innerHTML = '<i class="fas fa-check me-2"></i>Confirmar Aprovação';
+        const resposta = await response.json();
+        botao.disabled = false;
+        botao.innerHTML = '<i class="fas fa-check me-2"></i>Confirmar Aprovação';
 
-            if (response.ok && resposta.sucesso) {
-                toastr.success('Formulário aprovado com sucesso!');
-                setTimeout(() => location.reload(), 1500);
-            } else {
-                toastr.error(resposta.mensagem || 'Erro ao aprovar formulário.');
-                resetarPaineisConfirmacao();
-                if (resposta.mensagem && resposta.mensagem.includes('pet')) {
-                    document.querySelector('#modalDetalhesFormulario .modal-body').insertAdjacentHTML('afterbegin', `
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <strong>Erro!</strong> ${resposta.mensagem}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-                        </div>`);
-                }
-            }
-        } catch (erro) {
-            console.error('Erro ao aprovar formulário:', erro);
-            botao.disabled = false;
-            botao.innerHTML = '<i class="fas fa-check me-2"></i>Confirmar Aprovação';
-            toastr.error('Erro ao aprovar formulário.');
+        if (response.ok && resposta.sucesso) {
+            toastr.success('Formulário aprovado com sucesso!');
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            toastr.error(resposta.mensagem || 'Erro ao aprovar formulário.');
             resetarPaineisConfirmacao();
+            if (resposta.mensagem && resposta.mensagem.includes('pet')) {
+                document.querySelector('#modalDetalhesFormulario .modal-body').insertAdjacentHTML('afterbegin', `
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Erro!</strong> ${resposta.mensagem}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                    </div>`);
+            }
         }
-    })();
+    } catch (erro) {
+        console.error('Erro ao aprovar formulário:', erro);
+        botao.disabled = false;
+        botao.innerHTML = '<i class="fas fa-check me-2"></i>Confirmar Aprovação';
+        toastr.error('Erro ao aprovar formulário.');
+        resetarPaineisConfirmacao();
+    }
 }
-function rejeitarFormularioConfirmado() {
+async function rejeitarFormularioConfirmado() {
     const formularioId = document.getElementById('formularioIdAtual').value;
     const observacaoAdmin = document.getElementById('observacaoAdmin').value;
 
@@ -549,30 +567,28 @@ function rejeitarFormularioConfirmado() {
         return;
     }
 
-    (async () => {
-        try {
-            const formData = new FormData();
-            formData.append('motivo', observacaoAdmin);
-            formData.append('__RequestVerificationToken', document.querySelector('input[name="__RequestVerificationToken"]').value);
+    try {
+        const formData = new FormData();
+        formData.append('motivo', observacaoAdmin);
+        formData.append('__RequestVerificationToken', document.querySelector('input[name="__RequestVerificationToken"]').value);
 
-            const response = await fetch(`/admin/formularios-adocao/Rejeitar/${formularioId}`, {
-                method: 'POST',
-                body: formData
-            });
+        const response = await fetch(`/admin/formularios-adocao/Rejeitar/${formularioId}`, {
+            method: 'POST',
+            body: formData
+        });
 
-            const resposta = await response.json();
-            if (response.ok && resposta.sucesso) {
-                toastr.success('Formulário rejeitado com sucesso!');
-                setTimeout(() => location.reload(), 1500);
-            } else {
-                toastr.error(resposta.mensagem || 'Erro ao rejeitar formulário.');
-                resetarPaineisConfirmacao();
-            }
-        } catch (erro) {
-            toastr.error('Ocorreu um erro ao processar sua solicitação.');
+        const resposta = await response.json();
+        if (response.ok && resposta.sucesso) {
+            toastr.success('Formulário rejeitado com sucesso!');
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            toastr.error(resposta.mensagem || 'Erro ao rejeitar formulário.');
             resetarPaineisConfirmacao();
         }
-    })();
+    } catch (erro) {
+        toastr.error('Ocorreu um erro ao processar sua solicitação.');
+        resetarPaineisConfirmacao();
+    }
 }
 
 
