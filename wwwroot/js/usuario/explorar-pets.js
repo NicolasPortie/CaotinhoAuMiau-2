@@ -1266,84 +1266,80 @@ function mostrarIndicadorCarregamento() {
 // Nova função para garantir o funcionamento correto da paginação
 function garantirFuncionamentoPaginacao() {
     console.log("Configurando funcionamento da paginação...");
-    
-    // Garantir que os elementos de paginação estejam sempre visíveis
-    $('.paginacao').css('display', 'block');
-    $('.pagination').css('display', 'flex');
-    $('.paginacao-info').css('display', 'flex');
-    $('.itens-por-pagina').css('display', 'flex');
-    
-    // Aplicar estilos diretamente para garantir visibilidade
-    $('.paginacao').attr('style', 'display: block !important');
-    $('.pagination').attr('style', 'display: flex !important');
-    $('.paginacao-info').attr('style', 'display: flex !important');
-    $('.itens-por-pagina').attr('style', 'display: flex !important');
-    
-    // Remover todos os eventos existentes dos links de paginação
-    $('.pagination .page-link').off('click');
-    
-    // Adicionar novos eventos de clique
-    $('.pagination .page-link').on('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        // Obter o número da página do atributo data-pagina
-        const pagina = $(this).attr('data-pagina');
-        console.log("Link de paginação clicado. Página:", pagina);
-        
-        if (pagina) {
-            // Chamar a função de navegação
-            navegarParaPagina(pagina);
-        }
-        
-        return false;
-    });
-    
-    // Garantir que o seletor de itens por página funcione corretamente
+
+    // Referências aos elementos de paginação
+    const paginacao = document.querySelector('.paginacao');
+    const pagination = document.querySelector('.pagination');
+    const paginacaoInfo = document.querySelector('.paginacao-info');
+    const itensPorPagina = document.querySelector('.itens-por-pagina');
+
+    // Tornar todos visíveis
+    if (paginacao) paginacao.style.setProperty('display', 'block', 'important');
+    if (pagination) pagination.style.setProperty('display', 'flex', 'important');
+    if (paginacaoInfo) paginacaoInfo.style.setProperty('display', 'flex', 'important');
+    if (itensPorPagina) itensPorPagina.style.setProperty('display', 'flex', 'important');
+
+    // Configurar clique nos links de página usando delegação de eventos
+    if (pagination) {
+        // Substitui o elemento para remover listeners antigos
+        const novaPaginacao = pagination.cloneNode(true);
+        pagination.parentNode.replaceChild(novaPaginacao, pagination);
+
+        novaPaginacao.addEventListener('click', function (e) {
+            const link = e.target.closest('.page-link');
+            if (!link) return;
+            e.preventDefault();
+            e.stopPropagation();
+
+            const pagina = link.dataset.pagina;
+            console.log("Link de paginação clicado. Página:", pagina);
+            if (pagina) {
+                navegarParaPagina(pagina);
+            }
+        });
+
+        // Garantir que todos os links possuam o atributo data-pagina
+        novaPaginacao.querySelectorAll('.page-link').forEach(function (lnk) {
+            if (!lnk.dataset.pagina) {
+                const url = new URL(lnk.href, window.location.origin);
+                const pagina = url.searchParams.get('pagina');
+                if (pagina) lnk.dataset.pagina = pagina;
+            }
+        });
+    }
+
+    // Configurar mudança no seletor de itens por página
     const seletor = document.getElementById('selectItensPorPagina');
     if (seletor) {
-        // Remover eventos existentes
-        $(seletor).off('change');
-        
-        // Adicionar novo evento
-        $(seletor).on('change', function() {
-            const itensPorPagina = parseInt(this.value, 10);
-            if (!isNaN(itensPorPagina)) {
-            console.log("Alterando itens por página para:", itensPorPagina);
-            
-            document.getElementById('itensPorPagina').value = itensPorPagina;
-            document.getElementById('itensPorPaginaNav').value = itensPorPagina;
-            document.getElementById('paginaAtual').value = 1; // Volta para a primeira página ao mudar itens por página
-            
+        const novoSeletor = seletor.cloneNode(true);
+        seletor.parentNode.replaceChild(novoSeletor, seletor);
+
+        novoSeletor.addEventListener('change', function () {
+            const itensSelecionados = parseInt(novoSeletor.value, 10);
+            if (isNaN(itensSelecionados)) return;
+
+            console.log("Alterando itens por página para:", itensSelecionados);
+
+            document.getElementById('itensPorPagina').value = itensSelecionados;
+            document.getElementById('itensPorPaginaNav').value = itensSelecionados;
+            document.getElementById('paginaAtual').value = 1;
+
             // Remover inputs de navegação anteriores
-            $('#formNavegacao input[name="navegacaoPagina"]').remove();
-            
-            // Adicionar um parâmetro para indicar que não é uma navegação de página
-            let inputNavegacao = document.createElement('input');
+            document
+                .querySelectorAll('#formNavegacao input[name="navegacaoPagina"]')
+                .forEach(input => input.remove());
+
+            // Indicar que não é navegação por clique de página
+            const inputNavegacao = document.createElement('input');
             inputNavegacao.type = 'hidden';
             inputNavegacao.name = 'navegacaoPagina';
             inputNavegacao.value = 'false';
             document.getElementById('formNavegacao').appendChild(inputNavegacao);
-            
-            // Mostrar indicador de carregamento
+
             mostrarIndicadorCarregamento();
-            
-            // Submeter o formulário
             document.getElementById('formNavegacao').submit();
-            }
         });
     }
-    
-    // Verificar se os links têm o atributo data-pagina, se não tiverem, adicionar
-    $('.pagination .page-link').each(function() {
-        if (!$(this).attr('data-pagina')) {
-            const url = new URL(this.href, window.location.origin);
-            const pagina = url.searchParams.get('pagina');
-            if (pagina) {
-                $(this).attr('data-pagina', pagina);
-            }
-        }
-    });
 }
 
 
@@ -1402,9 +1398,6 @@ function inicializarItensPorPagina() {
     return valorSelecionado;
 }
 
-$(document).ready(function() {
-    // O manipulador para o seletor de itens por página foi movido para o script principal
-});
 
 // Adicionar a nova função para ajustar a largura dos cards
 function ajustarLarguraCards() {
