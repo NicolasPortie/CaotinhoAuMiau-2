@@ -1,6 +1,4 @@
-
-
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
     
     const menuHamburguer = document.querySelector('.menu-hamburguer');
     const menuLateral = document.querySelector('.menu-lateral');
@@ -20,16 +18,16 @@ document.addEventListener('DOMContentLoaded', function() {
         menuLateral.classList.remove('ativo');
         menuSobreposicao.classList.remove('ativo');
         
-        menuHamburguer.addEventListener('click', function(e) {
+        menuHamburguer.addEventListener('click', (e) => {
             e.preventDefault();
             alternarMenu();
         });
         
-        menuSobreposicao.addEventListener('click', function() {
+        menuSobreposicao.addEventListener('click', () => {
             alternarMenu();
         });
         
-        document.addEventListener('keydown', function(evento) {
+        document.addEventListener('keydown', (evento) => {
             if (evento.key === 'Escape' && menuLateral.classList.contains('ativo')) {
                 alternarMenu();
             }
@@ -51,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (sino) {
                 sino.classList.add('animacao-sino');
                 
-                setTimeout(function() {
+                setTimeout(() => {
                     sino.classList.remove('animacao-sino');
                 }, 1500);
             }
@@ -63,14 +61,14 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const overlayNotificacoes = document.querySelector('.overlay-notificacoes');
     if (overlayNotificacoes) {
-        overlayNotificacoes.addEventListener('click', function() {
+        overlayNotificacoes.addEventListener('click', () => {
             fecharPainelNotificacoes();
         });
     }
     
     const btnFecharPainel = document.querySelector('.fechar-painel');
     if (btnFecharPainel) {
-        btnFecharPainel.addEventListener('click', function(e) {
+        btnFecharPainel.addEventListener('click', (e) => {
             e.preventDefault();
             fecharPainelNotificacoes();
         });
@@ -78,13 +76,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const btnFecharNotificacoes = document.getElementById('fechar-notificacoes');
     if (btnFecharNotificacoes) {
-        btnFecharNotificacoes.addEventListener('click', function(e) {
+        btnFecharNotificacoes.addEventListener('click', (e) => {
             e.preventDefault();
             fecharPainelNotificacoes();
         });
     }
     
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             const painelNotificacoes = document.getElementById('painel-notificacoes');
             if (painelNotificacoes && (painelNotificacoes.classList.contains('ativo') || 
@@ -94,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', (e) => {
         const painelNotificacoes = document.getElementById('painel-notificacoes');
         const iconeNotif = document.querySelector('.icone-notificacao');
         
@@ -108,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-function alternarMenu() {
+const alternarMenu = () => {
     const menuHamburguer = document.querySelector('.menu-hamburguer');
     const menuLateral = document.querySelector('.menu-lateral');
     const menuSobreposicao = document.querySelector('.menu-sobreposicao');
@@ -136,10 +134,10 @@ function alternarMenu() {
             document.body.classList.remove('menu-aberto');
         }, 300); 
     }
-}
+};
 
 
-function abrirPainelNotificacoes() {
+const abrirPainelNotificacoes = () => {
     const painelNotificacoes = document.getElementById('painel-notificacoes');
     if (!painelNotificacoes) {
         console.error("[NAVBAR.JS] Painel de notificações não encontrado");
@@ -157,10 +155,10 @@ function abrirPainelNotificacoes() {
     if (typeof carregarNotificacoes === 'function') {
         carregarNotificacoes();
     }
-}
+};
 
 
-function fecharPainelNotificacoes() {
+const fecharPainelNotificacoes = () => {
     const painelNotificacoes = document.getElementById('painel-notificacoes');
     if (!painelNotificacoes) {
         return;
@@ -171,10 +169,10 @@ function fecharPainelNotificacoes() {
     painelNotificacoes.style.visibility = 'hidden';
     painelNotificacoes.style.opacity = '0';
     painelNotificacoes.classList.remove('ativo');
-}
+};
 
 
-function abrirMenuLateral() {
+const abrirMenuLateral = () => {
     const menuHamburguer = document.querySelector('.menu-hamburguer');
     const menuLateral = document.querySelector('.menu-lateral');
     const menuSobreposicao = document.querySelector('.menu-sobreposicao');
@@ -191,10 +189,10 @@ function abrirMenuLateral() {
         }
         
     }
-}
+};
 
 
-function fecharMenuLateral() {
+const fecharMenuLateral = () => {
     const menuHamburguer = document.querySelector('.menu-hamburguer');
     const menuLateral = document.querySelector('.menu-lateral');
     const menuSobreposicao = document.querySelector('.menu-sobreposicao');
@@ -210,10 +208,10 @@ function fecharMenuLateral() {
         }, 300);
         
     }
-}
+};
 
 
-function alternarNotificacoes() {
+const alternarNotificacoes = () => {
     const painelNotificacoes = document.getElementById('painel-notificacoes');
     if (!painelNotificacoes) {
         console.error("[NAVBAR.JS] Painel de notificações não encontrado");
@@ -229,7 +227,7 @@ function alternarNotificacoes() {
     } else {
         abrirPainelNotificacoes();
     }
-}
+};
 
 window.alternarMenu = alternarMenu;
 window.abrirMenuLateral = abrirMenuLateral;
