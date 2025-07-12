@@ -1,4 +1,5 @@
-$(document).ready(function() {
+
+document.addEventListener('DOMContentLoaded', function() {
     
     configurarLimpezaErrosFormulario();
     configurarToastr();
@@ -6,35 +7,44 @@ $(document).ready(function() {
     inicializarModalColaborador();
     
     
-    if (typeof $.fn.mask === 'function') {
-        $('.mascara-cpf').mask('000.000.000-00');
-        $('.mascara-telefone').mask('(00) 00000-0000');
+    if (typeof VMasker !== 'undefined') {
+        document.querySelectorAll('.mascara-cpf').forEach(el => VMasker(el).maskPattern('999.999.999-99'));
+        document.querySelectorAll('.mascara-telefone').forEach(el => VMasker(el).maskPattern('(99) 99999-9999'));
     }
     
     
     preencherDropdownCargos();
     
     
-    $('#btnNovoColaborador').on('click', function() {
-        abrirModalColaborador('criar');
-    });
+    const btnNovoColaborador = document.getElementById('btnNovoColaborador');
+    if (btnNovoColaborador) {
+        btnNovoColaborador.addEventListener('click', function() {
+            abrirModalColaborador('criar');
+        });
+    }
     
     
-    $('#btnFiltrarColaboradores').on('click', filtrarColaboradores);
-    $('#btnLimparFiltros').on('click', limparFiltros);
+    const btnFiltrar = document.getElementById('btnFiltrarColaboradores');
+    if (btnFiltrar) btnFiltrar.addEventListener('click', filtrarColaboradores);
+    const btnLimpar = document.getElementById('btnLimparFiltros');
+    if (btnLimpar) btnLimpar.addEventListener('click', limparFiltros);
     
     
-    $('#formularioColaborador').on('submit', function(e) {
-        e.preventDefault();
-        if (validarFormularioColaborador()) {
-            enviarFormularioColaborador();
-        }
-    });
+    const formColaborador = document.getElementById('formularioColaborador');
+    if (formColaborador) {
+        formColaborador.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (validarFormularioColaborador()) {
+                enviarFormularioColaborador();
+            }
+        });
+    }
     
     
-    $('#botaoConfirmarDesativar').on('click', async function() {
-        const id = $('#idDesativar').val();
-        const token = $('input[name="__RequestVerificationToken"]').val();
+    const botaoConfirmarDesativar = document.getElementById('botaoConfirmarDesativar');
+    if (botaoConfirmarDesativar) botaoConfirmarDesativar.addEventListener('click', async function() {
+        const id = document.getElementById('idDesativar').value;
+        const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
         try {
             const response = await fetch(`/Admin/Colaboradores/DesativarColaborador/${id}`, {
                 method: 'POST',
@@ -47,7 +57,8 @@ $(document).ready(function() {
             const data = await response.json();
             if (data.sucesso) {
                 mostrarNotificacao(data.mensagem, 'success');
-                $('#modalDesativar').modal('hide');
+                const modalDesativar = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalDesativar'));
+                modalDesativar.hide();
                 setTimeout(() => window.location.reload(), 1000);
             } else {
                 mostrarNotificacao(data.mensagem, 'error');
@@ -57,9 +68,10 @@ $(document).ready(function() {
             mostrarNotificacao('Erro na comunicação com o servidor', 'error');
         }
     });
-    $('#botaoConfirmarExcluir').on('click', async function() {
-        const id = $('#idExcluir').val();
-        const token = $('input[name="__RequestVerificationToken"]').val();
+    const botaoConfirmarExcluir = document.getElementById('botaoConfirmarExcluir');
+    if (botaoConfirmarExcluir) botaoConfirmarExcluir.addEventListener('click', async function() {
+        const id = document.getElementById('idExcluir').value;
+        const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
         try {
             const response = await fetch(`/Admin/Colaboradores/ExcluirColaborador/${id}`, {
                 method: 'POST',
@@ -72,7 +84,8 @@ $(document).ready(function() {
             const data = await response.json();
             if (data.sucesso) {
                 mostrarNotificacao(data.mensagem, 'success');
-                $('#modalExcluir').modal('hide');
+                const modalExcluir = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalExcluir'));
+                modalExcluir.hide();
                 setTimeout(() => window.location.reload(), 1000);
             } else {
                 mostrarNotificacao(data.mensagem, 'error');
@@ -83,12 +96,14 @@ $(document).ready(function() {
         }
     });
     
-    $('.pagination .page-link').on('click', function(e) {
-        e.preventDefault();
-        var url = $(this).attr('href');
-        if (url) {
-            window.location.href = url;
-        }
+    document.querySelectorAll('.pagination .page-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const url = link.getAttribute('href');
+            if (url) {
+                window.location.href = url;
+            }
+        });
     });
 });
 
@@ -98,16 +113,23 @@ $(document).ready(function() {
 
 
 function configurarLimpezaErrosFormulario() {
-    
-    $('input, select, textarea').on('input change focus', function() {
-        $(this).removeClass('is-invalid');
-        const feedbackId = $(this).attr('id') + '-erro';
-        $('#' + feedbackId).text('');
+    document.querySelectorAll('input, select, textarea').forEach(el => {
+        ['input', 'change', 'focus'].forEach(evt => {
+            el.addEventListener(evt, () => {
+                el.classList.remove('is-invalid');
+                const feedback = document.getElementById(el.id + '-erro');
+                if (feedback) feedback.textContent = '';
+            });
+        });
     });
-    
-    $(document).on('click', '.mensagem-erro', function() {
-        $(this).text('');
-        $(this).siblings('input, select, textarea').removeClass('is-invalid');
+
+    document.addEventListener('click', function(e) {
+        const alvo = e.target.closest('.mensagem-erro');
+        if (alvo) {
+            alvo.textContent = '';
+            const campo = alvo.parentElement.querySelector('input, select, textarea');
+            if (campo) campo.classList.remove('is-invalid');
+        }
     });
 }
 
@@ -142,88 +164,90 @@ function inicializarBootstrap() {
 
 
 function inicializarModalColaborador() {
-    const $modal = $('#modalColaborador');
-    
-    
-    $modal.on('show.bs.modal', function() {
-        
-        if (typeof $.fn.mask === 'function') {
-            $(this).find('.mascara-cpf').mask('000.000.000-00');
-            $(this).find('.mascara-telefone').mask('(00) 00000-0000');
+    const modalEl = document.getElementById('modalColaborador');
+    if (!modalEl) return;
+
+    modalEl.addEventListener('show.bs.modal', function() {
+        if (typeof VMasker !== 'undefined') {
+            modalEl.querySelectorAll('.mascara-cpf').forEach(el => VMasker(el).maskPattern('999.999.999-99'));
+            modalEl.querySelectorAll('.mascara-telefone').forEach(el => VMasker(el).maskPattern('(99) 99999-9999'));
         }
-        
-        
-        $modal.find('.form-floating').each(function(index) {
-            const $this = $(this);
-            setTimeout(function() {
-                $this.css({
-                    'opacity': 1,
-                    'transform': 'translateY(0)'
-                });
+
+        modalEl.querySelectorAll('.form-floating').forEach((el, index) => {
+            setTimeout(() => {
+                el.style.opacity = '1';
+                el.style.transform = 'translateY(0)';
             }, index * 50);
         });
     });
-    
-    
-    $modal.on('hidden.bs.modal', function() {
+
+    modalEl.addEventListener('hidden.bs.modal', function() {
         limparFormularioColaborador();
-        
-        
-        $modal.find('.form-floating').css({
-            'opacity': 0,
-            'transform': 'translateY(10px)'
+
+        modalEl.querySelectorAll('.form-floating').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(10px)';
         });
     });
-    
-    
-    $('.toggle-password').on('click', function() {
-        alternarVisibilidadeSenha($(this).data('target'));
+
+    document.querySelectorAll('.toggle-password').forEach(btn => {
+        btn.addEventListener('click', function() {
+            alternarVisibilidadeSenha(btn.dataset.target);
+        });
     });
-    
-    
-    $('#colaboradorImagem').on('change', function(e) {
-        const file = e.target.files[0];
-        const $avatarContainer = $('.admin-avatar-container');
-        
-        if (file) {
-            const reader = new FileReader();
-            
-            
-            $avatarContainer.find('img, .success-overlay').remove();
-            $avatarContainer.append('<div class="loading-overlay"><i class="bi bi-arrow-repeat spin"></i></div>');
-            
-            reader.onload = function(event) {
-                setTimeout(() => {
-                    
-                    $avatarContainer.find('.loading-overlay').remove();
-                    
-                    
-                    const img = $('<img>').attr('src', event.target.result);
-                    $avatarContainer.append(img);
-                    
-                    
-                    const $successOverlay = $('<div class="success-overlay"><i class="bi bi-check-lg"></i></div>');
-                    $avatarContainer.append($successOverlay);
-                    
-                    setTimeout(() => $successOverlay.fadeOut(300, function() {
-                        $(this).remove();
-                    }), 1000);
-                }, 500);
-            };
-            
-            reader.readAsDataURL(file);
-        }
-    });
-    
-    
-    $('#colaboradorAtivo').on('change', function() {
-        const $label = $(this).siblings('.form-check-label');
-        if ($(this).is(':checked')) {
-            $label.text('Colaborador ativo').css('color', 'var(--success)');
-        } else {
-            $label.text('Colaborador inativo').css('color', '#6c757d');
-        }
-    });
+
+    const imagemInput = document.getElementById('colaboradorImagem');
+    const avatarContainer = document.querySelector('.admin-avatar-container');
+    if (imagemInput && avatarContainer) {
+        imagemInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+
+                avatarContainer.querySelectorAll('img, .success-overlay, .loading-overlay').forEach(el => el.remove());
+                const loading = document.createElement('div');
+                loading.className = 'loading-overlay';
+                loading.innerHTML = '<i class="bi bi-arrow-repeat spin"></i>';
+                avatarContainer.appendChild(loading);
+
+                reader.onload = function(event) {
+                    setTimeout(() => {
+                        loading.remove();
+
+                        const img = document.createElement('img');
+                        img.src = event.target.result;
+                        avatarContainer.appendChild(img);
+
+                        const success = document.createElement('div');
+                        success.className = 'success-overlay';
+                        success.innerHTML = '<i class="bi bi-check-lg"></i>';
+                        avatarContainer.appendChild(success);
+
+                        setTimeout(() => {
+                            success.remove();
+                        }, 1300);
+                    }, 500);
+                };
+
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    const colaboradorAtivo = document.getElementById('colaboradorAtivo');
+    if (colaboradorAtivo) {
+        colaboradorAtivo.addEventListener('change', function() {
+            const label = colaboradorAtivo.closest('.form-check')?.querySelector('.form-check-label');
+            if (!label) return;
+            if (colaboradorAtivo.checked) {
+                label.textContent = 'Colaborador ativo';
+                label.style.color = 'var(--success)';
+            } else {
+                label.textContent = 'Colaborador inativo';
+                label.style.color = '#6c757d';
+            }
+        });
+    }
 }
 
 
@@ -233,64 +257,59 @@ function inicializarModalColaborador() {
 
 function abrirModalColaborador(modo, id = null) {
     limparFormularioColaborador();
-    const $modal = $('#modalColaborador');
-    const $header = $modal.find('.modal-header');
-    
-    $header.css('background', '');
+    const modalEl = document.getElementById('modalColaborador');
+    const header = modalEl.querySelector('.modal-header');
+
+    header.style.background = '';
     
     switch (modo) {
         case 'criar':
             
-            $header.css('background', getComputedStyle(document.documentElement).getPropertyValue('--primary-gradient'));
-            $('#tituloModalColaborador').html('<i class="fas fa-user-plus me-2 text-white"></i> Novo Colaborador');
-            $('#colaboradorId').val('0');
-            
-            
-            $('#formularioColaborador').attr('action', '/Admin/Colaboradores/CadastrarColaborador');
-            
-            
-            $('#containerSenhaAtual').hide();
-            $('#containerSenha').show();
-            $('#linhaConfirmarSenha').show();
-            
-            
-            $('#colaboradorAtivo').prop('checked', true).trigger('change');
-            
-            
+            header.style.background = getComputedStyle(document.documentElement).getPropertyValue('--primary-gradient');
+            document.getElementById('tituloModalColaborador').innerHTML = '<i class="fas fa-user-plus me-2 text-white"></i> Novo Colaborador';
+            document.getElementById('colaboradorId').value = '0';
+
+            document.getElementById('formularioColaborador').setAttribute('action', '/Admin/Colaboradores/CadastrarColaborador');
+
+            document.getElementById('containerSenhaAtual').style.display = 'none';
+            document.getElementById('containerSenha').style.display = '';
+            document.getElementById('linhaConfirmarSenha').style.display = '';
+
+            const ativo = document.getElementById('colaboradorAtivo');
+            if (ativo) {
+                ativo.checked = true;
+                ativo.dispatchEvent(new Event('change'));
+            }
+
             habilitarCamposFormulario(true);
-            
-            
-            $('.botao-modo-edicao').show();
-            $('.botao-modo-visualizacao').hide();
-            $('#botaoSalvarColaborador').html('<i class="fas fa-save me-2"></i> Cadastrar');
+
+            document.querySelectorAll('.botao-modo-edicao').forEach(el => el.style.display = '');
+            document.querySelectorAll('.botao-modo-visualizacao').forEach(el => el.style.display = 'none');
+            document.getElementById('botaoSalvarColaborador').innerHTML = '<i class="fas fa-save me-2"></i> Cadastrar';
             break;
             
         case 'editar':
             
-            $header.css('background', getComputedStyle(document.documentElement).getPropertyValue('--success-gradient'));
+            header.style.background = getComputedStyle(document.documentElement).getPropertyValue('--success-gradient');
             if (!id) {
                 console.error('ID do colaborador não fornecido para edição');
                 return;
             }
             
-            $('#tituloModalColaborador').html('<i class="fas fa-user-edit me-2 text-white"></i> Editar Colaborador');
-            $('#colaboradorId').val(id);
-            
-            
-            $('#formularioColaborador').attr('action', '/Admin/Colaboradores/AtualizarColaborador');
-            
-            
-            $('#containerSenhaAtual').show();
-            $('#containerSenha').show();
-            $('#linhaConfirmarSenha').show();
-            
-            
+            document.getElementById('tituloModalColaborador').innerHTML = '<i class="fas fa-user-edit me-2 text-white"></i> Editar Colaborador';
+            document.getElementById('colaboradorId').value = id;
+
+            document.getElementById('formularioColaborador').setAttribute('action', '/Admin/Colaboradores/AtualizarColaborador');
+
+            document.getElementById('containerSenhaAtual').style.display = '';
+            document.getElementById('containerSenha').style.display = '';
+            document.getElementById('linhaConfirmarSenha').style.display = '';
+
             habilitarCamposFormulario(true);
-            
-            
-            $('.botao-modo-edicao').show();
-            $('.botao-modo-visualizacao').hide();
-            $('#botaoSalvarColaborador').html('<i class="fas fa-save me-2"></i> Salvar Alterações');
+
+            document.querySelectorAll('.botao-modo-edicao').forEach(el => el.style.display = '');
+            document.querySelectorAll('.botao-modo-visualizacao').forEach(el => el.style.display = 'none');
+            document.getElementById('botaoSalvarColaborador').innerHTML = '<i class="fas fa-save me-2"></i> Salvar Alterações';
             
             
             carregarDadosColaborador(id);
@@ -298,26 +317,23 @@ function abrirModalColaborador(modo, id = null) {
             
         case 'visualizar':
             
-            $header.css('background', getComputedStyle(document.documentElement).getPropertyValue('--accent-gradient'));
+            header.style.background = getComputedStyle(document.documentElement).getPropertyValue('--accent-gradient');
             if (!id) {
                 console.error('ID do colaborador não fornecido para visualização');
                 return;
             }
             
-            $('#tituloModalColaborador').html('<i class="fas fa-eye me-2 text-white"></i> Detalhes do Colaborador');
-            $('#colaboradorId').val(id);
-            
-            
-            $('#containerSenhaAtual').hide();
-            $('#containerSenha').hide();
-            $('#linhaConfirmarSenha').hide();
-            
-            
+            document.getElementById('tituloModalColaborador').innerHTML = '<i class="fas fa-eye me-2 text-white"></i> Detalhes do Colaborador';
+            document.getElementById('colaboradorId').value = id;
+
+            document.getElementById('containerSenhaAtual').style.display = 'none';
+            document.getElementById('containerSenha').style.display = 'none';
+            document.getElementById('linhaConfirmarSenha').style.display = 'none';
+
             habilitarCamposFormulario(false);
-            
-            
-            $('.botao-modo-edicao').hide();
-            $('.botao-modo-visualizacao').hide();
+
+            document.querySelectorAll('.botao-modo-edicao').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.botao-modo-visualizacao').forEach(el => el.style.display = 'none');
             
             
             carregarDadosColaborador(id);
@@ -329,21 +345,19 @@ function abrirModalColaborador(modo, id = null) {
     }
     
     
-    $modal.modal('show');
+    bootstrap.Modal.getOrCreateInstance(modalEl).show();
 }
 
 
 function habilitarCamposFormulario(habilitar) {
-    const campos = $('#formularioColaborador').find('input, select, textarea');
-    
-    campos.each(function() {
-        $(this).prop('readonly', !habilitar);
-        $(this).prop('disabled', !habilitar);
+    document.querySelectorAll('#formularioColaborador input, #formularioColaborador select, #formularioColaborador textarea').forEach(campo => {
+        campo.readOnly = !habilitar;
+        campo.disabled = !habilitar;
     });
-    
-    
-    if (habilitar && $('#colaboradorId').val() !== '0') {
-        $('#colaboradorEmail').prop('readonly', true); 
+
+    if (habilitar && document.getElementById('colaboradorId').value !== '0') {
+        const email = document.getElementById('colaboradorEmail');
+        if (email) email.readOnly = true;
     }
 }
 
@@ -362,19 +376,30 @@ async function carregarDadosColaborador(id) {
         if (data.sucesso) {
             
             const colaborador = data.dados;
-            
-            $('#nomeColaborador').val(colaborador.nome);
-            $('#emailColaborador').val(colaborador.email);
-            $('#cpfColaborador').val(colaborador.cpf).trigger('input'); 
-            $('#telefoneColaborador').val(colaborador.telefone).trigger('input'); 
-            $('#cargoColaborador').val(colaborador.cargo);
-            $('#colaboradorAtivo').prop('checked', colaborador.ativo).trigger('change');
-            
-            
+
+            document.getElementById('nomeColaborador').value = colaborador.nome;
+            document.getElementById('emailColaborador').value = colaborador.email;
+            const cpfInput = document.getElementById('cpfColaborador');
+            cpfInput.value = colaborador.cpf;
+            cpfInput.dispatchEvent(new Event('input'));
+            const telInput = document.getElementById('telefoneColaborador');
+            telInput.value = colaborador.telefone;
+            telInput.dispatchEvent(new Event('input'));
+            document.getElementById('cargoColaborador').value = colaborador.cargo;
+            const ativo = document.getElementById('colaboradorAtivo');
+            if (ativo) {
+                ativo.checked = colaborador.ativo;
+                ativo.dispatchEvent(new Event('change'));
+            }
+
             if (colaborador.imagemUrl) {
-                const $avatarContainer = $('.admin-avatar-container');
-                $avatarContainer.find('img').remove();
-                $avatarContainer.append($('<img>').attr('src', colaborador.imagemUrl));
+                const avatarContainer = document.querySelector('.admin-avatar-container');
+                if (avatarContainer) {
+                    avatarContainer.querySelectorAll('img').forEach(el => el.remove());
+                    const img = document.createElement('img');
+                    img.src = colaborador.imagemUrl;
+                    avatarContainer.appendChild(img);
+                }
             }
         } else {
             console.error("Erro ao obter dados:", data.mensagem || "Erro desconhecido");
@@ -388,31 +413,32 @@ async function carregarDadosColaborador(id) {
 
 
 function limparFormularioColaborador() {
-    
-    $('#formularioColaborador')[0].reset();
-    
-    
-    $('#formularioColaborador').find('input, select, textarea').removeClass('is-valid is-invalid');
-    $('.mensagem-erro').text('').hide();
-    
-    $('.admin-avatar-container').find('img, .success-overlay, .loading-overlay').remove();
+    const form = document.getElementById('formularioColaborador');
+    if (form) form.reset();
+
+    document.querySelectorAll('#formularioColaborador input, #formularioColaborador select, #formularioColaborador textarea').forEach(el => {
+        el.classList.remove('is-valid', 'is-invalid');
+    });
+    document.querySelectorAll('.mensagem-erro').forEach(el => { el.textContent = ''; el.style.display = 'none'; });
+
+    const avatarContainer = document.querySelector('.admin-avatar-container');
+    if (avatarContainer) avatarContainer.querySelectorAll('img, .success-overlay, .loading-overlay').forEach(el => el.remove());
 }
 
 
 function alternarVisibilidadeSenha(targetId) {
-    const $input = $('#' + targetId);
-    const $toggleBtn = $('button[data-target="' + targetId + '"]');
-    
-    
-    const type = $input.attr('type') === 'password' ? 'text' : 'password';
-    $input.attr('type', type);
-    
-    
-    $toggleBtn.find('i').toggleClass('bi-eye bi-eye-slash');
-    
-    
-    $toggleBtn.addClass('btn-clicked');
-    setTimeout(() => $toggleBtn.removeClass('btn-clicked'), 200);
+    const input = document.getElementById(targetId);
+    const toggleBtn = document.querySelector('button[data-target="' + targetId + '"]');
+    if (!input || !toggleBtn) return;
+
+    input.type = input.type === 'password' ? 'text' : 'password';
+
+    const icon = toggleBtn.querySelector('i');
+    if (icon) icon.classList.toggle('bi-eye');
+    if (icon) icon.classList.toggle('bi-eye-slash');
+
+    toggleBtn.classList.add('btn-clicked');
+    setTimeout(() => toggleBtn.classList.remove('btn-clicked'), 200);
 }
 
 
@@ -431,7 +457,7 @@ function validarFormularioColaborador() {
     ];
     
     
-    const isCriacao = $('#colaboradorId').val() === '0';
+    const isCriacao = document.getElementById('colaboradorId').value === '0';
     
     
     if (isCriacao) {
@@ -442,22 +468,18 @@ function validarFormularioColaborador() {
     
     
     camposObrigatorios.forEach(campo => {
-        const $campo = $('#' + campo.id);
-        if (!$campo.length) {
+        const campoEl = document.getElementById(campo.id);
+        if (!campoEl) {
             console.warn(`Campo de validação '${campo.id}' não encontrado, pulando.`);
             return;
         }
         let valido = true;
-        
-        
-        if (!$campo.is(':visible')) {
+
+        if (campoEl.offsetParent === null) {
             return;
         }
-        
-        
-        
-        const raw = $campo.val();
-        const valor = raw != null ? raw.toString() : '';
+
+        const valor = campoEl.value != null ? campoEl.value.toString() : '';
         if (campo.min && valor.trim().length < campo.min) {
             valido = false;
         }
@@ -467,40 +489,45 @@ function validarFormularioColaborador() {
         }
         
         if (campo.id === 'cpfColaborador') {
-            const rawCpf = $campo.val() || '';
-            const cpfDigitos = removerMascara(rawCpf);
+            const cpfDigitos = removerMascara(valor);
             if (cpfDigitos.length !== 11) {
                 valido = false;
             }
         }
         
-        if (campo.id === 'telefoneColaborador' && $campo.val()) {
-            const telefone = removerMascara($campo.val());
+        if (campo.id === 'telefoneColaborador' && valor) {
+            const telefone = removerMascara(valor);
             valido = telefone.length >= 10;
         }
         
         
         if (campo.id === 'senhaColaborador' && isCriacao) {
-            const senha = $campo.val();
-            const confirmarSenha = $('#confirmarSenhaColaborador').val();
+            const senha = valor;
+            const confirmarSenha = document.getElementById('confirmarSenhaColaborador').value;
             
             if (senha !== confirmarSenha) {
-                $('#confirmarSenhaColaborador').addClass('is-invalid');
-                $('#confirmarSenhaColaborador-erro').text('As senhas não coincidem').show();
+                const conf = document.getElementById('confirmarSenhaColaborador');
+                conf.classList.add('is-invalid');
+                const erro = document.getElementById('confirmarSenhaColaborador-erro');
+                if (erro) { erro.textContent = 'As senhas não coincidem'; erro.style.display = 'block'; }
                 formValido = false;
             } else {
-                $('#confirmarSenhaColaborador').removeClass('is-invalid');
-                $('#confirmarSenhaColaborador-erro').text('').hide();
+                const conf = document.getElementById('confirmarSenhaColaborador');
+                conf.classList.remove('is-invalid');
+                const erro = document.getElementById('confirmarSenhaColaborador-erro');
+                if (erro) { erro.textContent = ''; erro.style.display = 'none'; }
             }
         }
-        
+
         if (!valido) {
-            $campo.addClass('is-invalid');
-            $('#' + campo.id + '-erro').text(campo.mensagem).show();
+            campoEl.classList.add('is-invalid');
+            const erroEl = document.getElementById(campo.id + '-erro');
+            if (erroEl) { erroEl.textContent = campo.mensagem; erroEl.style.display = 'block'; }
             formValido = false;
         } else {
-            $campo.removeClass('is-invalid');
-            $('#' + campo.id + '-erro').text('').hide();
+            campoEl.classList.remove('is-invalid');
+            const erroEl = document.getElementById(campo.id + '-erro');
+            if (erroEl) { erroEl.textContent = ''; erroEl.style.display = 'none'; }
         }
     });
     
@@ -513,23 +540,23 @@ function removerMascara(valor) {
 
 async function enviarFormularioColaborador() {
     try {
-        const $form = $('#formularioColaborador');
-        
-        const $cpf = $('#cpfColaborador');
-        if ($cpf.length) {
-            $cpf.val(removerMascara($cpf.val()));
+        const form = document.getElementById('formularioColaborador');
+
+        const cpfInput = document.getElementById('cpfColaborador');
+        if (cpfInput) {
+            cpfInput.value = removerMascara(cpfInput.value);
         }
-        const $telefone = $('#telefoneColaborador');
-        if ($telefone.length) {
-            $telefone.val(removerMascara($telefone.val()));
+        const telInput = document.getElementById('telefoneColaborador');
+        if (telInput) {
+            telInput.value = removerMascara(telInput.value);
         }
-        const formData = new FormData($form[0]);
-        const url = $form.attr('action');
-        const $btnSalvar = $('#botaoSalvarColaborador');
-        
-        
-        const textoOriginal = $btnSalvar.html();
-        $btnSalvar.html('<i class="bi bi-arrow-repeat spin me-2"></i>Salvando...').prop('disabled', true);
+        const formData = new FormData(form);
+        const url = form.getAttribute('action');
+        const btnSalvar = document.getElementById('botaoSalvarColaborador');
+
+        const textoOriginal = btnSalvar.innerHTML;
+        btnSalvar.innerHTML = '<i class="bi bi-arrow-repeat spin me-2"></i>Salvando...';
+        btnSalvar.disabled = true;
         
         
         const response = await fetch(url, {
@@ -538,37 +565,39 @@ async function enviarFormularioColaborador() {
         });
         
         const data = await response.json();
-        
-        
-        $btnSalvar.html(textoOriginal).prop('disabled', false);
-                    
-                    if (data.sucesso) {
-            
-            $('#modalColaborador').modal('hide');
+
+        btnSalvar.innerHTML = textoOriginal;
+        btnSalvar.disabled = false;
+
+        if (data.sucesso) {
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('modalColaborador')).hide();
             mostrarNotificacao(data.mensagem || 'Operação realizada com sucesso!', 'success');
-            
-            
-                                setTimeout(() => {
-                                    window.location.reload();
+            setTimeout(() => {
+                window.location.reload();
             }, 1000);
-                    } else {
+        } else {
             mostrarNotificacao(data.mensagem || 'Ocorreu um erro ao processar a solicitação', 'error');
-            
-            
+
             if (data.erros) {
                 Object.keys(data.erros).forEach(campo => {
-                    const $campo = $('#' + campo);
+                    const campoEl = document.getElementById(campo);
                     const mensagem = data.erros[campo];
-                    
-                    $campo.addClass('is-invalid');
-                    $('#' + campo + '-erro').text(mensagem).show();
+                    if (campoEl) {
+                        campoEl.classList.add('is-invalid');
+                        const erro = document.getElementById(campo + '-erro');
+                        if (erro) { erro.textContent = mensagem; erro.style.display = 'block'; }
+                    }
                 });
             }
         }
     } catch (error) {
         console.error("Erro ao enviar formulário:", error);
         mostrarNotificacao('Erro na comunicação com o servidor', 'error');
-        $('#botaoSalvarColaborador').html('<i class="fas fa-save me-2"></i>Salvar').prop('disabled', false);
+        const btnSalvar = document.getElementById('botaoSalvarColaborador');
+        if (btnSalvar) {
+            btnSalvar.innerHTML = '<i class="fas fa-save me-2"></i>Salvar';
+            btnSalvar.disabled = false;
+        }
     }
 }
 
@@ -608,38 +637,42 @@ function confirmarDesativacaoColaborador(id) {
 let statusAction = '';
 
 function abrirModalStatus(id, nome, acao) {
-    const $modal = $('#modalStatus');
-    
-    $modal.attr('data-action', acao);
+    const modalEl = document.getElementById('modalStatus');
+    modalEl.dataset.action = acao;
     statusAction = acao;
-    $('#idStatus').val(id);
-    $('#nomeColaboradorStatus').text(nome);
+    document.getElementById('idStatus').value = id;
+    document.getElementById('nomeColaboradorStatus').textContent = nome;
 
-    const $header = $modal.find('.modal-header');
-    const $titleIcon = $modal.find('.modal-title i');
-    const $titleText = $modal.find('#tituloStatus');
-    const $confirmBtn = $('#botaoConfirmarStatus');
+    const header = modalEl.querySelector('.modal-header');
+    const titleIcon = modalEl.querySelector('.modal-title i');
+    const titleText = modalEl.querySelector('#tituloStatus');
+    const confirmBtn = document.getElementById('botaoConfirmarStatus');
 
     if (acao === 'ativar') {
-        
-        $header.css('background', getComputedStyle(document.documentElement).getPropertyValue('--success-gradient'));
-        $titleIcon.attr('class', 'fas fa-user-check me-2');
-        $titleText.text('Confirmar Ativação');
-        $confirmBtn.attr('class', 'botao-primario').html('<i class="fas fa-user-check me-2"></i>Ativar');
+        header.style.background = getComputedStyle(document.documentElement).getPropertyValue('--success-gradient');
+        if (titleIcon) titleIcon.setAttribute('class', 'fas fa-user-check me-2');
+        if (titleText) titleText.textContent = 'Confirmar Ativação';
+        if (confirmBtn) {
+            confirmBtn.setAttribute('class', 'botao-primario');
+            confirmBtn.innerHTML = '<i class="fas fa-user-check me-2"></i>Ativar';
+        }
     } else {
-        
-        $header.css('background', getComputedStyle(document.documentElement).getPropertyValue('--danger-gradient'));
-        $titleIcon.attr('class', 'fas fa-user-slash me-2');
-        $titleText.text('Confirmar Status');
-        $confirmBtn.attr('class', 'botao-perigo').html('<i class="fas fa-user-slash me-2"></i>Inativar');
+        header.style.background = getComputedStyle(document.documentElement).getPropertyValue('--danger-gradient');
+        if (titleIcon) titleIcon.setAttribute('class', 'fas fa-user-slash me-2');
+        if (titleText) titleText.textContent = 'Confirmar Status';
+        if (confirmBtn) {
+            confirmBtn.setAttribute('class', 'botao-perigo');
+            confirmBtn.innerHTML = '<i class="fas fa-user-slash me-2"></i>Inativar';
+        }
     }
-    $modal.modal('show');
+    bootstrap.Modal.getOrCreateInstance(modalEl).show();
 }
 
 
-$(document).on('click', '#botaoConfirmarStatus', async function() {
-    const id = $('#idStatus').val();
-    const token = $('input[name="__RequestVerificationToken"]').val();
+document.addEventListener('click', async function(e) {
+    if (!e.target.closest('#botaoConfirmarStatus')) return;
+    const id = document.getElementById('idStatus').value;
+    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
     const url = statusAction === 'ativar'
         ? `/Admin/Colaboradores/AtivarColaborador/${id}`
         : `/Admin/Colaboradores/DesativarColaborador/${id}`;
@@ -654,7 +687,7 @@ $(document).on('click', '#botaoConfirmarStatus', async function() {
         const data = await response.json();
         if (data.sucesso) {
             mostrarNotificacao(data.mensagem, 'success');
-            $('#modalStatus').modal('hide');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('modalStatus')).hide();
             setTimeout(() => window.location.reload(), 1000);
         } else {
             mostrarNotificacao(data.mensagem, 'error');
@@ -671,9 +704,9 @@ $(document).on('click', '#botaoConfirmarStatus', async function() {
 
 
 function filtrarColaboradores() {
-    const filtroNome = $('#filtroNome').val().trim();
-    const filtroCargo = $('#filtroCargo').val();
-    const filtroStatus = $('#filtroStatus').val();
+    const filtroNome = document.getElementById('filtroNome').value.trim();
+    const filtroCargo = document.getElementById('filtroCargo').value;
+    const filtroStatus = document.getElementById('filtroStatus').value;
     
     
     let url = '/Admin/Colaboradores?';
@@ -696,9 +729,9 @@ function filtrarColaboradores() {
 
 
 function limparFiltros() {
-    $('#filtroNome').val('');
-    $('#filtroCargo').val('');
-    $('#filtroStatus').val('');
+    document.getElementById('filtroNome').value = '';
+    document.getElementById('filtroCargo').value = '';
+    document.getElementById('filtroStatus').value = '';
     
     window.location.href = '/Admin/Colaboradores';
 }
@@ -706,50 +739,45 @@ function limparFiltros() {
 
 function preencherDropdownCargos() {
     try {
-        
-        const $dropdownCargo = $('#colaboradorCargo');
-        const $filtroDropdownCargo = $('#filtroCargo');
-        
-        if (!$dropdownCargo.length && !$filtroDropdownCargo.length) {
-            return; 
+        const dropdownCargo = document.getElementById('colaboradorCargo');
+        const filtroDropdownCargo = document.getElementById('filtroCargo');
+
+        if (!dropdownCargo && !filtroDropdownCargo) {
+            return;
         }
-        
-        
+
         fetch('/Admin/Colaboradores/ObterCargos')
             .then(response => {
-        if (!response.ok) {
-            throw new Error(`Erro HTTP: ${response.status}`);
-        }
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
                 return response.json();
             })
             .then(data => {
-        if (data.sucesso) {
+                if (data.sucesso) {
                     const cargos = data.dados;
-                    
-                    
-                    if ($dropdownCargo.length) {
-                        $dropdownCargo.empty();
-                        $dropdownCargo.append('<option value="">Selecione um cargo</option>');
-                        
+
+                    if (dropdownCargo) {
+                        dropdownCargo.innerHTML = '<option value="">Selecione um cargo</option>';
                         cargos.forEach(cargo => {
-                            $dropdownCargo.append(`<option value="${cargo.id}">${cargo.nome}</option>`);
+                            const option = document.createElement('option');
+                            option.value = cargo.id;
+                            option.textContent = cargo.nome;
+                            dropdownCargo.appendChild(option);
                         });
                     }
-                    
-                    
-                    if ($filtroDropdownCargo.length) {
-                        const valorAtual = $filtroDropdownCargo.val();
-                        
-                        $filtroDropdownCargo.empty();
-                        $filtroDropdownCargo.append('<option value="">Todos os cargos</option>');
-                        
+
+                    if (filtroDropdownCargo) {
+                        const valorAtual = filtroDropdownCargo.value;
+                        filtroDropdownCargo.innerHTML = '<option value="">Todos os cargos</option>';
                         cargos.forEach(cargo => {
-                            $filtroDropdownCargo.append(`<option value="${cargo.id}">${cargo.nome}</option>`);
+                            const opt = document.createElement('option');
+                            opt.value = cargo.id;
+                            opt.textContent = cargo.nome;
+                            filtroDropdownCargo.appendChild(opt);
                         });
-                        
-                        
                         if (valorAtual) {
-                            $filtroDropdownCargo.val(valorAtual);
+                            filtroDropdownCargo.value = valorAtual;
                         }
                     }
                 } else {
@@ -845,14 +873,14 @@ function formatarData(dataStr) {
 
 
 function abrirModalDesativar(id, nome) {
-    $('#idDesativar').val(id);
-    $('#nomeColaboradorDesativacao').text(nome);
-    $('#modalDesativar').modal('show');
+    document.getElementById('idDesativar').value = id;
+    document.getElementById('nomeColaboradorDesativacao').textContent = nome;
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('modalDesativar')).show();
 }
 
 function abrirModalExcluir(id, nome) {
-    $('#idExcluir').val(id);
-    $('#nomeColaboradorExclusao').text(nome);
-    $('#modalExcluir').modal('show');
+    document.getElementById('idExcluir').value = id;
+    document.getElementById('nomeColaboradorExclusao').textContent = nome;
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('modalExcluir')).show();
 }
 
