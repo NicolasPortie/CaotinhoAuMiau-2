@@ -4,46 +4,41 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-$(document).ready(function() {
-
-    $('.pagination .page-link').on('click', function(e) {
-        e.preventDefault();
-        var url = $(this).attr('href');
-        if (url) {
-            window.location.href = url;
-        }
-        return false;
-    });
-
-    $(document).on('click', '.pagination .page-link', function(e) {
-        e.preventDefault();
-        var url = $(this).attr('href');
-        if (url) {
-            window.location.href = url;
-        }
-        return false;
-    });
-
-    $('#modalDetalhesFormulario').on('hide.bs.modal', function(e) {
-        const obsAtual = $('#observacaoAdmin').val();
-        if (statusFormularioAtual === 'Pendente' && obsAtual && obsAtual !== observacaoAdminInicial) {
-            if (!confirm('Você tem observações não salvas. Deseja realmente sair?')) {
-                e.preventDefault();
+document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('click', event => {
+        const link = event.target.closest('.pagination .page-link');
+        if (link) {
+            event.preventDefault();
+            const url = link.getAttribute('href');
+            if (url) {
+                window.location.href = url;
             }
         }
     });
 
-    $('#modalDetalhesFormulario').on('hidden.bs.modal', function () {
-        $('#observacaoAdmin').val('');
-        observacaoAdminInicial = '';
-        statusFormularioAtual = '';
-    });
+    const modalEl = document.getElementById('modalDetalhesFormulario');
+    if (modalEl) {
+        modalEl.addEventListener('hide.bs.modal', e => {
+            const obsAtual = document.getElementById('observacaoAdmin').value;
+            if (statusFormularioAtual === 'Pendente' && obsAtual && obsAtual !== observacaoAdminInicial) {
+                if (!confirm('Você tem observações não salvas. Deseja realmente sair?')) {
+                    e.preventDefault();
+                }
+            }
+        });
+
+        modalEl.addEventListener('hidden.bs.modal', () => {
+            document.getElementById('observacaoAdmin').value = '';
+            observacaoAdminInicial = '';
+            statusFormularioAtual = '';
+        });
+    }
 });
 
 function filtrarFormularios() {
-    const pesquisa = $('#campoPesquisaForm').val().toLowerCase();
-    const status = $('#filtroStatus').val();
-    const data = $('#filtroData').val();
+    const pesquisa = document.getElementById('campoPesquisaForm').value.toLowerCase();
+    const status = document.getElementById('filtroStatus').value;
+    const data = document.getElementById('filtroData').value;
     
     
     const hoje = new Date();
@@ -55,13 +50,14 @@ function filtrarFormularios() {
     const ultimos30Dias = new Date();
     ultimos30Dias.setDate(ultimos30Dias.getDate() - 30);
     
-    $('table tbody tr').each(function() {
-        const linha = $(this);
-        const nome = linha.find('.nome-cliente').text().toLowerCase();
-        const email = linha.find('small:contains("@")').text().toLowerCase();
-        const endereco = linha.find('small:contains("fa-map-marker-alt")').text().toLowerCase();
-        const statusLinha = linha.find('.indicador-status').text().toLowerCase();
-        const textoData = linha.find('.data').text();
+    document.querySelectorAll('table tbody tr').forEach(linha => {
+        const nome = linha.querySelector('.nome-cliente')?.textContent.toLowerCase() || '';
+        const emailElem = Array.from(linha.querySelectorAll('small')).find(s => s.textContent.includes('@'));
+        const email = emailElem ? emailElem.textContent.toLowerCase() : '';
+        const enderecoElem = Array.from(linha.querySelectorAll('small')).find(s => s.innerHTML.includes('fa-map-marker-alt'));
+        const endereco = enderecoElem ? enderecoElem.textContent.toLowerCase() : '';
+        const statusLinha = linha.querySelector('.indicador-status')?.textContent.toLowerCase() || '';
+        const textoData = linha.querySelector('.data')?.textContent || '';
         let correspondenciaData = true;
         
         if (data) {
@@ -79,9 +75,9 @@ function filtrarFormularios() {
         const correspondenciaStatus = !status || statusLinha === status.toLowerCase();
         
         if (correspondenciaNome && correspondenciaStatus && correspondenciaData) {
-            linha.show();
+            linha.style.display = '';
         } else {
-            linha.hide();
+            linha.style.display = 'none';
         }
     });
     
@@ -98,29 +94,34 @@ function verificarResultadosPorSecao() {
     const secoes = [
         { container: '.tabela-formularios', mensagem: '.mensagem-sem-formularios' }
     ];
-    
+
     secoes.forEach(secao => {
-        const linhasVisiveis = $(`${secao.container} tbody tr:visible`).length;
+        const linhasVisiveis = Array.from(document.querySelectorAll(`${secao.container} tbody tr`))
+            .filter(tr => tr.style.display !== 'none').length;
+        const mensagemEl = document.querySelector(secao.mensagem);
+        if (!mensagemEl) return;
         if (linhasVisiveis === 0) {
-            $(secao.mensagem).show();
+            mensagemEl.classList.remove('d-none');
         } else {
-            $(secao.mensagem).hide();
+            mensagemEl.classList.add('d-none');
         }
     });
 }
 
 
-$('#campoPesquisaForm, #filtroStatus, #filtroData').on('input change', filtrarFormularios);
+document.querySelectorAll('#campoPesquisaForm, #filtroStatus, #filtroData').forEach(el => {
+    el.addEventListener('input', filtrarFormularios);
+    el.addEventListener('change', filtrarFormularios);
+});
 
 
 function limparFiltros() {
-    
-    $('#campoPesquisaForm').val('');
-    $('#filtroStatus').val('');
-    $('#filtroData').val('');
-    
+    document.getElementById('campoPesquisaForm').value = '';
+    document.getElementById('filtroStatus').value = '';
+    document.getElementById('filtroData').value = '';
+
     filtrarFormularios();
-    
+
     toastr.info('Filtros limpos com sucesso!');
 }
 
@@ -141,7 +142,7 @@ const coresStatus = {
 
 
 function limparAlertasModal() {
-    $('#modalDetalhesFormulario .alert').remove();
+    document.querySelectorAll('#modalDetalhesFormulario .alert').forEach(el => el.remove());
 }
 
 
@@ -151,212 +152,75 @@ function visualizarFormulario(id) {
     limparAlertasModal();
     
     
-    $('#formularioIdAtual').val(id);
-    $('#observacaoAdmin').val('');
+    document.getElementById('formularioIdAtual').value = id;
+    document.getElementById('observacaoAdmin').value = '';
     observacaoAdminInicial = '';
     statusFormularioAtual = '';
     
     
-    $('#conteudoDetalhesFormulario').html(`
+    document.getElementById('conteudoDetalhesFormulario').innerHTML = `
         <div class="d-flex justify-content-center my-5">
             <div class="spinner-border text-primary" role="status">
                 <span class="visually-hidden">Carregando...</span>
             </div>
         </div>
-    `);
-    
-    
+    `;
+
     resetarPaineisConfirmacao();
-    
-    
-    $('#modalDetalhesFormulario').modal('show');
-    
-    
-    $.ajax({
-        url: `/admin/formularios-adocao/detalhes/${id}`,
-        type: 'GET',
-        success: function(resposta) {
-            
-            
-            if (typeof resposta === 'string' && resposta.trim().startsWith('{')) {
-                try {
-                    resposta = JSON.parse(resposta);
-                } catch (e) {
-                    console.error("Erro ao converter resposta de string para objeto:", e);
-                }
-            }
-            
-            
-            if (resposta) {
-                if (resposta.formulario) {
-                }
-            }
-            
-            
-            if (resposta.sucesso !== undefined) {
-                
-                if (resposta.sucesso) {
-                    
-                    if (resposta.html) {
-                        $('#conteudoDetalhesFormulario').html(resposta.html);
-                    } else if (resposta.formulario) {
-                        
-                        const htmlConteudo = construirHTMLDetalhesFormulario(resposta.formulario);
-                        $('#conteudoDetalhesFormulario').html(htmlConteudo);
-                    }
-                    
-                    
-                    if (resposta.observacoesAdmin) {
-                        $('#observacaoAdmin').val(resposta.observacoesAdmin);
-                    } else if (resposta.formulario && resposta.formulario.observacaoAdminFormulario) {
-                        $('#observacaoAdmin').val(resposta.formulario.observacaoAdminFormulario);
-                    }
-                    
-                    
-                    const status = resposta.status || (resposta.formulario ? resposta.formulario.status : null);
 
-                    observacaoAdminInicial = $('#observacaoAdmin').val();
-                    statusFormularioAtual = status;
-                    
-                    if (status !== 'Pendente') {
-                        
-                        $('#botoesAcaoPrimarios').addClass('d-none');
-                        $('#observacaoAdmin').prop('readonly', true);
-                    } else {
-                        
-                        $('#botoesAcaoPrimarios').removeClass('d-none');
-                        $('#observacaoAdmin').prop('readonly', false);
-                    }
-                } else {
-                    $('#conteudoDetalhesFormulario').html(`
-                        <div class="alert alert-warning">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            ${resposta.mensagem || 'Erro ao carregar detalhes do formulário'}
-                        </div>
-                    `);
-                }
-            } else if (resposta.formulario !== undefined) {
-                
-                const htmlConteudo = construirHTMLDetalhesFormulario(resposta.formulario);
-                $('#conteudoDetalhesFormulario').html(htmlConteudo);
-                
-                
-                $('#observacaoAdmin').val(resposta.formulario.observacaoAdminFormulario || '');
-                observacaoAdminInicial = $('#observacaoAdmin').val();
-                statusFormularioAtual = resposta.formulario.status;
-                
-                if (resposta.formulario.status !== 'Pendente') {
-                    
-                    $('#botoesAcaoPrimarios').addClass('d-none');
-                    $('#observacaoAdmin').prop('readonly', true);
-                } else {
-                    
-                    $('#botoesAcaoPrimarios').removeClass('d-none');
-                    $('#observacaoAdmin').prop('readonly', false);
-                }
+    if (!modalDetalhesFormulario) {
+        modalDetalhesFormulario = new bootstrap.Modal(document.getElementById('modalDetalhesFormulario'));
+    }
+    modalDetalhesFormulario.show();
+
+    (async () => {
+        try {
+            const response = await fetch(`/admin/formularios-adocao/detalhes/${id}`);
+            if (!response.ok) throw new Error('Falha ao obter detalhes');
+            const text = await response.text();
+            let resposta;
+            try { resposta = JSON.parse(text); } catch { resposta = { html: text }; }
+
+            let formulario = resposta.formulario || resposta.data || resposta.resultado;
+            if (!formulario && resposta.id !== undefined) formulario = resposta;
+
+            if (resposta.html) {
+                document.getElementById('conteudoDetalhesFormulario').innerHTML = resposta.html;
+            } else if (formulario) {
+                document.getElementById('conteudoDetalhesFormulario').innerHTML = construirHTMLDetalhesFormulario(formulario);
+            }
+
+            const observacao = resposta.observacoesAdmin ||
+                (formulario ? (formulario.observacaoAdminFormulario || formulario.observacaoAdmin || formulario.observacoes) : '') || '';
+            const obsInput = document.getElementById('observacaoAdmin');
+            obsInput.value = observacao;
+            observacaoAdminInicial = observacao;
+            statusFormularioAtual = resposta.status || (formulario ? formulario.status : '');
+
+            const botoesPrimarios = document.getElementById('botoesAcaoPrimarios');
+            if (statusFormularioAtual !== 'Pendente') {
+                botoesPrimarios.classList.add('d-none');
+                obsInput.readOnly = true;
             } else {
-                
-                try {
-                    
-                    
-                    let objFormulario = null;
-                    
-                    if (resposta.data && typeof resposta.data === 'object') {
-                        
-                        objFormulario = resposta.data;
-                    } else if (resposta.resultado && typeof resposta.resultado === 'object') {
-                        
-                        objFormulario = resposta.resultado;
-                    } else if (resposta.id !== undefined && resposta.status !== undefined) {
-                        
-                        objFormulario = resposta;
-                    } else {
-                        
-                        for (const key in resposta) {
-                            if (
-                                resposta[key] && 
-                                typeof resposta[key] === 'object' && 
-                                resposta[key].id !== undefined && 
-                                resposta[key].status !== undefined
-                            ) {
-                                objFormulario = resposta[key];
-                                break;
-                            }
-                        }
-                        
-                        
-                        if (!objFormulario) {
-                            objFormulario = resposta;
-                        }
-                    }
-                    
-                    
-                    const htmlConteudo = construirHTMLDetalhesFormulario(objFormulario);
-                    $('#conteudoDetalhesFormulario').html(htmlConteudo);
-                    
-                    
-                    const observacao = objFormulario.observacaoAdminFormulario ||
-                                      objFormulario.observacaoAdmin ||
-                                      objFormulario.observacoes ||
-                                      '';
-                    $('#observacaoAdmin').val(observacao);
-                    observacaoAdminInicial = $('#observacaoAdmin').val();
-                    statusFormularioAtual = objFormulario.status;
-                    
-                    
-                    if (objFormulario.status !== 'Pendente') {
-                        
-                        $('#botoesAcaoPrimarios').addClass('d-none');
-                        $('#observacaoAdmin').prop('readonly', true);
-                    } else {
-                        
-                        $('#botoesAcaoPrimarios').removeClass('d-none');
-                        $('#observacaoAdmin').prop('readonly', false);
-                    }
-                } catch (erro) {
-                    console.error("Erro ao processar resposta:", erro);
-                    $('#conteudoDetalhesFormulario').html(`
-                        <div class="alert alert-danger">
-                            <i class="fas fa-times-circle me-2"></i>
-                            Ocorreu um erro ao processar os detalhes do formulário.
-                        </div>
-                    `);
-                }
+                botoesPrimarios.classList.remove('d-none');
+                obsInput.readOnly = false;
             }
-            
-            
-            $('#botaoAprovarNoModal').off('click').on('click', function() {
-                exibirConfirmacaoAprovacao();
-            });
-            
-            $('#botaoRejeitarNoModal').off('click').on('click', function() {
-                exibirConfirmacaoRejeicao();
-            });
 
-            
-            $('#botaoCancelarAprovacao, #botaoCancelarRejeicao').off('click').on('click', function() {
-                resetarPaineisConfirmacao();
-            });
-
-            
-            $('#botaoConfirmarAprovacao').off('click').on('click', function() {
-                aprovarFormularioConfirmado();
-            });
-
-            $('#botaoConfirmarRejeicao').off('click').on('click', function() {
-                rejeitarFormularioConfirmado();
-            });
-        },
-        error: function(xhr, status, erro) {
-            $('#conteudoDetalhesFormulario').html(`
+            document.getElementById('botaoAprovarNoModal').onclick = exibirConfirmacaoAprovacao;
+            document.getElementById('botaoRejeitarNoModal').onclick = exibirConfirmacaoRejeicao;
+            document.getElementById('botaoCancelarAprovacao').onclick = resetarPaineisConfirmacao;
+            document.getElementById('botaoCancelarRejeicao').onclick = resetarPaineisConfirmacao;
+            document.getElementById('botaoConfirmarAprovacao').onclick = aprovarFormularioConfirmado;
+            document.getElementById('botaoConfirmarRejeicao').onclick = rejeitarFormularioConfirmado;
+        } catch (erro) {
+            document.getElementById('conteudoDetalhesFormulario').innerHTML = `
                 <div class="alert alert-danger">
                     <i class="fas fa-times-circle me-2"></i>
                     Ocorreu um erro ao carregar os detalhes do formulário.
-                </div>
-            `);
-            console.error("Erro na requisição:", status, erro);
+                </div>`;
+            console.error('Erro na requisição:', erro);
         }
-    });
+    })();
 }
 
 
@@ -599,13 +463,9 @@ function exibirConfirmacaoAprovacao() {
     
     limparAlertasModal();
     
-    $('#botoesAcaoPrimarios').addClass('d-none');
-    
-    
-    $('#confirmacaoRejeicao').addClass('d-none');
-    
-    
-    $('#confirmacaoAprovacao').removeClass('d-none');
+    document.getElementById('botoesAcaoPrimarios').classList.add('d-none');
+    document.getElementById('confirmacaoRejeicao').classList.add('d-none');
+    document.getElementById('confirmacaoAprovacao').classList.remove('d-none');
     
 }
 
@@ -615,24 +475,18 @@ function exibirConfirmacaoRejeicao() {
     limparAlertasModal();
     
     
-    $('#botoesAcaoPrimarios').addClass('d-none');
-    
-    
-    $('#confirmacaoAprovacao').addClass('d-none');
-    
-    
-    $('#confirmacaoRejeicao').removeClass('d-none');
+    document.getElementById('botoesAcaoPrimarios').classList.add('d-none');
+    document.getElementById('confirmacaoAprovacao').classList.add('d-none');
+    document.getElementById('confirmacaoRejeicao').classList.remove('d-none');
     
 }
 
 function resetarPaineisConfirmacao() {
     
     
-    $('#confirmacaoAprovacao').addClass('d-none');
-    $('#confirmacaoRejeicao').addClass('d-none');
-    
-    
-    $('#botoesAcaoPrimarios').removeClass('d-none');
+    document.getElementById('confirmacaoAprovacao').classList.add('d-none');
+    document.getElementById('confirmacaoRejeicao').classList.add('d-none');
+    document.getElementById('botoesAcaoPrimarios').classList.remove('d-none');
     
     
     limparAlertasModal();
@@ -640,114 +494,85 @@ function resetarPaineisConfirmacao() {
 }
 
 function aprovarFormularioConfirmado() {
-    const formularioId = $('#formularioIdAtual').val();
-    const observacaoAdmin = $('#observacaoAdmin').val();
-    
-    
-    
-    $('#botaoConfirmarAprovacao').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Processando...');
-    
-    $.ajax({
-        url: `/admin/formularios-adocao/Aprovar/${formularioId}`,
-        type: 'POST',
-        data: {
-            observacao: observacaoAdmin,
-            __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-        },
-        success: function(resposta) {
-            
-            
-            $('#botaoConfirmarAprovacao').prop('disabled', false).html('<i class="fas fa-check me-2"></i>Confirmar Aprovação');
-            
-            if (resposta.sucesso) {
+
+    const formularioId = document.getElementById('formularioIdAtual').value;
+    const observacaoAdmin = document.getElementById('observacaoAdmin').value;
+
+    const botao = document.getElementById('botaoConfirmarAprovacao');
+    botao.disabled = true;
+    botao.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processando...';
+
+    (async () => {
+        try {
+            const formData = new FormData();
+            formData.append('observacao', observacaoAdmin);
+            formData.append('__RequestVerificationToken', document.querySelector('input[name="__RequestVerificationToken"]').value);
+
+            const response = await fetch(`/admin/formularios-adocao/Aprovar/${formularioId}`, {
+                method: 'POST',
+                body: formData
+            });
+
+            const resposta = await response.json();
+            botao.disabled = false;
+            botao.innerHTML = '<i class="fas fa-check me-2"></i>Confirmar Aprovação';
+
+            if (response.ok && resposta.sucesso) {
                 toastr.success('Formulário aprovado com sucesso!');
-                setTimeout(function() {
-                    location.reload();
-                }, 1500);
+                setTimeout(() => location.reload(), 1500);
             } else {
-                
                 toastr.error(resposta.mensagem || 'Erro ao aprovar formulário.');
                 resetarPaineisConfirmacao();
-                
-                
-                if (resposta.mensagem && resposta.mensagem.includes("pet")) {
-                    $('#modalDetalhesFormulario .modal-body').prepend(`
+                if (resposta.mensagem && resposta.mensagem.includes('pet')) {
+                    document.querySelector('#modalDetalhesFormulario .modal-body').insertAdjacentHTML('afterbegin', `
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <strong>Erro!</strong> ${resposta.mensagem}
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-                        </div>
-                    `);
+                        </div>`);
                 }
             }
-        },
-        error: function(xhr, status, erro) {
-            console.error("Erro ao aprovar formulário:", erro, xhr);
-            
-            
-            $('#botaoConfirmarAprovacao').prop('disabled', false).html('<i class="fas fa-check me-2"></i>Confirmar Aprovação');
-            
-            
-            let mensagemErro = 'Erro ao aprovar formulário.';
-            
-            try {
-                if (xhr.responseText) {
-                    const respostaObj = JSON.parse(xhr.responseText);
-                    if (respostaObj && respostaObj.mensagem) {
-                        mensagemErro = respostaObj.mensagem;
-                    }
-                }
-            } catch (e) {
-                console.error("Erro ao processar resposta:", e);
-            }
-            
-            toastr.error(mensagemErro);
+        } catch (erro) {
+            console.error('Erro ao aprovar formulário:', erro);
+            botao.disabled = false;
+            botao.innerHTML = '<i class="fas fa-check me-2"></i>Confirmar Aprovação';
+            toastr.error('Erro ao aprovar formulário.');
             resetarPaineisConfirmacao();
-            
-            
-            $('#modalDetalhesFormulario .modal-body').prepend(`
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <strong>Erro!</strong> ${mensagemErro}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-                </div>
-            `);
         }
-    });
+    })();
 }
-
 function rejeitarFormularioConfirmado() {
-    const formularioId = $('#formularioIdAtual').val();
-    const observacaoAdmin = $('#observacaoAdmin').val();
-    
-    
+    const formularioId = document.getElementById('formularioIdAtual').value;
+    const observacaoAdmin = document.getElementById('observacaoAdmin').value;
+
     if (!observacaoAdmin || observacaoAdmin.trim() === '') {
         toastr.warning('Por favor, preencha a observação indicando o motivo da rejeição.');
         return;
     }
-    
-    
-    $.ajax({
-        url: `/admin/formularios-adocao/Rejeitar/${formularioId}`,
-        type: 'POST',
-        data: {
-            motivo: observacaoAdmin,
-            __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-        },
-        success: function(resposta) {
-            if (resposta.sucesso) {
+
+    (async () => {
+        try {
+            const formData = new FormData();
+            formData.append('motivo', observacaoAdmin);
+            formData.append('__RequestVerificationToken', document.querySelector('input[name="__RequestVerificationToken"]').value);
+
+            const response = await fetch(`/admin/formularios-adocao/Rejeitar/${formularioId}`, {
+                method: 'POST',
+                body: formData
+            });
+
+            const resposta = await response.json();
+            if (response.ok && resposta.sucesso) {
                 toastr.success('Formulário rejeitado com sucesso!');
-                setTimeout(function() {
-                    location.reload();
-                }, 1500);
+                setTimeout(() => location.reload(), 1500);
             } else {
                 toastr.error(resposta.mensagem || 'Erro ao rejeitar formulário.');
                 resetarPaineisConfirmacao();
             }
-        },
-        error: function() {
+        } catch (erro) {
             toastr.error('Ocorreu um erro ao processar sua solicitação.');
             resetarPaineisConfirmacao();
         }
-    });
+    })();
 }
 
 
@@ -774,100 +599,72 @@ function rejeitarFormulario(id) {
 
 function processarFormulario(id, acao, observacao = '') {
     toastr.info(`Processando ${acao === 'aprovar' ? 'aprovação' : 'rejeição'} do formulário...`);
-    
-    const token = $('input[name="__RequestVerificationToken"]').val();
-    
+    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
     processarFormularioAcao(id, acao, token, observacao);
 }
 
-function processarFormularioAcao(id, acao, token, observacao = '') {
-    const url = acao === 'aprovar' 
+async function processarFormularioAcao(id, acao, token, observacao = '') {
+    const url = acao === 'aprovar'
         ? `/admin/formularios-adocao/Aprovar/${id}`
         : `/admin/formularios-adocao/Rejeitar/${id}`;
-    
-    const data = {
-        __RequestVerificationToken: token
-    };
-    
+
+    const formData = new FormData();
+    formData.append('__RequestVerificationToken', token);
     if (acao === 'rejeitar') {
-        data.motivo = observacao;
+        formData.append('motivo', observacao);
     } else {
-        data.observacao = observacao;
+        formData.append('observacao', observacao);
     }
-    
-    $.ajax({
-        url: url,
-        method: 'POST',
-        data: data,
-        dataType: 'json',
-        success: function(resposta) {
-            
-            if (resposta && resposta.sucesso) {
-                const classeStatus = acao === 'aprovar' ? 'aprovado' : 'rejeitado';
-                const textoStatus = acao === 'aprovar' ? 'Aprovado' : 'Rejeitada';
-                const iconeStatus = acao === 'aprovar' ? 'check-circle' : 'times-circle';
-                
-                const linha = $(`table tbody tr[data-id="${id}"]`);
-                    
-                    linha.find('.indicador-status')
-                    .removeClass('pendente aprovado rejeitado cancelado aguardando-buscar')
-                    .addClass(classeStatus)
-                    .html(`${obterIconeStatus(textoStatus)} ${textoStatus}`);
-                
-                linha.find('.botoes-acao').html(`
+
+    try {
+        const response = await fetch(url, { method: 'POST', body: formData });
+        const resposta = await response.json();
+
+        if (response.ok && resposta && resposta.sucesso) {
+            const classeStatus = acao === 'aprovar' ? 'aprovado' : 'rejeitado';
+            const textoStatus = acao === 'aprovar' ? 'Aprovado' : 'Rejeitada';
+
+            const linha = document.querySelector(`table tbody tr[data-id="${id}"]`);
+            if (linha) {
+                const statusEl = linha.querySelector('.indicador-status');
+                statusEl.classList.remove('pendente', 'aprovado', 'rejeitado', 'cancelado', 'aguardando-buscar');
+                statusEl.classList.add(classeStatus);
+                statusEl.innerHTML = `${obterIconeStatus(textoStatus)} ${textoStatus}`;
+
+                linha.querySelector('.botoes-acao').innerHTML = `
                     <button class="botao-acao botao-visualizar" onclick="visualizarFormulario(${id})">
                         <i class="fas fa-eye"></i>
-                    </button>
-                `);
-                
-                linha.attr('data-status', textoStatus);
-                
-                atualizarContadoresFormularios();
-                
-                toastr.success(`Formulário ${acao === 'aprovar' ? 'aprovado' : 'rejeitado'} com sucesso!`);
-                
-                if (modalDetalhesFormulario) {
-                    modalDetalhesFormulario.hide();
-                }
-            } else {
-                toastr.error(resposta?.mensagem || `Erro ao ${acao === 'aprovar' ? 'aprovar' : 'rejeitar'} formulário`);
+                    </button>`;
+
+                linha.setAttribute('data-status', textoStatus);
             }
-        },
-        error: function(xhr, status, erro) {
-            console.error(`Erro ao ${acao} formulário:`, erro);
-            
-            
-            let mensagemErro = `Erro ao ${acao === 'aprovar' ? 'aprovar' : 'rejeitar'} formulário`;
-            
-            try {
-                const respostaJson = JSON.parse(xhr.responseText);
-                if (respostaJson && respostaJson.mensagem) {
-                    mensagemErro = respostaJson.mensagem;
-                }
-            } catch (e) {
-                console.error('Erro ao processar resposta de erro:', e);
+
+            atualizarContadoresFormularios();
+            toastr.success(`Formulário ${acao === 'aprovar' ? 'aprovado' : 'rejeitado'} com sucesso!`);
+            if (modalDetalhesFormulario) {
+                modalDetalhesFormulario.hide();
             }
-            
-            
-            toastr.error(mensagemErro);
+        } else {
+            toastr.error(resposta?.mensagem || `Erro ao ${acao === 'aprovar' ? 'aprovar' : 'rejeitar'} formulário`);
         }
-    });
+    } catch (erro) {
+        console.error(`Erro ao ${acao} formulário:`, erro);
+        toastr.error(`Erro ao ${acao === 'aprovar' ? 'aprovar' : 'rejeitar'} formulário`);
+    }
 }
 
 
 function atualizarContadoresFormularios() {
-    
-    const total = $('table tbody tr').length;
-    const pendentes = $('table tbody tr[data-status="Pendente"]').length;
-    const aprovados = $('table tbody tr[data-status="Aprovado"]').length;
-    const rejeitados = $('table tbody tr[data-status="Rejeitada"]').length;
-    const cancelados = $('table tbody tr[data-status^="Cancelad"]').length;
-    
-    
-    $('.card.resumo.total-formularios .h5').text(total);
-    $('.card.resumo.pendentes .h5').text(pendentes);
-    $('.card.resumo.aprovados .h5').text(aprovados);
-    $('.card.resumo.rejeicoes .h5').text(rejeitados + cancelados);
+    const total = document.querySelectorAll('table tbody tr').length;
+    const pendentes = document.querySelectorAll('table tbody tr[data-status="Pendente"]').length;
+    const aprovados = document.querySelectorAll('table tbody tr[data-status="Aprovado"]').length;
+    const rejeitados = document.querySelectorAll('table tbody tr[data-status="Rejeitada"]').length;
+    const cancelados = document.querySelectorAll('table tbody tr[data-status^="Cancelad"]').length;
+
+    document.querySelector('.card.resumo.total-formularios .h5').textContent = total;
+    document.querySelector('.card.resumo.pendentes .h5').textContent = pendentes;
+    document.querySelector('.card.resumo.aprovados .h5').textContent = aprovados;
+    document.querySelector('.card.resumo.rejeicoes .h5').textContent = rejeitados + cancelados;
 }
 
 
