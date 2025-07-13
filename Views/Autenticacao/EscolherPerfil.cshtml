@@ -252,35 +252,6 @@
             </div>
         </div>
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.body.classList.add('overlay-active');
-            const cards = document.querySelectorAll('.profile-card');
-            cards.forEach(card => {
-                card.addEventListener('click', () => {
-                    const destino = card.getAttribute('data-action');
-                    if (destino) {
-                        handleProfileSelection(card, destino);
-                    }
-                });
-                card.addEventListener('keydown', e => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        card.click();
-                    }
-                });
-            });
-            window.addEventListener('beforeunload', function() {
-                document.body.classList.remove('overlay-active');
-            });
-        });
-        function handleProfileSelection(element, url) {
-            element.style.pointerEvents = 'none';
-            element.style.opacity = '0.7';
-            setTimeout(() => {
-                window.location.href = url;
-            }, 180);
-        }
-    </script>
-} 
+    <script src="~/js/autenticacao/escolher-perfil.js" asp-append-version="true"></script>
+}
 } 

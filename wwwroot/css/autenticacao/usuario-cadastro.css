@@ -255,8 +255,9 @@ body:has(.etapa[data-etapa="2"].ativo) .login-container {
 }
 
 
-.etapa[data-etapa="1"].ativo ~ .botoes-navegacao #botaoVoltar {
-    display: none !important;
+/* Regra mais específica para ocultar o botão sem recorrer a !important */
+#formCadastro .etapa[data-etapa="1"].ativo ~ .botoes-navegacao #botaoVoltar {
+    display: none;
 }
 
 
