@@ -1001,7 +1001,7 @@ function aplicarEstilosModalDetalhesPet() {
 }
 
 
-function visualizarPet(petId) {
+async function visualizarPet(petId) {
     const petCard = document.querySelector(`.cartao-pet[data-id="${petId}"]`);
     if (petCard) {
         
@@ -1118,27 +1118,24 @@ function visualizarPet(petId) {
         console.error(`Não foi possível encontrar o pet com ID ${petId}`);
         
         
-        fetch(`/admin/pets/detalhes/${petId}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Erro ao carregar detalhes do pet: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data && data.sucesso) {
-                    const petData = data.dados || data;
-                    
-                    
-                    visualizarPetComDados(petData);
-                } else {
-                    toastr.error('Não foi possível carregar os detalhes do pet.');
-                }
-            })
-            .catch(error => {
-                console.error('Erro ao buscar dados do pet:', error);
-                toastr.error('Erro ao carregar detalhes do pet. Por favor, tente novamente.');
-            });
+        try {
+            const response = await fetch(`/admin/pets/detalhes/${petId}`);
+            if (!response.ok) {
+                throw new Error(`Erro ao carregar detalhes do pet: ${response.status}`);
+            }
+
+            const data = await response.json();
+            if (data && data.sucesso) {
+                const petData = data.dados || data;
+                // Utiliza a mesma função para preencher os detalhes no modal
+                visualizarPetComDados(petData);
+            } else {
+                toastr.error('Não foi possível carregar os detalhes do pet.');
+            }
+        } catch (error) {
+            console.error('Erro ao buscar dados do pet:', error);
+            toastr.error('Erro ao carregar detalhes do pet. Por favor, tente novamente.');
+        }
     }
 }
 
