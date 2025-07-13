@@ -48,11 +48,13 @@ body::before {
 }
 
 
-.navbar {
-    background-color: transparent !important;
-    background-image: none !important;
-    background: transparent !important;
-    box-shadow: none !important;
+/* Usamos o seletor `nav.navbar` para tornar esta regra mais específica
+   e remover o uso de `!important`. */
+nav.navbar {
+    background-color: transparent;
+    background-image: none;
+    background: transparent;
+    box-shadow: none;
     padding: 1rem 2rem;
     position: fixed;
     width: 100%;
@@ -61,11 +63,13 @@ body::before {
     transition: all 0.3s ease;
 }
 
-.navbar.scrolled {
-    background-color: transparent !important;
-    background-image: none !important;
-    background: transparent !important;
-    box-shadow: none !important;
+/* A mesma abordagem se aplica à versão com a classe "scrolled" */
+/* Regra igualmente reforçada para a variante ".scrolled" */
+nav.navbar.scrolled {
+    background-color: transparent;
+    background-image: none;
+    background: transparent;
+    box-shadow: none;
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
 }
@@ -873,11 +877,11 @@ body {
 }
 
 
-.navbar {
-    background-color: transparent !important;
-    background-image: none !important;
-    background: transparent !important;
-    box-shadow: none !important;
+nav.navbar {
+    background-color: transparent;
+    background-image: none;
+    background: transparent;
+    box-shadow: none;
     padding: 1rem 2rem;
     position: fixed;
     top: 0;
@@ -886,11 +890,11 @@ body {
     transition: all 0.3s ease;
 }
 
-.navbar.scrolled {
-    background-color: transparent !important;
-    background-image: none !important;
-    background: transparent !important;
-    box-shadow: none !important;
+nav.navbar.scrolled {
+    background-color: transparent;
+    background-image: none;
+    background: transparent;
+    box-shadow: none;
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
 }
