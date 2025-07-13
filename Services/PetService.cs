@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using CaotinhoAuMiau.Data;
 using CaotinhoAuMiau.Models;
+using CaotinhoAuMiau.Models.Enums;
 using CaotinhoAuMiau.Utils;
 
 namespace CaotinhoAuMiau.Services
@@ -27,8 +28,8 @@ namespace CaotinhoAuMiau.Services
             return await _contexto.Pets
                 .AnyAsync(p =>
                     p.Id != id
-                    && !string.Equals(p.Status, "Finalizado", StringComparison.OrdinalIgnoreCase)
-                    && !string.Equals(p.Status, "Adotado", StringComparison.OrdinalIgnoreCase)
+                    && p.Status != StatusPet.Finalizado
+                    && p.Status != StatusPet.Adotado
                     && string.Equals(p.Nome.Trim(), nomeNormalizado, StringComparison.OrdinalIgnoreCase));
         }
 
@@ -52,7 +53,7 @@ namespace CaotinhoAuMiau.Services
             if (novoPet)
             {
                 pet.DataCriacao = DateTime.Now;
-                pet.Status = cadastroCompleto ? "Disponível" : "Rascunho";
+                pet.Status = cadastroCompleto ? StatusPet.Disponivel : StatusPet.Rascunho;
                 pet.CadastroCompleto = cadastroCompleto;
                 if (foto != null && foto.Length > 0)
                 {
@@ -68,18 +69,18 @@ namespace CaotinhoAuMiau.Services
                     return new PetServiceResult { Sucesso = false, Mensagem = "Pet não encontrado" };
                 }
 
-                if (petExistente.Status == "Em Processo" || petExistente.Status == "Adotado")
+                if (petExistente.Status == StatusPet.EmProcesso || petExistente.Status == StatusPet.Adotado)
                 {
                     return new PetServiceResult { Sucesso = false, Mensagem = $"Não é possível editar um pet com status '{petExistente.Status}'." };
                 }
 
                 petExistente.Nome = pet.Nome?.Trim() ?? string.Empty;
-                petExistente.Status = cadastroCompleto ? "Disponível" : "Rascunho";
+                petExistente.Status = cadastroCompleto ? StatusPet.Disponivel : StatusPet.Rascunho;
                 petExistente.CadastroCompleto = cadastroCompleto;
                 petExistente.DataAtualizacao = DateTime.Now;
-                petExistente.Especie = pet.Especie?.Trim() ?? string.Empty;
+                petExistente.Especie = pet.Especie;
                 petExistente.Raca = pet.Raca?.Trim() ?? string.Empty;
-                petExistente.Sexo = pet.Sexo?.Trim() ?? string.Empty;
+                petExistente.Sexo = pet.Sexo;
                 petExistente.Porte = pet.Porte?.Trim() ?? string.Empty;
                 petExistente.Anos = pet.Anos;
                 petExistente.Meses = pet.Meses;

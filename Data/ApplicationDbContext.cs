@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using CaotinhoAuMiau.Models;
+using CaotinhoAuMiau.Models.Enums;
+using CaotinhoAuMiau.Utils;
 
 namespace CaotinhoAuMiau.Data
 {
@@ -25,11 +27,26 @@ namespace CaotinhoAuMiau.Data
             {
                 entidade.HasKey(e => e.Id);
                 entidade.Property(e => e.Nome).IsRequired().HasMaxLength(100);
-                entidade.Property(e => e.Especie).IsRequired().HasMaxLength(50);
+                entidade.Property(e => e.Especie)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasConversion(
+                        v => v.GetEnumMemberValue(),
+                        v => EnumExtensions.ParseEnumMemberValue<Especie>(v));
                 entidade.Property(e => e.Raca).IsRequired().HasMaxLength(50);
-                entidade.Property(e => e.Sexo).IsRequired().HasMaxLength(20);
+                entidade.Property(e => e.Sexo)
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .HasConversion(
+                        v => v.GetEnumMemberValue(),
+                        v => EnumExtensions.ParseEnumMemberValue<SexoPet>(v));
                 entidade.Property(e => e.Porte).IsRequired().HasMaxLength(20);
-                entidade.Property(e => e.Status).IsRequired().HasMaxLength(50);
+                entidade.Property(e => e.Status)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasConversion(
+                        v => v.GetEnumMemberValue(),
+                        v => EnumExtensions.ParseEnumMemberValue<StatusPet>(v));
                 entidade.Property(e => e.Descricao).HasMaxLength(500);
                 entidade.Property(e => e.NomeArquivoImagem).HasMaxLength(255);
             });

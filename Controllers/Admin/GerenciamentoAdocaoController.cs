@@ -4,6 +4,7 @@ using CaotinhoAuMiau.Models;
 using CaotinhoAuMiau.Data;
 using CaotinhoAuMiau.Models.ViewModels.Admin;
 using CaotinhoAuMiau.Models.ViewModels.Usuario;
+using CaotinhoAuMiau.Models.Enums;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
@@ -49,7 +50,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 adocao.Status = "Expirada";
                 if (adocao.Pet != null)
                 {
-                    adocao.Pet.Status = "Disponível";
+                    adocao.Pet.Status = StatusPet.Disponivel;
                 }
             }
             if (adocoesExpiradas.Any())
@@ -199,7 +200,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 var pet = await _contexto.Pets.FindAsync(adocao.PetId);
                 if (pet != null)
                 {
-                    pet.Status = "Em Processo";
+                    pet.Status = StatusPet.EmProcesso;
                 }
                 
                 if (adocao.Usuario != null)
@@ -267,7 +268,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 var pet = await _contexto.Pets.FindAsync(adocao.PetId);
                 if (pet != null)
                 {
-                    pet.Status = "Disponível";
+                    pet.Status = StatusPet.Disponivel;
                 }
                 
                 if (adocao.Usuario != null)
@@ -378,7 +379,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 var pet = await _contexto.Pets.FindAsync(adocao.PetId);
                 if (pet != null)
                 {
-                    pet.Status = "Disponível";
+                    pet.Status = StatusPet.Disponivel;
                 }
 
                 var formulario = await _contexto.FormulariosAdocao
@@ -463,9 +464,9 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 adocao.DataResposta = DateTime.Now;
                 
                 var pet = await _contexto.Pets.FindAsync(adocao.PetId);
-                if (pet != null && pet.Status != "Em Processo")
+                if (pet != null && pet.Status != StatusPet.EmProcesso)
                 {
-                    pet.Status = "Em Processo";
+                    pet.Status = StatusPet.EmProcesso;
                 }
                 
                 if (adocao.Usuario != null)
@@ -520,9 +521,9 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 adocao.DataResposta = DateTime.Now;
                 
                 var pet = await _contexto.Pets.FindAsync(adocao.PetId);
-                if (pet != null && pet.Status != "Em Processo")
+                if (pet != null && pet.Status != StatusPet.EmProcesso)
                 {
-                    pet.Status = "Em Processo";
+                    pet.Status = StatusPet.EmProcesso;
                 }
 
                 var formulario = await _contexto.FormulariosAdocao
@@ -598,7 +599,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     return Json(new { sucesso = false, mensagem = "Pet não encontrado." });
                 }
 
-                pet.Status = "Adotado";
+                pet.Status = StatusPet.Adotado;
 
                 adocao.Status = "Finalizada";
                 adocao.DataFinalizacao = DateTime.Now;
@@ -814,16 +815,16 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     switch (novoStatus)
                     {
                         case "Finalizada":
-                            pet.Status = "Adotado";
+                            pet.Status = StatusPet.Adotado;
                             break;
                         case "Cancelada":
-                            pet.Status = "Disponível";
+                            pet.Status = StatusPet.Disponivel;
                             break;
                         case "Aprovado":
-                            pet.Status = "Em Processo";
+                            pet.Status = StatusPet.EmProcesso;
                             break;
                         case "Aguardando buscar":
-                            pet.Status = "Em Processo";
+                            pet.Status = StatusPet.EmProcesso;
                             break;
                         default:
                             break;
@@ -1047,7 +1048,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
             var pet = await _contexto.Pets.FindAsync(adocao.PetId);
             if (pet != null)
             {
-                pet.Status = "Adotado";
+                pet.Status = StatusPet.Adotado;
             }
 
             var formulario = await _contexto.FormulariosAdocao
