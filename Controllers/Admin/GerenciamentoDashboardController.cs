@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 using CaotinhoAuMiau.Utils;
 
 namespace CaotinhoAuMiau.Controllers.Admin
@@ -17,10 +18,12 @@ namespace CaotinhoAuMiau.Controllers.Admin
     public class GerenciamentoDashboardController : Controller
     {
         private readonly ApplicationDbContext _contexto;
+        private readonly ILogger<GerenciamentoDashboardController> _logger;
 
-        public GerenciamentoDashboardController(ApplicationDbContext contexto)
+        public GerenciamentoDashboardController(ApplicationDbContext contexto, ILogger<GerenciamentoDashboardController> logger)
         {
             _contexto = contexto;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -83,7 +86,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erro ao carregar dashboard: {ex.Message}");
+                _logger.LogError(ex, "Erro ao carregar dashboard");
             }
 
             return View("~/Views/Admin/GerenciamentoDashboard.cshtml", dashboardViewModel);
@@ -138,7 +141,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 estatisticas.UsuariosPorMes.Clear();
                 estatisticas.TotalUsuariosAcumulados.Clear();
                 
-                Console.WriteLine($"Erro ao configurar dados dos gráficos: {ex.Message}");
+                _logger.LogError(ex, "Erro ao configurar dados dos gráficos");
                 
                 estatisticas.MesesAdocoes.Add("Sem dados");
                 estatisticas.AdocoesPorMes.Add(0);

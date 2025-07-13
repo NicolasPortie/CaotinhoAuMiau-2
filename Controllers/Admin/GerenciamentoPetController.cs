@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Authorization;
 using CaotinhoAuMiau.Services;
 using CaotinhoAuMiau.Utils;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 
 namespace CaotinhoAuMiau.Controllers.Admin
 {
@@ -28,13 +29,15 @@ namespace CaotinhoAuMiau.Controllers.Admin
         private readonly IWebHostEnvironment _ambiente;
         private readonly NotificacaoServico _servicoNotificacao;
         private readonly IPetService _petService;
+        private readonly ILogger<GerenciamentoPetController> _logger;
 
-        public GerenciamentoPetController(ApplicationDbContext contexto, IWebHostEnvironment ambiente, NotificacaoServico servicoNotificacao, IPetService petService)
+        public GerenciamentoPetController(ApplicationDbContext contexto, IWebHostEnvironment ambiente, NotificacaoServico servicoNotificacao, IPetService petService, ILogger<GerenciamentoPetController> logger)
         {
             _contexto = contexto;
             _ambiente = ambiente;
             _servicoNotificacao = servicoNotificacao;
             _petService = petService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -249,10 +252,10 @@ namespace CaotinhoAuMiau.Controllers.Admin
         {
             try
             {
-                Console.WriteLine("=========== INÍCIO DO LOG DE CADASTRO DE PET ===========");
-                Console.WriteLine($"Recebendo cadastro de pet: {modelo?.Nome ?? "null"}, Espécie: {modelo?.Especie ?? "null"}");
-                Console.WriteLine($"É rascunho: {modelo?.CadastroCompleto == false}");
-                Console.WriteLine($"Imagem recebida: {(imagemUpload != null ? $"Sim, nome: {imagemUpload.FileName}, tamanho: {imagemUpload.Length} bytes" : "Não")}");
+                _logger.LogInformation("=========== INÍCIO DO LOG DE CADASTRO DE PET ===========");
+                _logger.LogInformation("Recebendo cadastro de pet: {Nome}, Espécie: {Especie}", modelo?.Nome, modelo?.Especie);
+                _logger.LogInformation("É rascunho: {Rascunho}", modelo?.CadastroCompleto == false);
+                _logger.LogInformation("Imagem recebida: {InfoImagem}", imagemUpload != null ? $"Sim, nome: {imagemUpload.FileName}, tamanho: {imagemUpload.Length} bytes" : "Não");
                 
                 if (modelo == null)
                 {
@@ -313,8 +316,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erro ao cadastrar pet: {ex.Message}");
-                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                _logger.LogError(ex, "Erro ao cadastrar pet");
                 return Json(new { sucesso = false, mensagem = $"Erro ao processar cadastro: {ex.Message}" });
             }
         }

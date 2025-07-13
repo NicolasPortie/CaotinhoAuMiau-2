@@ -60,26 +60,26 @@ namespace CaotinhoAuMiau.Controllers.Autenticacao
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ProcessarLoginAsync(CaotinhoAuMiau.Models.ViewModels.Comuns.AutenticacaoLoginViewModel modelo, string returnUrl = "")
         {
-            System.Diagnostics.Debug.WriteLine($"==== PROCESSANDO LOGIN ====");
-            System.Diagnostics.Debug.WriteLine($"ReturnUrl recebida: {returnUrl}");
+            _logger.LogInformation("==== PROCESSANDO LOGIN ====");
+            _logger.LogInformation("ReturnUrl recebida: {ReturnUrl}", returnUrl);
             
             if (User?.Identity?.IsAuthenticated == true)
             {
-                System.Diagnostics.Debug.WriteLine($"Usuário já está autenticado");
+                _logger.LogInformation("Usuário já está autenticado");
                 
                 if (User.IsInRole("Administrador"))
                 {
-                    System.Diagnostics.Debug.WriteLine($"Usuário é administrador, redirecionando para /admin/index");
+                    _logger.LogInformation("Usuário é administrador, redirecionando para /admin/index");
                     return RedirectToAction("Index", "Painel", new { area = "Admin" });
                 }
                 
-                System.Diagnostics.Debug.WriteLine($"Usuário não é administrador, redirecionando para página inicial");
+                _logger.LogInformation("Usuário não é administrador, redirecionando para página inicial");
                 return RedirectToAction("Index", "Home");
             }
             
             if (!ModelState.IsValid)
             {
-                System.Diagnostics.Debug.WriteLine($"Modelo de dados inválido, retornando para a tela de login");
+                _logger.LogInformation("Modelo de dados inválido, retornando para a tela de login");
                 return View("~/Views/Autenticacao/Login.cshtml", modelo);
             }
             
