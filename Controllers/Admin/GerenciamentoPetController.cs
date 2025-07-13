@@ -258,25 +258,14 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 {
                     return Json(new { sucesso = false, erros = new Dictionary<string, string> { { "Geral", "Dados do pet não fornecidos." } } });
                 }
-                
-                if (string.IsNullOrEmpty(modelo.Nome))
-                {
-                    return Json(new { sucesso = false, mensagem = "O nome do pet é obrigatório." });
-                }
 
-                if (modelo.CadastroCompleto && string.IsNullOrEmpty(modelo.NomeArquivoImagem))
+                if (!ModelState.IsValid)
                 {
-                    return Json(new { sucesso = false, mensagem = "A imagem do pet é obrigatória para cadastro completo." });
-                }
-
-                if (modelo.CadastroCompleto)
-                {
-                    if (modelo.Especie == null || string.IsNullOrEmpty(modelo.Raca) ||
-                        modelo.Sexo == null || string.IsNullOrEmpty(modelo.Porte) ||
-                        string.IsNullOrEmpty(modelo.Descricao))
-                    {
-                        return Json(new { sucesso = false, mensagem = "Todos os campos são obrigatórios para cadastro completo." });
-                    }
+                    var erros = ModelState.Where(ms => ms.Value.Errors.Count > 0)
+                        .ToDictionary(
+                            kvp => kvp.Key,
+                            kvp => kvp.Value.Errors.First().ErrorMessage);
+                    return Json(new { sucesso = false, erros });
                 }
 
                 var pet = new Pet
