@@ -73,7 +73,7 @@
                         <option value="">Todas</option>
                         @foreach (var especie in Model.Especies)
                         {
-                            <option value="@especie.Value" selected="@(especie.Value == Model.FiltroEspecie)">@especie.Text</option>
+                            <option value="@especie.Value" selected="@(Model.FiltroEspecie?.GetEnumMemberValue() == especie.Value)">@especie.Text</option>
                         }
                     </select>
                 </div>
@@ -83,7 +83,7 @@
                         <option value="">Todos</option>
                         @foreach (var sexo in Model.Sexos)
                         {
-                            <option value="@sexo.Value" selected="@(sexo.Value == Model.FiltroSexo)">@sexo.Text</option>
+                            <option value="@sexo.Value" selected="@(Model.FiltroSexo?.GetEnumMemberValue() == sexo.Value)">@sexo.Text</option>
                         }
                     </select>
                 </div>
