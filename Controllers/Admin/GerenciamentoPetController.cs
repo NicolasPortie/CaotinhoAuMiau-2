@@ -26,12 +26,14 @@ namespace CaotinhoAuMiau.Controllers.Admin
         private readonly ApplicationDbContext _contexto;
         private readonly IWebHostEnvironment _ambiente;
         private readonly NotificacaoServico _servicoNotificacao;
+        private readonly PetService _petService;
 
-        public GerenciamentoPetController(ApplicationDbContext contexto, IWebHostEnvironment ambiente, NotificacaoServico servicoNotificacao)
+        public GerenciamentoPetController(ApplicationDbContext contexto, IWebHostEnvironment ambiente, NotificacaoServico servicoNotificacao, PetService petService)
         {
             _contexto = contexto;
             _ambiente = ambiente;
             _servicoNotificacao = servicoNotificacao;
+            _petService = petService;
         }
 
         [HttpGet]
@@ -112,19 +114,13 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 
                 if (!string.IsNullOrWhiteSpace(pet.Nome))
                 {
-                    var nomePetTrim = pet.Nome.Trim();
-                    var petExistenteComMesmoNome = await _contexto.Pets
-                        .Where(p => p.Nome.ToLower() == nomePetTrim.ToLower() 
-                                 && p.Id != pet.Id
-                                 && p.Status != "Finalizado" 
-                                 && p.Status != "Adotado")
-                        .FirstOrDefaultAsync();
-                    
-                    if (petExistenteComMesmoNome != null)
+                    bool nomeDuplicado = await _petService.NomeJaExisteAsync(pet.Nome, pet.Id);
+
+                    if (nomeDuplicado)
                     {
-                        return Json(new { 
-                            sucesso = false, 
-                            mensagem = $"Já existe um pet ativo com o nome '{pet.Nome}'. Por favor, escolha um nome diferente ou adicione um detalhe para diferenciar." 
+                        return Json(new {
+                            sucesso = false,
+                            mensagem = $"Já existe um pet ativo com o nome '{pet.Nome}'. Por favor, escolha um nome diferente ou adicione um detalhe para diferenciar."
                         });
                     }
                 }
