@@ -39,7 +39,7 @@ namespace CaotinhoAuMiau.Services
                     PetId = a.PetId,
                     NomePet = a.Pet.Nome,
                     NomeArquivoImagem = a.Pet.NomeArquivoImagem,
-                    EspeciePet = a.Pet.Especie,
+                    EspeciePet = a.Pet.Especie.GetEnumMemberValue(),
                     RacaPet = a.Pet.Raca,
                     DataEnvio = a.DataEnvio,
                     DataResposta = a.DataResposta,

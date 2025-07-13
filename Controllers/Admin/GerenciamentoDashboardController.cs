@@ -56,18 +56,18 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 dashboardViewModel.Estatisticas.FormulariosReprovados = await _contexto.FormulariosAdocao.CountAsync(f => f.Status == "Rejeitada");
                 
                 dashboardViewModel.Estatisticas.TotalPets = await _contexto.Pets.CountAsync();
-                dashboardViewModel.Estatisticas.PetsAdotados = await _contexto.Pets.CountAsync(p => p.Status == "Adotado");
-                dashboardViewModel.Estatisticas.TotalCachorros = await _contexto.Pets.CountAsync(p => p.Especie == "Cachorro");
-                dashboardViewModel.Estatisticas.TotalGatos = await _contexto.Pets.CountAsync(p => p.Especie == "Gato");
-                dashboardViewModel.Estatisticas.CachorrosAdotados = await _contexto.Pets.CountAsync(p => p.Especie == "Cachorro" && p.Status == "Adotado");
-                dashboardViewModel.Estatisticas.GatosAdotados = await _contexto.Pets.CountAsync(p => p.Especie == "Gato" && p.Status == "Adotado");
-                dashboardViewModel.Estatisticas.PetsEmProcesso = await _contexto.Pets.CountAsync(p => p.Status == "Em Processo");
+                dashboardViewModel.Estatisticas.PetsAdotados = await _contexto.Pets.CountAsync(p => p.Status == StatusPet.Adotado);
+                dashboardViewModel.Estatisticas.TotalCachorros = await _contexto.Pets.CountAsync(p => p.Especie == Especie.Cachorro);
+                dashboardViewModel.Estatisticas.TotalGatos = await _contexto.Pets.CountAsync(p => p.Especie == Especie.Gato);
+                dashboardViewModel.Estatisticas.CachorrosAdotados = await _contexto.Pets.CountAsync(p => p.Especie == Especie.Cachorro && p.Status == StatusPet.Adotado);
+                dashboardViewModel.Estatisticas.GatosAdotados = await _contexto.Pets.CountAsync(p => p.Especie == Especie.Gato && p.Status == StatusPet.Adotado);
+                dashboardViewModel.Estatisticas.PetsEmProcesso = await _contexto.Pets.CountAsync(p => p.Status == StatusPet.EmProcesso);
                 
                 dashboardViewModel.Estatisticas.TotalUsuarios = await _contexto.Usuarios.CountAsync();
                 dashboardViewModel.Estatisticas.TotalAdmins = await _contexto.Colaboradores.CountAsync();
                 dashboardViewModel.Estatisticas.TotalAdotantes = await _contexto.Usuarios.CountAsync(u => u.Ativo);
                 
-                dashboardViewModel.Estatisticas.PetsDisponiveis = await _contexto.Pets.CountAsync(p => p.Status == "Disponível");
+                dashboardViewModel.Estatisticas.PetsDisponiveis = await _contexto.Pets.CountAsync(p => p.Status == StatusPet.Disponivel);
                 dashboardViewModel.Estatisticas.FormulariosPendentesHoje = await _contexto.FormulariosAdocao.CountAsync(f => f.Status == "Pendente" && f.DataEnvio.Date == DateTime.Today);
                 dashboardViewModel.Estatisticas.PetsAguardandoRetirada = await _contexto.FormulariosAdocao.CountAsync(f => f.Status == "Aguardando buscar");
                 dashboardViewModel.Estatisticas.AdocoesFinalizadas = await _contexto.FormulariosAdocao.CountAsync(f => f.Status == "Finalizada");
@@ -271,7 +271,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                         Descricao = $"Novo pet cadastrado: {p.Nome}",
                         NomeUsuario = "",
                         DataOcorrencia = p.DataCriacao,
-                        Status = p.Status
+                        Status = p.Status.GetEnumMemberValue()
                     })
                     .ToListAsync();
                     

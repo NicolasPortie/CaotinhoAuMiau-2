@@ -326,7 +326,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     }
 
                     TempData["Erro"] = "É necessário fornecer um motivo para o cancelamento.";
-                    return RedirectToAction(nameof(Listar));
+                    return RedirectToAction(nameof(ListarAsync));
                 }
 
                 var adocao = await _contexto.Adocoes
@@ -342,7 +342,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     }
 
                     TempData["Erro"] = "Adoção não encontrada.";
-                    return RedirectToAction(nameof(Listar));
+                    return RedirectToAction(nameof(ListarAsync));
                 }
 
                 var adminIdStr = User.ObterIdUsuario();
@@ -357,7 +357,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                             return Json(new { sucesso = false, mensagem = msg });
                         }
                         TempData["Erro"] = msg;
-                        return RedirectToAction(nameof(Listar));
+                        return RedirectToAction(nameof(ListarAsync));
                     }
                 }
 
@@ -370,7 +370,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     }
 
                     TempData["Erro"] = msg;
-                    return RedirectToAction(nameof(Listar));
+                    return RedirectToAction(nameof(ListarAsync));
                 }
 
                 var observacaoCancelamento = $"Cancelado pelo Administrador: {motivo}";
@@ -425,7 +425,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 }
 
                 TempData["Sucesso"] = "Adoção cancelada com sucesso!";
-                return RedirectToAction(nameof(Listar));
+                return RedirectToAction(nameof(ListarAsync));
             }
             catch (Exception ex)
             {
@@ -435,7 +435,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 }
 
                 TempData["Erro"] = $"Erro ao cancelar adoção: {ex.Message}";
-                return RedirectToAction(nameof(Listar));
+                return RedirectToAction(nameof(ListarAsync));
             }
         }
 

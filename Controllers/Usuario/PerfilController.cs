@@ -137,7 +137,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
                 await transacao.CommitAsync();
 
                 TempData["Sucesso"] = "Perfil atualizado com sucesso!";
-                return RedirectToAction(nameof(ExibirPerfil));
+                return RedirectToAction(nameof(ExibirPerfilAsync));
             }
             catch (Exception ex)
             {
@@ -192,7 +192,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
                     return Json(new { success = false, message = "Usuário não possui foto de perfil" });
                 }
 
-                return RedirectToAction(nameof(ExibirPerfil));
+                return RedirectToAction(nameof(ExibirPerfilAsync));
             }
             catch (Exception ex)
             {
@@ -202,7 +202,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
                 }
                 
                 TempData["Erro"] = $"Erro ao remover foto: {ex.Message}";
-                return RedirectToAction(nameof(ExibirPerfil));
+                return RedirectToAction(nameof(ExibirPerfilAsync));
             }
         }
 
@@ -256,7 +256,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
                 await transacao.CommitAsync();
 
                 TempData["Sucesso"] = "Senha alterada com sucesso!";
-                return RedirectToAction(nameof(ExibirPerfil));
+                return RedirectToAction(nameof(ExibirPerfilAsync));
             }
             catch (Exception ex)
             {
