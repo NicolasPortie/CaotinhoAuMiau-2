@@ -1,0 +1,16 @@
+@* Barra de navegação pública reutilizada pelas páginas que não exigem autenticação *@
+<nav class="navbar">
+    <div class="navbar-container">
+        <a href="@Url.Action("Index", "Home")" class="navbar-brand">
+            <i class="fas fa-paw"></i> CaotinhoAuMiau
+        </a>
+        <div class="navbar-links">
+            <a href="/usuario/login" class="navbar-link">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </a>
+            <a href="/usuario/cadastro" class="navbar-link">
+                <i class="fas fa-user-plus"></i> Cadastro
+            </a>
+        </div>
+    </div>
+</nav>

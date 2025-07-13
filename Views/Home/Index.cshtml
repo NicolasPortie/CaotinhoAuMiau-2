@@ -20,21 +20,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-container">
-            <a href="@Url.Action("Index", "Home")" class="navbar-brand">
-                <i class="fas fa-paw"></i> CaotinhoAuMiau
-            </a>
-            <div class="navbar-links">
-                <a href="/usuario/login" class="navbar-link">
-                    <i class="fas fa-sign-in-alt"></i> Login
-                </a>
-                <a href="/usuario/cadastro" class="navbar-link">
-                    <i class="fas fa-user-plus"></i> Cadastro
-                </a>
-            </div>
-        </div>
-    </nav>
+        <partial name="_NavbarPublic" />
 
     <section class="banner container-fluid p-0">
         <div class="conteudo-banner">
