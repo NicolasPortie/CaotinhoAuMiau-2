@@ -25,11 +25,11 @@ namespace CaotinhoAuMiau.Data
             {
                 entidade.HasKey(e => e.Id);
                 entidade.Property(e => e.Nome).IsRequired().HasMaxLength(100);
-                entidade.Property(e => e.Especie).IsRequired().HasMaxLength(50);
+                entidade.Property(e => e.Especie).IsRequired().HasMaxLength(50).HasConversion<string>();
                 entidade.Property(e => e.Raca).IsRequired().HasMaxLength(50);
-                entidade.Property(e => e.Sexo).IsRequired().HasMaxLength(20);
+                entidade.Property(e => e.Sexo).IsRequired().HasMaxLength(20).HasConversion<string>();
                 entidade.Property(e => e.Porte).IsRequired().HasMaxLength(20);
-                entidade.Property(e => e.Status).IsRequired().HasMaxLength(50);
+                entidade.Property(e => e.Status).IsRequired().HasMaxLength(50).HasConversion<string>();
                 entidade.Property(e => e.Descricao).HasMaxLength(500);
                 entidade.Property(e => e.NomeArquivoImagem).HasMaxLength(255);
             });
@@ -63,7 +63,7 @@ namespace CaotinhoAuMiau.Data
             construtorModelo.Entity<FormularioAdocao>(entidade =>
             {
                 entidade.HasKey(e => e.Id);
-                entidade.Property(e => e.Status).IsRequired().HasMaxLength(50);
+                entidade.Property(e => e.Status).IsRequired().HasMaxLength(50).HasConversion<string>();
                 entidade.Property(e => e.ObservacaoAdminFormulario).HasMaxLength(500);
                 entidade.Property(e => e.UsuarioId).IsRequired();
                 entidade.Property(e => e.PetId).IsRequired();
@@ -73,7 +73,7 @@ namespace CaotinhoAuMiau.Data
             construtorModelo.Entity<Adocao>(entidade =>
             {
                 entidade.HasKey(e => e.Id);
-                entidade.Property(e => e.Status).IsRequired().HasMaxLength(20);
+                entidade.Property(e => e.Status).IsRequired().HasMaxLength(20).HasConversion<string>();
                 entidade.Property(e => e.UsuarioId).IsRequired();
                 entidade.Property(e => e.PetId).IsRequired();
             });

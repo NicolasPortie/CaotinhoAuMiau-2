@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using CaotinhoAuMiau.Models.Enums;
 
 namespace CaotinhoAuMiau.Models
 {
@@ -18,7 +19,7 @@ namespace CaotinhoAuMiau.Models
         public DateTime DataEnvio { get; set; } = DateTime.Now;
         public DateTime? DataResposta { get; set; }
         public DateTime? DataFinalizacao { get; set; }
-        public string Status { get; set; } = "Pendente";  
+        public StatusAdocao Status { get; set; } = StatusAdocao.Pendente;
         public string? ObservacoesCancelamento { get; set; }
 
         public virtual Pet? Pet { get; set; }

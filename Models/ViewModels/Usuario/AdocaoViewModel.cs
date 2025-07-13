@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using CaotinhoAuMiau.Models;
+using CaotinhoAuMiau.Models.Enums;
 
 namespace CaotinhoAuMiau.Models.ViewModels.Usuario
 {
@@ -14,7 +15,7 @@ namespace CaotinhoAuMiau.Models.ViewModels.Usuario
         public CaotinhoAuMiau.Models.Usuario Usuario { get; set; } = null!;
         public DateTime DataEnvio { get; set; } = DateTime.Now;
         public DateTime? DataResposta { get; set; }
-        public string Status { get; set; } = "Pendente";
+        public StatusFormulario Status { get; set; } = StatusFormulario.Pendente;
         public string? ObservacaoAdminFormulario { get; set; }
         public string? ObservacoesCancelamento { get; set; }
 

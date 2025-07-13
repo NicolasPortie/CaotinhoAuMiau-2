@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using CaotinhoAuMiau.Services;
 using System.Text.Json;
 using CaotinhoAuMiau.Utils;
+using CaotinhoAuMiau.Models.Enums;
 
 namespace CaotinhoAuMiau.Controllers.Admin
 {
@@ -42,14 +43,14 @@ namespace CaotinhoAuMiau.Controllers.Admin
             // Lógica de expiração automática
             var adocoesExpiradas = await _contexto.Adocoes
                 .Include(a => a.Pet)
-                .Where(a => a.Status == "Aguardando buscar" && a.DataResposta.HasValue && a.DataResposta.Value.AddDays(10) < DateTime.Now)
+                .Where(a => a.Status == StatusAdocao.AguardandoBuscar && a.DataResposta.HasValue && a.DataResposta.Value.AddDays(10) < DateTime.Now)
                 .ToListAsync();
             foreach (var adocao in adocoesExpiradas)
             {
-                adocao.Status = "Expirada";
+                adocao.Status = StatusAdocao.Expirada;
                 if (adocao.Pet != null)
                 {
-                    adocao.Pet.Status = "Disponível";
+                    adocao.Pet.Status = StatusPet.Disponivel;
                 }
             }
             if (adocoesExpiradas.Any())
@@ -187,19 +188,19 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     }
                 }
                 
-                if (adocao.Status == "Aprovado" || adocao.Status == "Rejeitada" ||
-                    adocao.Status == "Cancelada")
+                if (adocao.Status == StatusAdocao.Aprovado || adocao.Status == StatusAdocao.Rejeitada ||
+                    adocao.Status == StatusAdocao.Cancelada)
                 {
                     return Json(new { sucesso = false, mensagem = $"Esta adoção já foi {adocao.Status.ToLower()}." });
                 }
                 
-                adocao.Status = "Aprovado";
+                adocao.Status = StatusAdocao.Aprovado;
                 adocao.DataResposta = DateTime.Now;
                 
                 var pet = await _contexto.Pets.FindAsync(adocao.PetId);
                 if (pet != null)
                 {
-                    pet.Status = "Em Processo";
+                    pet.Status = StatusPet.EmProcesso;
                 }
                 
                 if (adocao.Usuario != null)
@@ -254,20 +255,20 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     return Json(new { sucesso = false, mensagem = "É necessário fornecer um motivo para a rejeição." });
                 }
                 
-                if (adocao.Status == "Aprovado" || adocao.Status == "Rejeitada" ||
-                    adocao.Status == "Cancelada")
+                if (adocao.Status == StatusAdocao.Aprovado || adocao.Status == StatusAdocao.Rejeitada ||
+                    adocao.Status == StatusAdocao.Cancelada)
                 {
                     return Json(new { sucesso = false, mensagem = $"Esta adoção já foi {adocao.Status.ToLower()}." });
                 }
                 
-                adocao.Status = "Rejeitada";
+                adocao.Status = StatusAdocao.Rejeitada;
                 adocao.DataResposta = DateTime.Now;
                 adocao.ObservacoesCancelamento = motivo;
                 
                 var pet = await _contexto.Pets.FindAsync(adocao.PetId);
                 if (pet != null)
                 {
-                    pet.Status = "Disponível";
+                    pet.Status = StatusPet.Disponivel;
                 }
                 
                 if (adocao.Usuario != null)
@@ -357,7 +358,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     }
                 }
 
-                if (adocao.Status == "Finalizada" || adocao.Status == "Cancelada")
+                if (adocao.Status == StatusAdocao.Finalizada || adocao.Status == StatusAdocao.Cancelada)
                 {
                     var msg = $"Não é possível cancelar uma adoção que já está {adocao.Status.ToLower()}.";
                     if (isAjax)
@@ -371,14 +372,14 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
                 var observacaoCancelamento = $"Cancelado pelo Administrador: {motivo}";
 
-                adocao.Status = "Cancelado pelo Admin";
+                adocao.Status = StatusAdocao.CanceladoPeloAdmin;
                 adocao.DataFinalizacao = DateTime.Now;
                 adocao.ObservacoesCancelamento = observacaoCancelamento;
 
                 var pet = await _contexto.Pets.FindAsync(adocao.PetId);
                 if (pet != null)
                 {
-                    pet.Status = "Disponível";
+                    pet.Status = StatusPet.Disponivel;
                 }
 
                 var formulario = await _contexto.FormulariosAdocao
@@ -451,7 +452,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     return Json(new { sucesso = false, mensagem = "Adoção não encontrada." });
                 }
                 
-                if (adocao.Status != "Aprovado")
+                if (adocao.Status != StatusAdocao.Aprovado)
                 {
                     return Json(new { 
                         sucesso = false, 
@@ -459,13 +460,13 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     });
                 }
                 
-                adocao.Status = "Aguardando buscar";
+                adocao.Status = StatusAdocao.AguardandoBuscar;
                 adocao.DataResposta = DateTime.Now;
                 
                 var pet = await _contexto.Pets.FindAsync(adocao.PetId);
-                if (pet != null && pet.Status != "Em Processo")
+                if (pet != null && pet.Status != StatusPet.EmProcesso)
                 {
-                    pet.Status = "Em Processo";
+                    pet.Status = StatusPet.EmProcesso;
                 }
                 
                 if (adocao.Usuario != null)
@@ -508,7 +509,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     return Json(new { sucesso = false, mensagem = "Adoção não encontrada." });
                 }
                 
-                if (adocao.Status != "Aprovado")
+                if (adocao.Status != StatusAdocao.Aprovado)
                 {
                     return Json(new { 
                         sucesso = false, 
@@ -516,13 +517,13 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     });
                 }
                 
-                adocao.Status = "Aguardando buscar";
+                adocao.Status = StatusAdocao.AguardandoBuscar;
                 adocao.DataResposta = DateTime.Now;
                 
                 var pet = await _contexto.Pets.FindAsync(adocao.PetId);
-                if (pet != null && pet.Status != "Em Processo")
+                if (pet != null && pet.Status != StatusPet.EmProcesso)
                 {
-                    pet.Status = "Em Processo";
+                    pet.Status = StatusPet.EmProcesso;
                 }
 
                 var formulario = await _contexto.FormulariosAdocao
@@ -530,7 +531,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
                 if (formulario != null)
                 {
-                    formulario.Status = "Aguardando buscar";
+                    formulario.Status = StatusFormulario.AguardandoBuscar;
                     if (formulario.DataResposta == null)
                     {
                         formulario.DataResposta = DateTime.Now;
@@ -577,17 +578,17 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     return Json(new { sucesso = false, mensagem = "Adoção não encontrada." });
                 }
 
-                if (adocao.Status == "Finalizada")
+                if (adocao.Status == StatusAdocao.Finalizada)
                 {
                     return Json(new { sucesso = false, mensagem = "Esta adoção já está finalizada." });
                 }
 
-                if (adocao.Status == "Cancelada")
+                if (adocao.Status == StatusAdocao.Cancelada)
                 {
                     return Json(new { sucesso = false, mensagem = "Não é possível finalizar uma adoção cancelada." });
                 }
 
-                if (adocao.Status != "Aguardando buscar" && adocao.Status != "Aprovado")
+                if (adocao.Status != StatusAdocao.AguardandoBuscar && adocao.Status != StatusAdocao.Aprovado)
                 {
                     return Json(new { sucesso = false, mensagem = $"Não é possível finalizar uma adoção com status '{adocao.Status}'. A adoção deve estar em 'Aguardando buscar' ou 'Aprovado'." });
                 }
@@ -598,9 +599,9 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     return Json(new { sucesso = false, mensagem = "Pet não encontrado." });
                 }
 
-                pet.Status = "Adotado";
+                pet.Status = StatusPet.Adotado;
 
-                adocao.Status = "Finalizada";
+                adocao.Status = StatusAdocao.Finalizada;
                 adocao.DataFinalizacao = DateTime.Now;
                 
                 var formulario = await _contexto.FormulariosAdocao
@@ -786,7 +787,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
         [HttpPost("atualizarStatus/{adocaoId}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AtualizarStatusAdocaoAsync(int adocaoId, string novoStatus, string observacoes = "")
+        public async Task<IActionResult> AtualizarStatusAdocaoAsync(int adocaoId, StatusAdocao novoStatus, string observacoes = "")
         {
             try
             {
@@ -803,7 +804,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 var statusAntigo = adocao.Status;
                 adocao.Status = novoStatus;
 
-                if (novoStatus == "Finalizada" || novoStatus == "Cancelada")
+                if (novoStatus == StatusAdocao.Finalizada || novoStatus == StatusAdocao.Cancelada)
                 {
                     adocao.DataFinalizacao = DateTime.Now;
                 }
@@ -813,24 +814,24 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 {
                     switch (novoStatus)
                     {
-                        case "Finalizada":
-                            pet.Status = "Adotado";
+                        case StatusAdocao.Finalizada:
+                            pet.Status = StatusPet.Adotado;
                             break;
-                        case "Cancelada":
-                            pet.Status = "Disponível";
+                        case StatusAdocao.Cancelada:
+                            pet.Status = StatusPet.Disponivel;
                             break;
-                        case "Aprovado":
-                            pet.Status = "Em Processo";
+                        case StatusAdocao.Aprovado:
+                            pet.Status = StatusPet.EmProcesso;
                             break;
-                        case "Aguardando buscar":
-                            pet.Status = "Em Processo";
+                        case StatusAdocao.AguardandoBuscar:
+                            pet.Status = StatusPet.EmProcesso;
                             break;
                         default:
                             break;
                     }
                 }
 
-                if (!string.IsNullOrEmpty(observacoes) && (novoStatus == "Cancelada"))
+                if (!string.IsNullOrEmpty(observacoes) && (novoStatus == StatusAdocao.Cancelada))
                 {
                     adocao.ObservacoesCancelamento = observacoes;
                 }
@@ -840,17 +841,17 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     
                 if (formulario != null)
                 {
-                    formulario.Status = novoStatus;
-                    
-                    if (formulario.DataResposta == null && 
-                        (novoStatus != "Pendente" && novoStatus != statusAntigo))
+                    formulario.Status = (StatusFormulario)Enum.Parse(typeof(StatusFormulario), novoStatus.ToString());
+
+                    if (formulario.DataResposta == null &&
+                        (novoStatus != StatusAdocao.Pendente && novoStatus != statusAntigo))
                     {
                         formulario.DataResposta = DateTime.Now;
                     }
-                    
+
                     if (!string.IsNullOrWhiteSpace(observacoes))
                     {
-                        if (novoStatus == "Cancelada")
+                        if (novoStatus == StatusAdocao.Cancelada)
                         {
                             formulario.ObservacoesCancelamento = observacoes;
                         }
@@ -897,9 +898,9 @@ namespace CaotinhoAuMiau.Controllers.Admin
             try
             {
                 var totalGeral = await _contexto.Adocoes.CountAsync();
-                var emAndamento = await _contexto.Adocoes.CountAsync(a => a.Status == "Aprovado" || a.Status == "Aguardando buscar");
-                var finalizadas = await _contexto.Adocoes.CountAsync(a => a.Status == "Finalizada");
-                var canceladas = await _contexto.Adocoes.CountAsync(a => a.Status == "Cancelada" || a.Status == "Rejeitada");
+                var emAndamento = await _contexto.Adocoes.CountAsync(a => a.Status == StatusAdocao.Aprovado || a.Status == StatusAdocao.AguardandoBuscar);
+                var finalizadas = await _contexto.Adocoes.CountAsync(a => a.Status == StatusAdocao.Finalizada);
+                var canceladas = await _contexto.Adocoes.CountAsync(a => a.Status == StatusAdocao.Cancelada || a.Status == StatusAdocao.Rejeitada);
                 
                 return Json(new {
                     totalGeral,
@@ -1026,28 +1027,28 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 }
             }
 
-            if (adocao.Status == "Finalizada")
+            if (adocao.Status == StatusAdocao.Finalizada)
             {
                 return (false, "Esta adoção já está finalizada.");
             }
 
-            if (adocao.Status == "Cancelada")
+            if (adocao.Status == StatusAdocao.Cancelada)
             {
                 return (false, "Não é possível finalizar uma adoção cancelada.");
             }
 
-            if (adocao.Status != "Aguardando buscar" && adocao.Status != "Aprovado")
+            if (adocao.Status != StatusAdocao.AguardandoBuscar && adocao.Status != StatusAdocao.Aprovado)
             {
                 return (false, $"Apenas adoções com status 'Aguardando buscar' ou 'Aprovado' podem ser finalizadas. Status atual: '{adocao.Status}'");
             }
 
-            adocao.Status = "Finalizada";
+            adocao.Status = StatusAdocao.Finalizada;
             adocao.DataFinalizacao = DateTime.Now;
 
             var pet = await _contexto.Pets.FindAsync(adocao.PetId);
             if (pet != null)
             {
-                pet.Status = "Adotado";
+                pet.Status = StatusPet.Adotado;
             }
 
             var formulario = await _contexto.FormulariosAdocao
@@ -1055,9 +1056,9 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
             if (formulario != null)
             {
-                if (formulario.Status != "Finalizada")
+                if (formulario.Status != StatusFormulario.Finalizada)
                 {
-                    formulario.Status = "Finalizada";
+                    formulario.Status = StatusFormulario.Finalizada;
                 }
                 if (formulario.DataResposta == null)
                 {
@@ -1238,9 +1239,9 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     .Where(a => a.UsuarioId == id)
                     .ToListAsync();
                 
-                var adocoesAprovadas = todasAdocoes.Count(a => a.Status == "Aprovada" || a.Status == "Finalizada" || a.Status == "Aguardando buscar");
-                var adocoesRejeitadas = todasAdocoes.Count(a => a.Status == "Rejeitada");
-                var adocoesCanceladas = todasAdocoes.Count(a => a.Status.Contains("Cancelad"));
+                var adocoesAprovadas = todasAdocoes.Count(a => a.Status == StatusAdocao.Aprovado || a.Status == StatusAdocao.Finalizada || a.Status == StatusAdocao.AguardandoBuscar);
+                var adocoesRejeitadas = todasAdocoes.Count(a => a.Status == StatusAdocao.Rejeitada);
+                var adocoesCanceladas = todasAdocoes.Count(a => a.Status.ToString().Contains("Cancelad"));
                 
                 var formularioIds = await _contexto.Adocoes
                     .Where(a => a.UsuarioId == id)
@@ -1254,9 +1255,9 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 var resultado = new {
                     total = todasAdocoes.Count + formularios.Count,
                     aprovadas = adocoesAprovadas,
-                    rejeitadas = adocoesRejeitadas + formularios.Count(f => f.Status == "Rejeitada"),
-                    canceladas = adocoesCanceladas + formularios.Count(f => f.Status.Contains("Cancelad")),
-                    emAnalise = formularios.Count(f => f.Status == "Pendente" || f.Status == "Em Análise")
+                    rejeitadas = adocoesRejeitadas + formularios.Count(f => f.Status == StatusFormulario.Rejeitada),
+                    canceladas = adocoesCanceladas + formularios.Count(f => f.Status.ToString().Contains("Cancelad")),
+                    emAnalise = formularios.Count(f => f.Status == StatusFormulario.Pendente || f.Status == StatusFormulario.InformacoesPendentes)
                 };
                 
                 return Json(resultado);

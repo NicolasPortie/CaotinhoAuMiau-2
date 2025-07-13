@@ -5,6 +5,7 @@ using CaotinhoAuMiau.Models;
 using CaotinhoAuMiau.Models.ViewModels.Admin;
 using CaotinhoAuMiau.Models.ViewModels.Usuario;
 using CaotinhoAuMiau.Models.ViewModels;
+using CaotinhoAuMiau.Models.Enums;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
@@ -150,10 +151,10 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     return Json(new { sucesso = false, mensagem = "Pet não encontrado." });
                 }
 
-                if (pet.Status == "Em Processo")
+                if (pet.Status == StatusPet.EmProcesso)
                 {
                     var formularioAprovado = await _contexto.FormulariosAdocao
-                        .FirstOrDefaultAsync(f => f.PetId == pet.Id && f.Status == "Aprovado" && f.Id != id);
+                        .FirstOrDefaultAsync(f => f.PetId == pet.Id && f.Status == StatusFormulario.Aprovado && f.Id != id);
                         
                     if (formularioAprovado != null)
                     {
@@ -161,18 +162,18 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     }
                     
                 }
-                else if (pet.Status != "Disponível" && pet.Status != "")
+                else if (pet.Status != StatusPet.Disponivel)
                 {
                     return Json(new { sucesso = false, mensagem = $"Este pet não está disponível para adoção. Status atual: {pet.Status}" });
                 }
 
                 var outrosFormularios = await _contexto.FormulariosAdocao
-                    .Where(f => f.PetId == pet.Id && f.Id != id && f.Status == "Pendente")
+                    .Where(f => f.PetId == pet.Id && f.Id != id && f.Status == StatusFormulario.Pendente)
                     .ToListAsync();
                     
                 foreach (var outroForm in outrosFormularios)
                 {
-                    outroForm.Status = "Rejeitada";
+                    outroForm.Status = StatusFormulario.Rejeitada;
                     outroForm.DataResposta = DateTime.Now;
                     outroForm.ObservacaoAdminFormulario = "Formulário rejeitado automaticamente porque outro candidato foi aprovado para adotar este pet.";
                     
@@ -192,7 +193,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     }
                 }
 
-                formulario.Status = "Aprovado";
+                formulario.Status = StatusFormulario.Aprovado;
                 formulario.DataResposta = DateTime.Now;
                 
                 if (!string.IsNullOrWhiteSpace(observacao))
@@ -200,7 +201,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     formulario.ObservacaoAdminFormulario = observacao;
                 }
 
-                pet.Status = "Em Processo";
+                pet.Status = StatusPet.EmProcesso;
 
                 var adocao = new Adocao
                 {
@@ -208,7 +209,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     UsuarioId = formulario.UsuarioId,
                     DataEnvio = formulario.DataEnvio,
                     DataResposta = DateTime.Now,
-                    Status = "Aguardando buscar"
+                    Status = StatusAdocao.AguardandoBuscar
                 };
 
                 _contexto.Adocoes.Add(adocao);
@@ -255,7 +256,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     return Json(new { sucesso = false, mensagem = "É necessário fornecer um motivo para a rejeição." });
                 }
 
-                formulario.Status = "Rejeitada";
+                formulario.Status = StatusFormulario.Rejeitada;
                 formulario.DataResposta = DateTime.Now;
                 formulario.ObservacaoAdminFormulario = motivo;
 
@@ -296,7 +297,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     return Json(new { sucesso = false, mensagem = "Formulário não encontrado" });
                 }
 
-                formulario.Status = "Informações Pendentes";
+                formulario.Status = StatusFormulario.InformacoesPendentes;
                 formulario.ObservacaoAdminFormulario = observacao;
                 formulario.DataResposta = DateTime.Now;
 

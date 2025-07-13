@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using CaotinhoAuMiau.Models;
+using CaotinhoAuMiau.Models.Enums;
 
 namespace CaotinhoAuMiau.Models.ViewModels.Comuns
 {
@@ -13,7 +14,7 @@ namespace CaotinhoAuMiau.Models.ViewModels.Comuns
         public string Nome { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "A espécie é obrigatória")]
-        public string Especie { get; set; } = string.Empty;
+        public Especie? Especie { get; set; }
 
         [Required(ErrorMessage = "A raça é obrigatória")]
         [StringLength(50, ErrorMessage = "A raça não pode ter mais que 50 caracteres")]
@@ -27,7 +28,7 @@ namespace CaotinhoAuMiau.Models.ViewModels.Comuns
         [Range(0, 11, ErrorMessage = "Os meses devem estar entre 0 e 11")]
         public int Meses { get; set; }
 
-        public string Sexo { get; set; } = string.Empty;
+        public SexoPet? Sexo { get; set; }
 
         public string Porte { get; set; } = string.Empty;
 
@@ -35,7 +36,7 @@ namespace CaotinhoAuMiau.Models.ViewModels.Comuns
         [StringLength(500, ErrorMessage = "A descrição não pode ter mais que 500 caracteres")]
         public string Descricao { get; set; } = string.Empty;
 
-        public string Status { get; set; } = string.Empty;
+        public StatusPet Status { get; set; } = StatusPet.Rascunho;
 
         public string? NomeArquivoImagem { get; set; }
 

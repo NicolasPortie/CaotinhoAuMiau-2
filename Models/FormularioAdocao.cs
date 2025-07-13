@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using CaotinhoAuMiau.Models.Enums;
 
 namespace CaotinhoAuMiau.Models
 {
@@ -37,7 +38,7 @@ namespace CaotinhoAuMiau.Models
 
         [Required]
         public string DescricaoMoradia { get; set; } = string.Empty;
-        public string Status { get; set; } = "Pendente";
+        public StatusFormulario Status { get; set; } = StatusFormulario.Pendente;
         public DateTime DataEnvio { get; set; } = DateTime.Now;
         public DateTime? DataResposta { get; set; }
         [MaxLength(500)]

@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using CaotinhoAuMiau.Models;
+using CaotinhoAuMiau.Models.Enums;
 
 namespace CaotinhoAuMiau.Models.ViewModels.Usuario
 {
@@ -80,7 +81,7 @@ namespace CaotinhoAuMiau.Models.ViewModels.Usuario
                 EspacoAdequado = EspacoAdequado,
                 PlanejamentoViagens = PlanejamentoViagens,
                 MotivacaoAdocao = MotivacaoAdocao,
-                Status = "Pendente",
+                Status = StatusFormulario.Pendente,
                 DataEnvio = DateTime.Now
             };
         }

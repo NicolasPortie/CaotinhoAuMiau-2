@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using CaotinhoAuMiau.Services;
 using CaotinhoAuMiau.Utils;
 using System.Text.Json;
+using CaotinhoAuMiau.Models.Enums;
 
 namespace CaotinhoAuMiau.Controllers.Admin
 {
@@ -102,7 +103,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     var petExistente = await _contexto.Pets.FindAsync(pet.Id);
                     if (petExistente != null)
                     {
-                        if (petExistente.Status == "Em Processo" || petExistente.Status == "Adotado")
+                        if (petExistente.Status == StatusPet.EmProcesso || petExistente.Status == StatusPet.Adotado)
                         {
                             return Json(new { 
                                 sucesso = false, 
@@ -151,13 +152,13 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     
                     var errosValidacao = new Dictionary<string, string>();
                     
-                    if (string.IsNullOrWhiteSpace(pet.Especie))
+                    if (pet.Especie == null)
                         errosValidacao.Add("especie", "A espécie do pet é obrigatória.");
                     
                     if (string.IsNullOrWhiteSpace(pet.Raca))
                         errosValidacao.Add("raca", "A raça do pet é obrigatória.");
                         
-                    if (string.IsNullOrWhiteSpace(pet.Sexo))
+                    if (pet.Sexo == null)
                         errosValidacao.Add("sexo", "O sexo do pet é obrigatório.");
                         
                     if (string.IsNullOrWhiteSpace(pet.Porte))
@@ -197,15 +198,15 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     }
                     
                     petExistente.Nome = pet.Nome?.Trim() ?? "";
-                    petExistente.Status = CadastroCompleto ? "Disponível" : "Rascunho";
+                    petExistente.Status = CadastroCompleto ? StatusPet.Disponivel : StatusPet.Rascunho;
                     petExistente.CadastroCompleto = CadastroCompleto;
                     petExistente.DataAtualizacao = DateTime.Now;
                     
                     if (CadastroCompleto)
                     {
-                        petExistente.Especie = pet.Especie?.Trim() ?? "";
+                        petExistente.Especie = pet.Especie ?? petExistente.Especie;
                         petExistente.Raca = pet.Raca?.Trim() ?? "";
-                        petExistente.Sexo = pet.Sexo?.Trim() ?? "";
+                        petExistente.Sexo = pet.Sexo ?? petExistente.Sexo;
                         petExistente.Porte = pet.Porte?.Trim() ?? "";
                         petExistente.Anos = pet.Anos;
                         petExistente.Meses = pet.Meses;
@@ -214,9 +215,9 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     if (!CadastroCompleto)
                     {
                         petExistente.Nome = pet.Nome?.Trim() ?? "";
-                        petExistente.Especie = pet.Especie?.Trim() ?? "";
+                        petExistente.Especie = pet.Especie ?? petExistente.Especie;
                         petExistente.Raca = pet.Raca?.Trim() ?? "";
-                        petExistente.Sexo = pet.Sexo?.Trim() ?? "";
+                        petExistente.Sexo = pet.Sexo ?? petExistente.Sexo;
                         petExistente.Porte = pet.Porte?.Trim() ?? "";
                         petExistente.Descricao = pet.Descricao?.Trim() ?? "";
                         
@@ -304,15 +305,15 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 {
                     Console.WriteLine("Criando novo pet");
                     pet.DataCriacao = DateTime.Now;
-                    pet.Status = CadastroCompleto ? "Disponível" : "Rascunho";
+                    pet.Status = CadastroCompleto ? StatusPet.Disponivel : StatusPet.Rascunho;
                     pet.CadastroCompleto = CadastroCompleto;
                     
                     if (CadastroCompleto)
                     {
                         pet.Nome = pet.Nome?.Trim() ?? "";
-                        pet.Especie = pet.Especie?.Trim() ?? "";
+                        pet.Especie = pet.Especie;
                         pet.Raca = pet.Raca?.Trim() ?? "";
-                        pet.Sexo = pet.Sexo?.Trim() ?? "";
+                        pet.Sexo = pet.Sexo;
                         pet.Porte = pet.Porte?.Trim() ?? "";
                         pet.Descricao = pet.Descricao?.Trim() ?? "";
                     }
@@ -320,9 +321,9 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     {
                         pet.Nome = pet.Nome?.Trim() ?? "";
                         
-                        pet.Especie = pet.Especie?.Trim() ?? "";
+                        pet.Especie = pet.Especie;
                         pet.Raca = pet.Raca?.Trim() ?? "";
-                        pet.Sexo = pet.Sexo?.Trim() ?? "";
+                        pet.Sexo = pet.Sexo;
                         pet.Porte = pet.Porte?.Trim() ?? "";
                         pet.Descricao = pet.Descricao?.Trim() ?? "";
                         
@@ -477,7 +478,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 return Json(new { sucesso = false, mensagem = "Pet não encontrado." });
             }
 
-            if (pet.Status == "Adotado" || pet.Status == "Em Processo")
+            if (pet.Status == StatusPet.Adotado || pet.Status == StatusPet.EmProcesso)
             {
                 return Json(new { sucesso = false, mensagem = "Não é possível excluir um pet que está em processo de adoção ou já foi adotado." });
             }
@@ -623,7 +624,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     Sexo = modelo.Sexo,
                     Porte = modelo.Porte,
                     Descricao = modelo.Descricao,
-                    Status = modelo.CadastroCompleto ? "Disponível" : "Rascunho",
+                    Status = modelo.CadastroCompleto ? StatusPet.Disponivel : StatusPet.Rascunho,
                     DataCriacao = DateTime.Now,
                     CadastroCompleto = modelo.CadastroCompleto,
                     UsuarioId = 0,

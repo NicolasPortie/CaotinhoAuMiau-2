@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using CaotinhoAuMiau.Models;
+using CaotinhoAuMiau.Models.Enums;
 
 namespace CaotinhoAuMiau.Models.ViewModels.Usuario
 {
@@ -42,7 +43,7 @@ namespace CaotinhoAuMiau.Models.ViewModels.Usuario
         [StringLength(500, ErrorMessage = "A descrição deve ter no máximo 500 caracteres")]
         public string DescricaoMoradia { get; set; } = string.Empty;
 
-        public string Status { get; set; } = "Pendente";
+        public StatusFormulario Status { get; set; } = StatusFormulario.Pendente;
         public DateTime DataEnvio { get; set; } = DateTime.Now;
         public DateTime? DataResposta { get; set; }
         public string? ObservacaoAdminFormulario { get; set; }
