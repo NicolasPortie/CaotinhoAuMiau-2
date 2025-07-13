@@ -20,10 +20,10 @@ namespace CaotinhoAuMiau.Controllers.Usuario
     public class AdocaoController : Controller
     {
         private readonly ApplicationDbContext _contexto;
-        private readonly NotificacaoServico _servicoNotificacao;
+        private readonly NotificationService _servicoNotificacao;
         private readonly HistoricoAdocaoServico _historicoServico;
 
-        public AdocaoController(ApplicationDbContext contexto, NotificacaoServico servicoNotificacao, HistoricoAdocaoServico historicoServico)
+        public AdocaoController(ApplicationDbContext contexto, NotificationService servicoNotificacao, HistoricoAdocaoServico historicoServico)
         {
             _contexto = contexto;
             _servicoNotificacao = servicoNotificacao;

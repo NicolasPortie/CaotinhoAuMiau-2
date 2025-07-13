@@ -13,9 +13,9 @@ namespace CaotinhoAuMiau.Controllers.API
     public class NotificacaoController : ControllerBase
     {
         private readonly ApplicationDbContext _contexto;
-        private readonly NotificacaoServico _servicoNotificacao;
+        private readonly NotificationService _servicoNotificacao;
 
-        public NotificacaoController(ApplicationDbContext contexto, NotificacaoServico servicoNotificacao)
+        public NotificacaoController(ApplicationDbContext contexto, NotificationService servicoNotificacao)
         {
             _contexto = contexto;
             _servicoNotificacao = servicoNotificacao;

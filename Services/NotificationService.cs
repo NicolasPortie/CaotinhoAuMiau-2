@@ -8,11 +8,11 @@ using System.Linq;
 
 namespace CaotinhoAuMiau.Services
 {
-    public class NotificacaoServico
+    public class NotificationService
     {
         private readonly ApplicationDbContext _context;
 
-        public NotificacaoServico(ApplicationDbContext context)
+        public NotificationService(ApplicationDbContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }

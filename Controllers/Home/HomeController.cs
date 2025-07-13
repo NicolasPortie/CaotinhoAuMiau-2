@@ -18,11 +18,11 @@ namespace CaotinhoAuMiau.Controllers.Home
 {
     public class HomeController : Controller
     {
-        private readonly NotificacaoServico _servicoNotificacao;
+        private readonly NotificationService _servicoNotificacao;
         private readonly ApplicationDbContext _contexto;
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(NotificacaoServico servicoNotificacao, ApplicationDbContext contexto, ILogger<HomeController> logger)
+        public HomeController(NotificationService servicoNotificacao, ApplicationDbContext contexto, ILogger<HomeController> logger)
         {
             _servicoNotificacao = servicoNotificacao;
             _contexto = contexto;

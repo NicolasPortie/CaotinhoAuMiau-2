@@ -22,10 +22,10 @@ namespace CaotinhoAuMiau.Controllers.Usuario
     public class PetController : Controller
     {
         private readonly ApplicationDbContext _contexto;
-        private readonly NotificacaoServico _servicoNotificacao;
+        private readonly NotificationService _servicoNotificacao;
         private readonly ILogger<PetController> _logger;
 
-        public PetController(ApplicationDbContext contexto, NotificacaoServico servicoNotificacao, ILogger<PetController> logger)
+        public PetController(ApplicationDbContext contexto, NotificationService servicoNotificacao, ILogger<PetController> logger)
         {
             _contexto = contexto;
             _servicoNotificacao = servicoNotificacao;
