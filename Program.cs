@@ -210,6 +210,9 @@ app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Mapeia rotas definidas com atributos nos controladores
+app.MapControllers();
+
 
 app.MapControllerRoute(
     name: "explorarPetsComFiltros",
