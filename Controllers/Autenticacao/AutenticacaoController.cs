@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using CaotinhoAuMiau.Data;
 using CaotinhoAuMiau.Models;
 using CaotinhoAuMiau.Models.ViewModels;
 using CaotinhoAuMiau.Models.ViewModels.Usuario;
@@ -24,45 +22,14 @@ namespace CaotinhoAuMiau.Controllers.Autenticacao
     [Route("usuario")]
     public class AutenticacaoController : Controller
     {
-        private readonly ApplicationDbContext _contexto;
         private readonly ILogger<AutenticacaoController> _logger;
+        private readonly IUsuarioService _usuarioService;
 
-        public AutenticacaoController(ApplicationDbContext contexto, ILogger<AutenticacaoController> logger)
+        public AutenticacaoController(ILogger<AutenticacaoController> logger, IUsuarioService usuarioService)
         {
-            _contexto = contexto;
             _logger = logger;
-            _ = Task.Run(CriarAdminPadrao);
-        }
-
-        private async Task CriarAdminPadrao()
-        {
-            try
-            {
-                var colaboradorExistente = await _contexto.Colaboradores
-                    .FirstOrDefaultAsync(a => a.Email == "admin@admin.com");
-
-                if (colaboradorExistente == null)
-                {
-                    var colaborador = new Colaborador
-                    {
-                        Nome = "Administrador",
-                        Email = "admin@admin.com",
-                        Senha = HashHelper.GerarHashSenha("admin"),
-                        CPF = "00000000000",
-                        Telefone = "0000000000",
-                        Cargo = "Administrador",
-                        Ativo = true,
-                        DataCadastro = DateTime.Now
-                    };
-
-                    _contexto.Colaboradores.Add(colaborador);
-                    await _contexto.SaveChangesAsync();
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Erro ao criar admin padrão: {ex.Message}");
-            }
+            _usuarioService = usuarioService;
+            _ = Task.Run(() => _usuarioService.CriarAdminPadraoAsync());
         }
 
         [HttpGet("login")]
@@ -120,13 +87,10 @@ namespace CaotinhoAuMiau.Controllers.Autenticacao
             {
                 _logger.LogInformation("Tentativa de login para email: {Email}", modelo.Email);
 
-                var colaborador = await _contexto.Colaboradores
-                    .FirstOrDefaultAsync(c => c.Email == modelo.Email);
-                var usuario = await _contexto.Usuarios
-                    .FirstOrDefaultAsync(u => u.Email == modelo.Email);
+                var (colaborador, usuario) = await _usuarioService.AutenticarAsync(modelo.Email, modelo.Senha);
 
-                bool senhaColaboradorOk = colaborador != null && HashHelper.VerificarSenha(modelo.Senha, colaborador.Senha);
-                bool senhaUsuarioOk = usuario != null && HashHelper.VerificarSenha(modelo.Senha, usuario.Senha);
+                bool senhaColaboradorOk = colaborador != null;
+                bool senhaUsuarioOk = usuario != null;
 
                 if (senhaColaboradorOk && senhaUsuarioOk)
                 {
@@ -180,8 +144,7 @@ namespace CaotinhoAuMiau.Controllers.Autenticacao
                             new ClaimsPrincipal(identidade),
                             propriedadesAutenticacao);
 
-                        colaborador.UltimoAcesso = DateTime.Now;
-                        await _contexto.SaveChangesAsync();
+                        await _usuarioService.AtualizarUltimoAcessoColaboradorAsync(colaborador);
 
                         return RedirectToAction("Inicio", "GerenciamentoDashboard");
                     }
@@ -214,8 +177,7 @@ namespace CaotinhoAuMiau.Controllers.Autenticacao
                             new ClaimsPrincipal(identidade),
                             propriedadesAutenticacao);
 
-                        usuario.UltimoAcesso = DateTime.Now;
-                        await _contexto.SaveChangesAsync();
+                        await _usuarioService.AtualizarUltimoAcessoUsuarioAsync(usuario);
 
                         string? urlRedirecionamento = null;
 
@@ -282,15 +244,14 @@ namespace CaotinhoAuMiau.Controllers.Autenticacao
 
             if (perfil == "Admin" && colaboradorId.HasValue)
             {
-                var colaborador = await _contexto.Colaboradores.FirstOrDefaultAsync(c => c.Id == colaboradorId.Value);
+                var colaborador = await _usuarioService.ObterColaboradorPorIdAsync(colaboradorId.Value);
                 if (colaborador == null)
                 {
                     TempData["Erro"] = "Colaborador não encontrado.";
                     return RedirectToAction("ExibirTelaLogin");
                 }
 
-                colaborador.UltimoAcesso = DateTime.Now;
-                await _contexto.SaveChangesAsync();
+                await _usuarioService.AtualizarUltimoAcessoColaboradorAsync(colaborador);
 
                 var claims = new List<Claim>
                 {
@@ -316,7 +277,7 @@ namespace CaotinhoAuMiau.Controllers.Autenticacao
 
             if (perfil == "Usuario" && usuarioId.HasValue)
             {
-                var usuario = await _contexto.Usuarios.FirstOrDefaultAsync(u => u.Id == usuarioId.Value);
+                var usuario = await _usuarioService.ObterUsuarioPorIdAsync(usuarioId.Value);
                 if (usuario == null)
                 {
                     TempData["Erro"] = "Usuário não encontrado.";
@@ -341,8 +302,7 @@ namespace CaotinhoAuMiau.Controllers.Autenticacao
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identidade), props);
 
-                usuario.UltimoAcesso = DateTime.Now;
-                await _contexto.SaveChangesAsync();
+                await _usuarioService.AtualizarUltimoAcessoUsuarioAsync(usuario);
 
                 var returnUrl = TempData["ReturnUrl"]?.ToString();
                 if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
@@ -411,8 +371,8 @@ namespace CaotinhoAuMiau.Controllers.Autenticacao
 
             cpf = Regex.Replace(cpf, @"[^\d]", "");
 
-            var cpfExiste = await _contexto.Usuarios.AnyAsync(u => u.CPF == cpf);
-            
+            var cpfExiste = await _usuarioService.CPFExisteAsync(cpf);
+
             return Json(new { valido = !cpfExiste, mensagem = cpfExiste ? "Este CPF já está cadastrado." : "" });
         }
 
@@ -426,16 +386,11 @@ namespace CaotinhoAuMiau.Controllers.Autenticacao
                     return Json(new { emailExiste = false, mensagem = "Email não informado" });
                 }
 
-                var usuarioExistente = await _contexto.Usuarios
-                    .FirstOrDefaultAsync(u => u.Email == email);
+                var emailExiste = await _usuarioService.EmailExisteAsync(email);
 
-                var colaboradorExistente = await _contexto.Colaboradores
-                    .FirstOrDefaultAsync(a => a.Email == email);
-
-                return Json(new { 
-                    emailExiste = (usuarioExistente != null || colaboradorExistente != null),
-                    mensagem = (usuarioExistente != null || colaboradorExistente != null) ? 
-                        "Este email já está cadastrado" : "Email disponível"
+                return Json(new {
+                    emailExiste,
+                    mensagem = emailExiste ? "Este email já está cadastrado" : "Email disponível"
                 });
             }
             catch (Exception ex)
@@ -501,14 +456,8 @@ namespace CaotinhoAuMiau.Controllers.Autenticacao
                 }
 
                 var usuario = usuarioVM.ConverterParaEntidade();
-                
-                string senhaOriginal = usuario.Senha;
-                usuario.Senha = HashHelper.GerarHashSenha(usuario.Senha);
-                usuario.DataCadastro = DateTime.Now;
-                usuario.Ativo = true;
 
-                _contexto.Usuarios.Add(usuario);
-                await _contexto.SaveChangesAsync();
+                await _usuarioService.RegistrarUsuarioAsync(usuario);
 
                 TempData["Sucesso"] = "Cadastro realizado com sucesso! Por favor, faça o login.";
                 
