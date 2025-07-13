@@ -474,10 +474,10 @@ namespace CaotinhoAuMiau.Controllers.Admin
             
             var nomeTrim = nome.Trim();
             var petExistente = await _contexto.Pets
-                .Where(p => p.Nome.ToLower() == nomeTrim.ToLower() 
+                .Where(p => p.Nome.ToLower() == nomeTrim.ToLower()
                          && p.Id != id
-                         && p.Status != "Finalizado" 
-                         && p.Status != "Adotado")
+                         && p.Status != StatusPet.Finalizado
+                         && p.Status != StatusPet.Adotado)
                 .FirstOrDefaultAsync();
             
             return Json(new { 

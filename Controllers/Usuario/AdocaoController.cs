@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using CaotinhoAuMiau.Services;
 using CaotinhoAuMiau.Utils;
+using CaotinhoAuMiau.Models.Enums;
 
 namespace CaotinhoAuMiau.Controllers.Usuario
 {
@@ -174,7 +175,8 @@ namespace CaotinhoAuMiau.Controllers.Usuario
 
                 _contexto.FormulariosAdocao.Add(formulario);
 
-                pet.Status = "Em Processo";
+                // StatusPet é um enum; use o valor correspondente ao invés de uma string
+                pet.Status = StatusPet.EmProcesso;
 
                 await _contexto.SaveChangesAsync();
 
@@ -288,7 +290,8 @@ namespace CaotinhoAuMiau.Controllers.Usuario
 
                 if (formulario.Pet != null)
                 {
-                    formulario.Pet.Status = "Disponível";
+                    // Atualiza o status usando o enum correspondente
+                    formulario.Pet.Status = StatusPet.Disponivel;
                 }
 
                 await _contexto.SaveChangesAsync();
@@ -333,10 +336,11 @@ namespace CaotinhoAuMiau.Controllers.Usuario
             }
 
             formulario.Status = "Pendente";
-            
+
             if (formulario.Pet != null)
             {
-                formulario.Pet.Status = "Em Processo";
+                // Status de pet atualizado usando o enum
+                formulario.Pet.Status = StatusPet.EmProcesso;
             }
             
             await _contexto.SaveChangesAsync();

@@ -13,6 +13,7 @@ using CaotinhoAuMiau.Models.ViewModels.Comuns;
 using CaotinhoAuMiau.Models.ViewModels.Usuario;
 using Microsoft.AspNetCore.Authorization;
 using CaotinhoAuMiau.Utils;
+using CaotinhoAuMiau.Models.Enums;
 
 namespace CaotinhoAuMiau.Controllers.Home
 {
@@ -56,7 +57,8 @@ namespace CaotinhoAuMiau.Controllers.Home
             }
 
             var pets = await _contexto.Pets
-                .Where(p => p.Status == "Disponível" && p.CadastroCompleto)
+                // Filtra apenas pets disponíveis usando o enum
+                .Where(p => p.Status == StatusPet.Disponivel && p.CadastroCompleto)
                 .OrderByDescending(p => p.DataCriacao)
                 .Take(6)
                 .ToListAsync();

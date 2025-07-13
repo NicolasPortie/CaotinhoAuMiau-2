@@ -1,4 +1,6 @@
 @model CaotinhoAuMiau.Models.ViewModels.Usuario.PetViewModel
+@using CaotinhoAuMiau.Models.Enums
+@using CaotinhoAuMiau.Utils
 
 @{
     ViewData["Title"] = "Explorar Pets para Adoção - CaotinhoAuMiau";
@@ -148,18 +150,18 @@
                 {
                     foreach (var pet in Model.Pets)
                     {
-                        <div class="pet-card" 
-                             data-id="@pet.Id" 
-                             data-especie="@(pet.Especie?.ToLower() ?? "outro")" 
-                             data-sexo="@(pet.Sexo?.ToLower() ?? "desconhecido")">
+                        <div class="pet-card"
+                             data-id="@pet.Id"
+                             data-especie="@pet.Especie.GetEnumMemberValue().ToLower()"
+                             data-sexo="@pet.Sexo.GetEnumMemberValue().ToLower()">
                             <div class="image-container">
                                 <img src="@(string.IsNullOrEmpty(pet.NomeArquivoImagem) ? "/imagens/pets/pet-placeholder.jpg" : $"/imagens/pets/{pet.NomeArquivoImagem}")" 
                                      alt="@pet.Nome" 
                                      onerror="this.src='/imagens/pets/pet-placeholder.jpg'">
                                 
-                                <div class="etiqueta-pet @(pet.Especie?.ToLower() == "cachorro" ? "dog" : (pet.Especie?.ToLower() == "gato" ? "cat" : "other"))">
-                                    <i class="fas @(pet.Especie?.ToLower() == "cachorro" ? "fa-dog" : (pet.Especie?.ToLower() == "gato" ? "fa-cat" : "fa-paw")) me-1"></i>
-                                    @(pet.Especie ?? "Pet")
+                                <div class="etiqueta-pet @(pet.Especie == Especie.Cachorro ? "dog" : (pet.Especie == Especie.Gato ? "cat" : "other"))">
+                                    <i class="fas @(pet.Especie == Especie.Cachorro ? "fa-dog" : (pet.Especie == Especie.Gato ? "fa-cat" : "fa-paw")) me-1"></i>
+                                    @(pet.Especie.GetEnumMemberValue())
                                 </div>
                                 
                                 <div class="overlay">
@@ -176,9 +178,9 @@
                                 
                                 <div class="pet-characteristics">
                                     <div class="pet-item">
-                                        <i class="fas @(pet.Sexo == "Macho" || pet.Sexo == "M" ? "fa-mars" : "fa-venus")"></i>
+                                        <i class="fas @(pet.Sexo == SexoPet.Macho ? "fa-mars" : "fa-venus")"></i>
                                         <span class="item-label">Sexo</span>
-                                        <span>@(pet.Sexo ?? "Não informado")</span>
+                                        <span>@pet.Sexo.GetEnumMemberValue()</span>
                                     </div>
                                     
                                     <div class="pet-item">
