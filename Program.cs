@@ -5,7 +5,6 @@ using CaotinhoAuMiau.Services;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Caching.Memory;
 using CaotinhoAuMiau.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -36,6 +35,12 @@ builder.Services.Configure<IISServerOptions>(options =>
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("Redis");
+    options.InstanceName = "PortalAdocao_";
+});
+
 builder.Services.AddScoped<NotificacaoServico>();
 builder.Services.AddScoped<HistoricoAdocaoServico>();
 builder.Services.AddScoped<PetService>();
@@ -52,7 +57,6 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
         options.ExpireTimeSpan = TimeSpan.FromHours(2);
         options.SlidingExpiration = true;
-        options.SessionStore = new MemoryCacheTicketStore(new MemoryCache(new MemoryCacheOptions()));
         
         options.Events = new CookieAuthenticationEvents
         {
@@ -188,46 +192,3 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
-
-
-public class MemoryCacheTicketStore : ITicketStore
-{
-    private const string KeyPrefix = "AuthTicket_";
-    private readonly IMemoryCache _cache;
-
-    public MemoryCacheTicketStore(IMemoryCache cache)
-    {
-        _cache = cache;
-    }
-
-    public Task<string> StoreAsync(AuthenticationTicket ticket)
-    {
-        var key = $"{KeyPrefix}{Guid.NewGuid()}";
-        _cache.Set(key, ticket, new MemoryCacheEntryOptions
-        {
-            AbsoluteExpirationRelativeToNow = ticket.Properties.ExpiresUtc - DateTimeOffset.UtcNow
-        });
-        return Task.FromResult(key);
-    }
-
-    public Task RenewAsync(string key, AuthenticationTicket ticket)
-    {
-        _cache.Set(key, ticket, new MemoryCacheEntryOptions
-        {
-            AbsoluteExpirationRelativeToNow = ticket.Properties.ExpiresUtc - DateTimeOffset.UtcNow
-        });
-        return Task.CompletedTask;
-    }
-
-    public Task<AuthenticationTicket?> RetrieveAsync(string key)
-    {
-        _cache.TryGetValue(key, out AuthenticationTicket? ticket);
-        return Task.FromResult(ticket);
-    }
-
-    public Task RemoveAsync(string key)
-    {
-        _cache.Remove(key);
-        return Task.CompletedTask;
-    }
-}
