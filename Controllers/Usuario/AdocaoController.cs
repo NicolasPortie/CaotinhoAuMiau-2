@@ -241,7 +241,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
                         return Json(new { success = false, message = "É necessário informar o motivo do cancelamento" });
                     }
                     TempData["Erro"] = "É necessário informar o motivo do cancelamento";
-                    return RedirectToAction(nameof(Listar));
+                    return RedirectToAction(nameof(ListarAsync));
                 }
                 
                 if (motivoCancelamento.Trim().Length < 10)
@@ -251,7 +251,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
                         return Json(new { success = false, message = "O motivo do cancelamento deve ter pelo menos 10 caracteres" });
                     }
                     TempData["Erro"] = "O motivo do cancelamento deve ter pelo menos 10 caracteres";
-                    return RedirectToAction(nameof(Listar));
+                    return RedirectToAction(nameof(ListarAsync));
                 }
 
                 var formulario = await _contexto.FormulariosAdocao
@@ -299,7 +299,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
                 }
 
                 TempData["Sucesso"] = "Adoção cancelada com sucesso!";
-                return RedirectToAction(nameof(Listar));
+                return RedirectToAction(nameof(ListarAsync));
             }
             catch (Exception ex)
             {
@@ -309,7 +309,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
                 }
                 
                 TempData["Erro"] = $"Erro ao cancelar a adoção: {ex.Message}";
-                return RedirectToAction(nameof(Listar));
+                return RedirectToAction(nameof(ListarAsync));
             }
         }
 
@@ -342,7 +342,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
             await _contexto.SaveChangesAsync();
 
             TempData["Sucesso"] = "Formulário de adoção reativado com sucesso!";
-            return RedirectToAction(nameof(Listar));
+            return RedirectToAction(nameof(ListarAsync));
         }
 
         [HttpGet("formulario-detalhes/{id}")]
