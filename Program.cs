@@ -38,7 +38,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddScoped<NotificacaoServico>();
 builder.Services.AddScoped<HistoricoAdocaoServico>();
-builder.Services.AddScoped<PetService>();
+builder.Services.AddScoped<IPetService, PetService>();
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
