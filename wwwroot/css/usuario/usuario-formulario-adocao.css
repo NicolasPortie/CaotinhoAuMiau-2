@@ -1259,12 +1259,13 @@ body {
 }
 
 .btn-primary {
-    background: #F0A050;
+    background: var(--color-primary);
+    border: none;
     color: white;
 }
 
 .btn-primary:hover {
-    background: #E78845;
+    background: var(--color-primary-light);
     box-shadow: 0 3px 10px rgba(231, 136, 69, 0.2);
     transform: translateY(-2px);
 }
