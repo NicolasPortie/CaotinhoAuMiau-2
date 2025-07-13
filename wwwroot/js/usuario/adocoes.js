@@ -336,7 +336,7 @@ async function enviarSolicitacaoCancelamento(adocaoId, motivo) {
                 ...CONFIG.api.headers,
                 'RequestVerificationToken': state.requestToken
             },
-            body: JSON.stringify({ MotivoCancelamento: motivo })
+            body: JSON.stringify({ motivoCancelamento: motivo })
         });
 
         if (!response.ok) {
