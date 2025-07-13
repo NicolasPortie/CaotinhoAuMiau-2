@@ -1,15 +1,15 @@
+// Código responsável por lidar com a paginação e seleção de itens na listagem de adoções do usuário.
 document.addEventListener('DOMContentLoaded', function () {
     // Manipulador para o seletor de itens por página
     var seletor = document.getElementById('selectItensPorPagina');
     if (seletor) {
         seletor.addEventListener('change', function () {
             var itensPorPagina = this.value;
-            var url = '@Url.Action("Listar", "Adocao")' + '?pagina=1&itensPorPagina=' + itensPorPagina;
+            var url = '@Url.Action("Listar", "Adocao")' + "?pagina=1&itensPorPagina=".concat(itensPorPagina);
             window.location.href = url;
         });
     }
-
-    // Corrigir problema de paginação
+    // Corrigir problema de paginação ao clicar nos links
     document.querySelectorAll('.pagination .page-link').forEach(function (link) {
         link.addEventListener('click', function (e) {
             e.preventDefault();
@@ -20,6 +20,5 @@ document.addEventListener('DOMContentLoaded', function () {
             return false;
         });
     });
-
     // Código existente abaixo
 });
