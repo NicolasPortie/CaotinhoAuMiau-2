@@ -36,11 +36,21 @@ builder.Services.Configure<IISServerOptions>(options =>
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddStackExchangeRedisCache(options =>
+var redisConnection = builder.Configuration.GetConnectionString("Redis");
+if (string.IsNullOrWhiteSpace(redisConnection))
 {
-    options.Configuration = builder.Configuration.GetConnectionString("Redis");
-    options.InstanceName = "PortalAdocao_";
-});
+    // Caso não haja um servidor Redis configurado, utiliza cache em memória
+    builder.Services.AddDistributedMemoryCache();
+}
+else
+{
+    // Mantém a utilização do Redis quando a conexão estiver disponível
+    builder.Services.AddStackExchangeRedisCache(options =>
+    {
+        options.Configuration = redisConnection;
+        options.InstanceName = "PortalAdocao_";
+    });
+}
 
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<HistoricoAdocaoServico>();
