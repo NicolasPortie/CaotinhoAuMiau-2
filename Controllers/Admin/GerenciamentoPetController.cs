@@ -109,6 +109,10 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 _logger.LogWarning(ioEx, "Falha de I/O ao processar imagem do pet.");
                 return Json(new { sucesso = false, mensagem = "Erro ao processar a imagem do pet." });
             }
+            catch (ArgumentException ex)
+            {
+                return Json(new { sucesso = false, mensagem = ex.Message });
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro inesperado ao salvar pet.");
@@ -325,10 +329,17 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 
                 if (imagemUpload != null && imagemUpload.Length > 0)
                 {
-                    pet.NomeArquivoImagem = await ImagemHelper.SalvarAsync(
-                        imagemUpload,
-                        _ambiente.WebRootPath,
-                        "pets");
+                    try
+                    {
+                        pet.NomeArquivoImagem = await ImagemHelper.SalvarAsync(
+                            imagemUpload,
+                            _ambiente.WebRootPath,
+                            "pets");
+                    }
+                    catch (ArgumentException ex)
+                    {
+                        return Json(new { sucesso = false, mensagem = ex.Message });
+                    }
                 }
                 else
                 {
