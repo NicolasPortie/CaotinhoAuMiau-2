@@ -33,7 +33,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
             var adminId = User.ObterIdUsuario();
             if (string.IsNullOrEmpty(adminId))
             {
-                return RedirectToAction("ExibirTelaLogin", "Autenticacao");
+                return RedirectToAction("ExibirTelaLogin", "Authentication");
             }
             
             var dashboardViewModel = new DashboardViewModel();
