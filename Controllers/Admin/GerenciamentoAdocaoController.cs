@@ -685,13 +685,14 @@ namespace CaotinhoAuMiau.Controllers.Admin
                         pet = new {
                             id = formulario.Pet.Id,
                             nome = formulario.Pet.Nome ?? "Não informado",
-                            especie = formulario.Pet.Especie ?? "Não informada",
+                            // Converte a enum em string amigável
+                            especie = formulario.Pet.Especie.GetEnumMemberValue(),
                             raca = formulario.Pet.Raca ?? "Não informada",
                             idade = (formulario.Pet.Anos > 0 ? $"{formulario.Pet.Anos} anos" : "") + 
                                    (formulario.Pet.Meses > 0 ? $" e {formulario.Pet.Meses} meses" : ""),
                             anos = formulario.Pet.Anos,
                             meses = formulario.Pet.Meses,
-                            sexo = formulario.Pet.Sexo ?? "Não informado",
+                            sexo = formulario.Pet.Sexo.GetEnumMemberValue(),
                             porte = formulario.Pet.Porte ?? "Não informado",
                             imagem = formulario.Pet.NomeArquivoImagem ?? ""
                         },
@@ -733,13 +734,13 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     pet = new {
                         id = adocao.Pet.Id,
                         nome = adocao.Pet.Nome ?? "Não informado",
-                        especie = adocao.Pet.Especie ?? "Não informada",
+                        especie = adocao.Pet.Especie.GetEnumMemberValue(),
                         raca = adocao.Pet.Raca ?? "Não informada",
                         idade = (adocao.Pet.Anos > 0 ? $"{adocao.Pet.Anos} anos" : "") + 
                                (adocao.Pet.Meses > 0 ? $" e {adocao.Pet.Meses} meses" : ""),
                         anos = adocao.Pet.Anos,
                         meses = adocao.Pet.Meses,
-                        sexo = adocao.Pet.Sexo ?? "Não informado",
+                        sexo = adocao.Pet.Sexo.GetEnumMemberValue(),
                         porte = adocao.Pet.Porte ?? "Não informado",
                         imagem = adocao.Pet.NomeArquivoImagem ?? ""
                     },
@@ -955,13 +956,15 @@ namespace CaotinhoAuMiau.Controllers.Admin
         [HttpGet("HistoricoAdocoes")]
         public async Task<IActionResult> HistoricoAdocoesAsync(int usuarioId)
         {
-            return await BuscarHistoricoAdocoes(usuarioId);
+            // Chama a versão assíncrona do método de busca
+            return await BuscarHistoricoAdocoesAsync(usuarioId);
         }
 
         [HttpGet("HistoricoAdocoes/{id}")]
         public async Task<IActionResult> HistoricoAdocoesComIdAsync(int id)
         {
-            return await BuscarHistoricoAdocoes(id);
+            // Chama a versão assíncrona para manter o padrão
+            return await BuscarHistoricoAdocoesAsync(id);
         }
 
         [HttpPost("FinalizarAdocao")]

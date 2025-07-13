@@ -1,6 +1,8 @@
 @using CaotinhoAuMiau.Models
 @using System.Linq
 @using CaotinhoAuMiau.Models.ViewModels.Usuario
+@using CaotinhoAuMiau.Models.Enums
+@using CaotinhoAuMiau.Utils
 @model AdocaoListaViewModel
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery antiforgery
 
@@ -129,8 +131,8 @@
                                                 @(adocao.Pet?.Idade != null ? adocao.Pet.Idade.ToString() : "Idade não informada")
                                             </span>
                                             <span class="sexo-pet">
-                                                <i class="fa-solid @(adocao.Pet?.Sexo == "Macho" ? "fa-mars" : "fa-venus") me-1"></i>
-                                                @(adocao.Pet?.Sexo ?? "Sexo não informado")
+                                                <i class="fa-solid @(adocao.Pet?.Sexo == SexoPet.Macho ? "fa-mars" : "fa-venus") me-1"></i>
+                                                @(adocao.Pet != null ? adocao.Pet.Sexo.GetEnumMemberValue() : "Sexo não informado")
                                             </span>
                                         </div>
                                         <div class="detalhes-adocao">

@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using CaotinhoAuMiau.Utils;
+using CaotinhoAuMiau.Models.Enums;
 
 namespace CaotinhoAuMiau.Controllers.Admin
 {

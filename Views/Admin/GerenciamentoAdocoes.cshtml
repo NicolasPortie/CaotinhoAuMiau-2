@@ -1,5 +1,7 @@
 @using CaotinhoAuMiau.Models
 @using System.Linq
+@using CaotinhoAuMiau.Models.Enums
+@using CaotinhoAuMiau.Utils
 @model IEnumerable<CaotinhoAuMiau.Models.Adocao>
 
 @{
@@ -172,7 +174,7 @@
                                             </div>
                                             <div class="info-pet">
                                                 <span class="nome">@(adocao.Pet?.Nome ?? "Nome não disponível")</span>
-                                                <span class="detalhes">@(adocao.Pet?.Especie ?? "") @(adocao.Pet?.Raca ?? "")</span>
+                                                <span class="detalhes">@(adocao.Pet != null ? adocao.Pet.Especie.GetEnumMemberValue() : "") @(adocao.Pet?.Raca ?? "")</span>
                                             </div>
                                         </div>
                                     </td>
