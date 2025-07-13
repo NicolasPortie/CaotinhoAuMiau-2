@@ -28,11 +28,11 @@ namespace CaotinhoAuMiau.Controllers.Admin
     {
         private readonly ApplicationDbContext _contexto;
         private readonly IWebHostEnvironment _ambiente;
-        private readonly NotificacaoServico _servicoNotificacao;
+        private readonly NotificationService _servicoNotificacao;
         private readonly IPetService _petService;
         private readonly ILogger<GerenciamentoPetController> _logger;
 
-        public GerenciamentoPetController(ApplicationDbContext contexto, IWebHostEnvironment ambiente, NotificacaoServico servicoNotificacao, IPetService petService, ILogger<GerenciamentoPetController> logger)
+        public GerenciamentoPetController(ApplicationDbContext contexto, IWebHostEnvironment ambiente, NotificationService servicoNotificacao, IPetService petService, ILogger<GerenciamentoPetController> logger)
         {
             _contexto = contexto;
             _ambiente = ambiente;

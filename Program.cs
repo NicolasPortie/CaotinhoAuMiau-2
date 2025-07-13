@@ -42,7 +42,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
     options.InstanceName = "PortalAdocao_";
 });
 
-builder.Services.AddScoped<NotificacaoServico>();
+builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<HistoricoAdocaoServico>();
 builder.Services.AddScoped<IPetService, PetService>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();

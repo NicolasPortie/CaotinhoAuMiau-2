@@ -22,12 +22,12 @@ using System.IO;
 namespace CaotinhoAuMiau.Controllers.Autenticacao
 {
     [Route("usuario")]
-    public class AutenticacaoController : Controller
+    public class AuthenticationController : Controller
     {
-        private readonly ILogger<AutenticacaoController> _logger;
+        private readonly ILogger<AuthenticationController> _logger;
         private readonly IUsuarioService _usuarioService;
 
-        public AutenticacaoController(ILogger<AutenticacaoController> logger, IUsuarioService usuarioService)
+        public AuthenticationController(ILogger<AuthenticationController> logger, IUsuarioService usuarioService)
         {
             _logger = logger;
             _usuarioService = usuarioService;

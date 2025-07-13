@@ -22,11 +22,11 @@ namespace CaotinhoAuMiau.Controllers.Admin
     public class GerenciamentoAdocaoController : Controller
     {
         private readonly ApplicationDbContext _contexto;
-        private readonly NotificacaoServico _servicoNotificacao;
+        private readonly NotificationService _servicoNotificacao;
         private readonly HistoricoAdocaoServico _historicoServico;
         private readonly ILogger<GerenciamentoAdocaoController> _logger;
 
-        public GerenciamentoAdocaoController(ApplicationDbContext contexto, NotificacaoServico servicoNotificacao, HistoricoAdocaoServico historicoServico, ILogger<GerenciamentoAdocaoController> logger)
+        public GerenciamentoAdocaoController(ApplicationDbContext contexto, NotificationService servicoNotificacao, HistoricoAdocaoServico historicoServico, ILogger<GerenciamentoAdocaoController> logger)
         {
             _contexto = contexto;
             _servicoNotificacao = servicoNotificacao;
