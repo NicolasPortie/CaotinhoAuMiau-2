@@ -128,7 +128,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 if (!CadastroCompleto)
                 {
                     ModelState.Clear();
-                    
+
                     if (string.IsNullOrEmpty(pet.Nome))
                     {
                         return Json(new { sucesso = false, mensagem = "O nome do pet é obrigatório mesmo para rascunhos." });
@@ -142,36 +142,16 @@ namespace CaotinhoAuMiau.Controllers.Admin
                         {
                             ModelState.Remove("foto");
                         }
-                        
+
                         if (ModelState.ContainsKey("NomeArquivoImagem"))
                         {
                             ModelState.Remove("NomeArquivoImagem");
                         }
                     }
-                    
-                    var errosValidacao = new Dictionary<string, string>();
-                    
-                    if (string.IsNullOrWhiteSpace(pet.Especie))
-                        errosValidacao.Add("especie", "A espécie do pet é obrigatória.");
-                    
-                    if (string.IsNullOrWhiteSpace(pet.Raca))
-                        errosValidacao.Add("raca", "A raça do pet é obrigatória.");
-                        
-                    if (string.IsNullOrWhiteSpace(pet.Sexo))
-                        errosValidacao.Add("sexo", "O sexo do pet é obrigatório.");
-                        
-                    if (string.IsNullOrWhiteSpace(pet.Porte))
-                        errosValidacao.Add("porte", "O porte do pet é obrigatório.");
-                        
-                    if (string.IsNullOrWhiteSpace(pet.Descricao))
-                        errosValidacao.Add("descricao", "A descrição do pet é obrigatória.");
-                    
+
                     if (string.IsNullOrWhiteSpace(pet.NomeArquivoImagem) && foto == null && !ManterImagemAtual)
-                        errosValidacao.Add("foto", "A foto do pet é obrigatória.");
-                    
-                    if (errosValidacao.Count > 0)
                     {
-                        return Json(new { sucesso = false, mensagem = "Dados inválidos para cadastro completo", erros = errosValidacao });
+                        ModelState.AddModelError("foto", "A foto do pet é obrigatória.");
                     }
                 }
 
@@ -592,25 +572,30 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 {
                     return Json(new { sucesso = false, erros = new Dictionary<string, string> { { "Geral", "Dados do pet não fornecidos." } } });
                 }
-                
-                if (string.IsNullOrEmpty(modelo.Nome))
-                {
-                    return Json(new { sucesso = false, mensagem = "O nome do pet é obrigatório." });
-                }
 
-                if (modelo.CadastroCompleto && string.IsNullOrEmpty(modelo.NomeArquivoImagem))
+                if (!modelo.CadastroCompleto)
                 {
-                    return Json(new { sucesso = false, mensagem = "A imagem do pet é obrigatória para cadastro completo." });
-                }
+                    ModelState.Clear();
 
-                if (modelo.CadastroCompleto)
-                {
-                    if (string.IsNullOrEmpty(modelo.Especie) || string.IsNullOrEmpty(modelo.Raca) ||
-                        string.IsNullOrEmpty(modelo.Sexo) || string.IsNullOrEmpty(modelo.Porte) ||
-                        string.IsNullOrEmpty(modelo.Descricao))
+                    if (string.IsNullOrEmpty(modelo.Nome))
                     {
-                        return Json(new { sucesso = false, mensagem = "Todos os campos são obrigatórios para cadastro completo." });
+                        return Json(new { sucesso = false, mensagem = "O nome do pet é obrigatório." });
                     }
+                }
+                else
+                {
+                    if (string.IsNullOrWhiteSpace(modelo.NomeArquivoImagem) && imagemUpload == null)
+                    {
+                        ModelState.AddModelError("NomeArquivoImagem", "A imagem do pet é obrigatória para cadastro completo.");
+                    }
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    var erros = ModelState.ToDictionary(
+                        kvp => kvp.Key,
+                        kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray());
+                    return Json(new { sucesso = false, mensagem = "Dados inválidos", erros });
                 }
 
                 var pet = new Pet

@@ -14,8 +14,10 @@ namespace CaotinhoAuMiau.Models
         [Required(ErrorMessage = "O nome do pet é obrigatório")]
         [StringLength(100, ErrorMessage = "O nome não pode ter mais que 100 caracteres")]
         public string Nome { get; set; } = string.Empty;
+        [Required(ErrorMessage = "A espécie do pet é obrigatória")]
         public string? Especie { get; set; } = "";
 
+        [Required(ErrorMessage = "A raça do pet é obrigatória")]
         [StringLength(50, ErrorMessage = "A raça não pode ter mais que 50 caracteres")]
         public string? Raca { get; set; } = "";
 
@@ -26,9 +28,14 @@ namespace CaotinhoAuMiau.Models
         public int Meses { get; set; }
         
         public int Idade { get => Anos; }
+
+        [Required(ErrorMessage = "O sexo do pet é obrigatório")]
         public string? Sexo { get; set; } = "";
+
+        [Required(ErrorMessage = "O porte do pet é obrigatório")]
         public string? Porte { get; set; } = "";
 
+        [Required(ErrorMessage = "A descrição do pet é obrigatória")]
         [StringLength(500, ErrorMessage = "A descrição não pode ter mais que 500 caracteres")]
         public string? Descricao { get; set; } = "";
 
