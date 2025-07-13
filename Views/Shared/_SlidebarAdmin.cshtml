@@ -242,21 +242,21 @@
             <span>Dashboard</span>
         </a>
         
-        <a href="/admin/pets" class="link-nav @(ViewContext?.RouteData?.Values["Controller"]?.ToString() == "GerenciamentoPet" ? "ativo" : "")">
+        <a href="@Url.Action("Listar", "GerenciamentoPet")" class="link-nav @(ViewContext?.RouteData?.Values["Controller"]?.ToString() == "GerenciamentoPet" ? "ativo" : "")">
             <span class="circulo-icone">
                 <i class="fas fa-paw"></i>
             </span>
             <span>Pets</span>
         </a>
         
-        <a href="/admin/formularios-adocao" class="link-nav @(ViewContext?.RouteData?.Values["Controller"]?.ToString() == "GerenciamentoFormularioAdocao" ? "ativo" : "")">
+        <a href="@Url.Action("Listar", "GerenciamentoFormularioAdocao")" class="link-nav @(ViewContext?.RouteData?.Values["Controller"]?.ToString() == "GerenciamentoFormularioAdocao" ? "ativo" : "")">
             <span class="circulo-icone">
                 <i class="fas fa-file-alt"></i>
             </span>
             <span>Formulários</span>
         </a>
         
-        <a href="/admin/adocoes" class="link-nav @(ViewContext?.RouteData?.Values["Controller"]?.ToString() == "GerenciamentoAdocao" ? "ativo" : "")">
+        <a href="@Url.Action("Listar", "GerenciamentoAdocao")" class="link-nav @(ViewContext?.RouteData?.Values["Controller"]?.ToString() == "GerenciamentoAdocao" ? "ativo" : "")">
             <span class="circulo-icone">
                 <i class="fas fa-heart"></i>
             </span>
