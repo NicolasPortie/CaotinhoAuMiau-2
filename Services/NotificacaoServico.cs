@@ -17,7 +17,8 @@ namespace CaotinhoAuMiau.Services
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<IEnumerable<Notificacao>> ObterNotificacoesUsuario(string idUsuario)
+        // Renomeado para seguir a convenção .NET de métodos assíncronos
+        public async Task<IEnumerable<Notificacao>> ObterNotificacoesUsuarioAsync(string idUsuario)
         {
             if (string.IsNullOrEmpty(idUsuario))
                 throw new ArgumentException("ID do usuário não pode ser nulo ou vazio", nameof(idUsuario));
@@ -29,7 +30,8 @@ namespace CaotinhoAuMiau.Services
                 .ToListAsync();
         }
 
-        public async Task<int> ContarNotificacoesNaoLidas(string idUsuario)
+        // Sufixo Async indica método assíncrono
+        public async Task<int> ContarNotificacoesNaoLidasAsync(string idUsuario)
         {
             if (string.IsNullOrEmpty(idUsuario))
                 throw new ArgumentException("ID do usuário não pode ser nulo ou vazio", nameof(idUsuario));
@@ -38,7 +40,8 @@ namespace CaotinhoAuMiau.Services
                 .CountAsync(n => n.UsuarioId.ToString() == idUsuario && !n.Lida);
         }
 
-        public async Task<bool> MarcarComoLida(int id, string idUsuario)
+        // Método renomeado para refletir chamada assíncrona
+        public async Task<bool> MarcarComoLidaAsync(int id, string idUsuario)
         {
             var notificacao = await _context.Notificacoes
                 .FirstOrDefaultAsync(n => n.Id == id && n.UsuarioId.ToString() == idUsuario);
@@ -53,7 +56,8 @@ namespace CaotinhoAuMiau.Services
             return true;
         }
 
-        public async Task MarcarTodasComoLidas(string idUsuario)
+        // Identificador ajustado para padrão assíncrono
+        public async Task MarcarTodasComoLidasAsync(string idUsuario)
         {
             if (string.IsNullOrEmpty(idUsuario))
                 throw new ArgumentException("ID do usuário não pode ser nulo ou vazio", nameof(idUsuario));
@@ -71,7 +75,8 @@ namespace CaotinhoAuMiau.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task CriarNotificacao(string idUsuario, string titulo, string mensagem, string tipo, string? referencia = null)
+        // Sufixo Async para indicar operação assíncrona
+        public async Task CriarNotificacaoAsync(string idUsuario, string titulo, string mensagem, string tipo, string? referencia = null)
         {
             if (string.IsNullOrEmpty(idUsuario))
                 throw new ArgumentException("ID do usuário não pode ser nulo ou vazio", nameof(idUsuario));

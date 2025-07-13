@@ -91,7 +91,7 @@ namespace CaotinhoAuMiau.Controllers.Autenticacao
 
         [HttpPost("login")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ProcessarLogin(CaotinhoAuMiau.Models.ViewModels.Comuns.AutenticacaoLoginViewModel modelo, string returnUrl = "")
+        public async Task<IActionResult> ProcessarLoginAsync(CaotinhoAuMiau.Models.ViewModels.Comuns.AutenticacaoLoginViewModel modelo, string returnUrl = "")
         {
             System.Diagnostics.Debug.WriteLine($"==== PROCESSANDO LOGIN ====");
             System.Diagnostics.Debug.WriteLine($"ReturnUrl recebida: {returnUrl}");
@@ -272,7 +272,7 @@ namespace CaotinhoAuMiau.Controllers.Autenticacao
         }
 
         [HttpGet("EscolherPerfil")]
-        public async Task<IActionResult> EscolherPerfil(string perfil, int? colaboradorId, int? usuarioId, bool continuarConectado = false)
+        public async Task<IActionResult> EscolherPerfilAsync(string perfil, int? colaboradorId, int? usuarioId, bool continuarConectado = false)
         {
             if (string.IsNullOrEmpty(perfil))
             {
@@ -358,7 +358,7 @@ namespace CaotinhoAuMiau.Controllers.Autenticacao
         }
 
         [HttpGet("logout")]
-        public async Task<IActionResult> EncerrarSessao()
+        public async Task<IActionResult> EncerrarSessaoAsync()
         {
             try
             {
@@ -402,7 +402,7 @@ namespace CaotinhoAuMiau.Controllers.Autenticacao
         #region API para validação de formulários
 
         [HttpGet("verificar-cpf")]
-        public async Task<IActionResult> VerificarCPF(string cpf)
+        public async Task<IActionResult> VerificarCPFAsync(string cpf)
         {
             if (string.IsNullOrWhiteSpace(cpf))
             {
@@ -417,7 +417,7 @@ namespace CaotinhoAuMiau.Controllers.Autenticacao
         }
 
         [HttpGet("verificar-email")]
-        public async Task<IActionResult> VerificarEmail(string email)
+        public async Task<IActionResult> VerificarEmailAsync(string email)
         {
             try
             {
@@ -446,7 +446,7 @@ namespace CaotinhoAuMiau.Controllers.Autenticacao
         }
 
         [HttpGet("validar-cep")]
-        public async Task<IActionResult> ValidarCep(string cep)
+        public async Task<IActionResult> ValidarCepAsync(string cep)
         {
             if (string.IsNullOrWhiteSpace(cep))
             {
@@ -491,7 +491,7 @@ namespace CaotinhoAuMiau.Controllers.Autenticacao
 
         [HttpPost("cadastro")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ProcessarCadastro(CaotinhoAuMiau.Models.ViewModels.Usuario.UsuarioViewModel usuarioVM)
+        public async Task<IActionResult> ProcessarCadastroAsync(CaotinhoAuMiau.Models.ViewModels.Usuario.UsuarioViewModel usuarioVM)
         {
             try
             {

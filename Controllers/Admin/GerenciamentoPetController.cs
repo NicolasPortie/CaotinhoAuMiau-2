@@ -35,7 +35,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         }
 
         [HttpGet]
-        public async Task<IActionResult> Listar(int pagina = 1, int itensPorPagina = 14)
+        public async Task<IActionResult> ListarAsync(int pagina = 1, int itensPorPagina = 14)
         {
             var adminId = User.ObterIdUsuario();
             if (string.IsNullOrEmpty(adminId))
@@ -84,7 +84,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
         [HttpPost("SalvarPet")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SalvarPet([FromForm]Pet pet, IFormFile foto, bool RemoverImagem = false, bool CadastroCompleto = true, bool ManterImagemAtual = false)
+        public async Task<IActionResult> SalvarPetAsync([FromForm]Pet pet, IFormFile foto, bool RemoverImagem = false, bool CadastroCompleto = true, bool ManterImagemAtual = false)
         {
             try
             {
@@ -440,7 +440,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         }
 
         [HttpGet("editar/{id}")]
-        public async Task<IActionResult> ExibirFormularioEdicao(int id)
+        public async Task<IActionResult> ExibirFormularioEdicaoAsync(int id)
         {
             var pet = await _contexto.Pets
                 .FirstOrDefaultAsync(p => p.Id == id);
@@ -471,7 +471,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
         [HttpPost("excluir/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ExcluirPet(int id)
+        public async Task<IActionResult> ExcluirPetAsync(int id)
         {
             var pet = await _contexto.Pets
                 .FirstOrDefaultAsync(p => p.Id == id);
@@ -506,7 +506,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
         [HttpPost("alterar-status/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AlterarStatusPet(int id, [FromBody] JsonElement modelo)
+        public async Task<IActionResult> AlterarStatusPetAsync(int id, [FromBody] JsonElement modelo)
         {
             try
             {
@@ -543,7 +543,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         }
 
         [HttpGet("ObterPet/{id}")]
-        public async Task<IActionResult> ObterDadosPet(int id)
+        public async Task<IActionResult> ObterDadosPetAsync(int id)
         {
             try
             {
@@ -583,7 +583,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
         [HttpPost("CadastrarPet")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CadastrarPetAjax(PetViewModel? modelo, IFormFile? imagemUpload)
+        public async Task<IActionResult> CadastrarPetAjaxAsync(PetViewModel? modelo, IFormFile? imagemUpload)
         {
             try
             {
@@ -669,7 +669,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         }
 
         [HttpGet("ObterDetalhesPet/{id}")]
-        public async Task<IActionResult> ObterDetalhesPet(int id)
+        public async Task<IActionResult> ObterDetalhesPetAsync(int id)
         {
             try
             {
@@ -708,7 +708,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         }
 
         [HttpGet("ObterListaPets")]
-        public async Task<IActionResult> ObterListaPets()
+        public async Task<IActionResult> ObterListaPetsAsync()
         {
             try
             {
@@ -750,7 +750,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
 
         [HttpGet("verificar-nome")]
-        public async Task<IActionResult> VerificarNome(string nome, int id = 0)
+        public async Task<IActionResult> VerificarNomeAsync(string nome, int id = 0)
         {
             if (string.IsNullOrWhiteSpace(nome))
             {
