@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 using Microsoft.Extensions.DependencyInjection;
 using CaotinhoAuMiau.Utils;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,12 +45,27 @@ if (string.IsNullOrWhiteSpace(redisConnection))
 }
 else
 {
-    // Mantém a utilização do Redis quando a conexão estiver disponível
-    builder.Services.AddStackExchangeRedisCache(options =>
+    // Tenta se conectar ao Redis; se falhar, volta para o cache em memória
+    try
     {
-        options.Configuration = redisConnection;
-        options.InstanceName = "PortalAdocao_";
-    });
+        using var muxer = StackExchange.Redis.ConnectionMultiplexer.Connect(redisConnection);
+        if (muxer.IsConnected)
+        {
+            builder.Services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = redisConnection;
+                options.InstanceName = "PortalAdocao_";
+            });
+        }
+        else
+        {
+            builder.Services.AddDistributedMemoryCache();
+        }
+    }
+    catch
+    {
+        builder.Services.AddDistributedMemoryCache();
+    }
 }
 
 builder.Services.AddScoped<NotificationService>();
