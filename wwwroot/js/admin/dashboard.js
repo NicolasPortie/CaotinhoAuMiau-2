@@ -640,23 +640,47 @@ function filtrarDadosPorPeriodo(dados, filtro) {
     const hoje = new Date();
     const mesAtual = hoje.getMonth();
     const anoAtual = hoje.getFullYear();
-    
+
+    const mapaMes = {
+        'jan': 0, 'janeiro': 0,
+        'feb': 1, 'fev': 1, 'fevereiro': 1,
+        'mar': 2, 'marco': 2, 'março': 2,
+        'apr': 3, 'abr': 3, 'abril': 3,
+        'may': 4, 'mai': 4, 'maio': 4,
+        'jun': 5, 'junho': 5,
+        'jul': 6, 'julho': 6,
+        'aug': 7, 'ago': 7, 'agosto': 7,
+        'sep': 8, 'set': 8, 'setembro': 8,
+        'oct': 9, 'out': 9, 'outubro': 9,
+        'nov': 10, 'novembro': 10,
+        'dec': 11, 'dez': 11, 'dezembro': 11
+    };
+
+    function obterData(item) {
+        const [mesParte, anoParte] = item.mes.split('/');
+        const ano = parseInt(anoParte);
+        let mes = parseInt(mesParte) - 1;
+        if (isNaN(mes)) {
+            const chave = mesParte.toLowerCase();
+            mes = mapaMes[chave];
+        }
+        return new Date(ano, mes ?? 0, 1);
+    }
+
     switch (filtro) {
         case 'Trimestral':
             return dados.filter(item => {
-                const [mes, ano] = item.mes.split('/');
-                const itemDate = new Date(parseInt(ano), parseInt(mes) - 1, 1);
+                const itemDate = obterData(item);
                 const tresAtrasMes = new Date(anoAtual, mesAtual - 2, 1);
                 return itemDate >= tresAtrasMes;
             });
         case 'Semestral':
             return dados.filter(item => {
-                const [mes, ano] = item.mes.split('/');
-                const itemDate = new Date(parseInt(ano), parseInt(mes) - 1, 1);
+                const itemDate = obterData(item);
                 const seisAtrasMes = new Date(anoAtual, mesAtual - 5, 1);
                 return itemDate >= seisAtrasMes;
             });
-        default: 
+        default:
             return dados;
     }
 }
