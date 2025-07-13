@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using CaotinhoAuMiau.Services;
 using CaotinhoAuMiau.Utils;
+using Microsoft.Extensions.Logging;
 
 namespace CaotinhoAuMiau.Controllers.Admin
 {
@@ -21,11 +22,13 @@ namespace CaotinhoAuMiau.Controllers.Admin
     {
         private readonly ApplicationDbContext _contexto;
         private readonly NotificacaoServico _servicoNotificacao;
+        private readonly ILogger<GerenciamentoFormularioAdocaoController> _logger;
 
-        public GerenciamentoFormularioAdocaoController(ApplicationDbContext contexto, NotificacaoServico servicoNotificacao)
+        public GerenciamentoFormularioAdocaoController(ApplicationDbContext contexto, NotificacaoServico servicoNotificacao, ILogger<GerenciamentoFormularioAdocaoController> logger)
         {
             _contexto = contexto;
             _servicoNotificacao = servicoNotificacao;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -122,8 +125,8 @@ namespace CaotinhoAuMiau.Controllers.Admin
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine($"Erro ao obter detalhes do formulário {id}: {ex.Message}");
-                
+                _logger.LogError(ex, "Erro ao obter detalhes do formulário {FormularioId}", id);
+
                 return Json(new { sucesso = false, mensagem = $"Erro ao carregar detalhes do formulário: {ex.Message}" });
             }
         }
@@ -188,7 +191,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     }
                     catch (Exception notifEx)
                     {
-                        Console.WriteLine($"Erro ao enviar notificação: {notifEx.Message}");
+                        _logger.LogError(notifEx, "Erro ao enviar notificação");
                     }
                 }
 

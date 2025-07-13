@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using CaotinhoAuMiau.Services;
 using CaotinhoAuMiau.Utils;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 
 namespace CaotinhoAuMiau.Controllers.Admin
 {
@@ -27,13 +28,15 @@ namespace CaotinhoAuMiau.Controllers.Admin
         private readonly IWebHostEnvironment _ambiente;
         private readonly NotificacaoServico _servicoNotificacao;
         private readonly PetService _petService;
+        private readonly ILogger<GerenciamentoPetController> _logger;
 
-        public GerenciamentoPetController(ApplicationDbContext contexto, IWebHostEnvironment ambiente, NotificacaoServico servicoNotificacao, PetService petService)
+        public GerenciamentoPetController(ApplicationDbContext contexto, IWebHostEnvironment ambiente, NotificacaoServico servicoNotificacao, PetService petService, ILogger<GerenciamentoPetController> logger)
         {
             _contexto = contexto;
             _ambiente = ambiente;
             _servicoNotificacao = servicoNotificacao;
             _petService = petService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -90,10 +93,10 @@ namespace CaotinhoAuMiau.Controllers.Admin
         {
             try
             {
-                Console.WriteLine("=========== INÍCIO DO LOG DE SALVAMENTO DE PET ===========");
-                Console.WriteLine($"ID do Pet: {pet.Id}, Nome: {pet.Nome}, CadastroCompleto: {CadastroCompleto}");
-                Console.WriteLine($"Imagem recebida: {(foto != null ? $"Sim, nome: {foto.FileName}, tamanho: {foto.Length / 1024} KB" : "Não")}");
-                Console.WriteLine($"RemoverImagem: {RemoverImagem}, ManterImagemAtual: {ManterImagemAtual}");
+                _logger.LogInformation("=========== INÍCIO DO LOG DE SALVAMENTO DE PET ===========");
+                _logger.LogInformation("ID do Pet: {PetId}, Nome: {Nome}, CadastroCompleto: {CadastroCompleto}", pet.Id, pet.Nome, CadastroCompleto);
+                _logger.LogInformation("Imagem recebida: {InfoImagem}", foto != null ? $"Sim, nome: {foto.FileName}, tamanho: {foto.Length / 1024} KB" : "Não");
+                _logger.LogInformation("RemoverImagem: {RemoverImagem}, ManterImagemAtual: {ManterImagemAtual}", RemoverImagem, ManterImagemAtual);
                 
                 bool novoPet = pet.Id == 0;
                 
@@ -187,12 +190,12 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 
                 if (!novoPet)
                 {
-                    Console.WriteLine($"Atualizando pet existente com ID {pet.Id}");
+                    _logger.LogInformation("Atualizando pet existente com ID {PetId}", pet.Id);
                     var petExistente = await _contexto.Pets.FindAsync(pet.Id);
                     
                     if (petExistente == null)
                     {
-                        Console.WriteLine($"Pet com ID {pet.Id} não encontrado no banco de dados");
+                        _logger.LogWarning("Pet com ID {PetId} não encontrado no banco de dados", pet.Id);
                         return Json(new { sucesso = false, mensagem = "Pet não encontrado" });
                     }
                     
@@ -231,20 +234,20 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     {
                         if (foto != null && foto.Length > 0)
                         {
-                            Console.WriteLine($"Processando nova imagem: {foto.FileName}, tamanho: {foto.Length / 1024} KB");
-                            
+                            _logger.LogInformation("Processando nova imagem: {NomeArquivo}, tamanho: {TamanhoKb} KB", foto.FileName, foto.Length / 1024);
+
                             if (!foto.ContentType.StartsWith("image/"))
                             {
-                                Console.WriteLine($"Tipo de arquivo inválido: {foto.ContentType}");
+                                _logger.LogWarning("Tipo de arquivo inválido: {ContentType}", foto.ContentType);
                                 return Json(new { sucesso = false, mensagem = "O arquivo enviado não é uma imagem válida." });
                             }
-                            
+
                             if (foto.Length > 50 * 1024 * 1024)
                             {
-                                Console.WriteLine($"Imagem muito grande: {foto.Length / (1024 * 1024)} MB");
+                                _logger.LogWarning("Imagem muito grande: {TamanhoMb} MB", foto.Length / (1024 * 1024));
                                 return Json(new { sucesso = false, mensagem = "A imagem é muito grande. O tamanho máximo permitido é 50MB." });
                             }
-                            
+
                             string nomeArquivoImagem = await ImagemHelper.SalvarAsync(
                                 foto,
                                 _ambiente.WebRootPath,
@@ -253,56 +256,55 @@ namespace CaotinhoAuMiau.Controllers.Admin
                             if (nomeArquivoImagem != null)
                             {
                                 petExistente.NomeArquivoImagem = nomeArquivoImagem;
-                                Console.WriteLine($"Nova imagem salva com sucesso: {nomeArquivoImagem}");
+                                _logger.LogInformation("Nova imagem salva com sucesso: {NomeArquivoImagem}", nomeArquivoImagem);
                             }
                             else
                             {
-                                Console.WriteLine("Falha ao processar a imagem");
+                                _logger.LogWarning("Falha ao processar a imagem");
                                 return Json(new { sucesso = false, mensagem = "Falha ao processar a imagem do pet." });
                             }
                         }
                         else if (RemoverImagem)
                         {
-                            Console.WriteLine("Removendo imagem existente conforme solicitado");
+                            _logger.LogInformation("Removendo imagem existente conforme solicitado");
                             ImagemHelper.Remover(_ambiente.WebRootPath, "pets", petExistente.NomeArquivoImagem);
                             petExistente.NomeArquivoImagem = null;
                         }
                         else if (ManterImagemAtual)
                         {
-                            Console.WriteLine("Mantendo a imagem atual conforme solicitado");
+                            _logger.LogInformation("Mantendo a imagem atual conforme solicitado");
                         }
                         else if (CadastroCompleto && string.IsNullOrEmpty(petExistente.NomeArquivoImagem) && !RemoverImagem)
                         {
-                            Console.WriteLine("Verificando necessidade de imagem para cadastro completo");
-                            
+                            _logger.LogInformation("Verificando necessidade de imagem para cadastro completo");
+
                             if (!ManterImagemAtual)
                             {
-                                Console.WriteLine("Imagem obrigatória para cadastro completo - validando");
-                                return Json(new { 
-                                    sucesso = false, 
-                                    mensagem = "É necessário fornecer uma imagem para o pet", 
-                                    erros = new Dictionary<string, string[]> { 
-                                        { "foto", new[] { "É necessário fornecer uma imagem para o pet" } } 
-                                    } 
+                                _logger.LogInformation("Imagem obrigatória para cadastro completo - validando");
+                                return Json(new {
+                                    sucesso = false,
+                                    mensagem = "É necessário fornecer uma imagem para o pet",
+                                    erros = new Dictionary<string, string[]> {
+                                        { "foto", new[] { "É necessário fornecer uma imagem para o pet" } }
+                                    }
                                 });
                             }
                             else
                             {
-                                Console.WriteLine("ManterImagemAtual=true, pulando validação de imagem obrigatória");
+                                _logger.LogInformation("ManterImagemAtual=true, pulando validação de imagem obrigatória");
                             }
                         }
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"Erro ao processar imagem: {ex.Message}");
-                        Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                        _logger.LogError(ex, "Erro ao processar imagem");
                     }
                     
                     _contexto.Update(petExistente);
                 }
                 else
                 {
-                    Console.WriteLine("Criando novo pet");
+                    _logger.LogInformation("Criando novo pet");
                     pet.DataCriacao = DateTime.Now;
                     pet.Status = CadastroCompleto ? "Disponível" : "Rascunho";
                     pet.CadastroCompleto = CadastroCompleto;
@@ -334,17 +336,17 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     {
                         if (foto != null && foto.Length > 0)
                         {
-                            Console.WriteLine($"Processando imagem para novo pet: {foto.FileName}, tamanho: {foto.Length / 1024} KB");
+                            _logger.LogInformation("Processando imagem para novo pet: {NomeArquivo}, tamanho: {TamanhoKb} KB", foto.FileName, foto.Length / 1024);
                             
                             if (!foto.ContentType.StartsWith("image/"))
                             {
-                                Console.WriteLine($"Tipo de arquivo inválido: {foto.ContentType}");
+                                _logger.LogWarning("Tipo de arquivo inválido: {ContentType}", foto.ContentType);
                                 return Json(new { sucesso = false, mensagem = "O arquivo enviado não é uma imagem válida." });
                             }
                             
                             if (foto.Length > 50 * 1024 * 1024)
                             {
-                                Console.WriteLine($"Imagem muito grande: {foto.Length / (1024 * 1024)} MB");
+                                _logger.LogWarning("Imagem muito grande: {TamanhoMb} MB", foto.Length / (1024 * 1024));
                                 return Json(new { sucesso = false, mensagem = "A imagem é muito grande. O tamanho máximo permitido é 50MB." });
                             }
                             
@@ -355,19 +357,18 @@ namespace CaotinhoAuMiau.Controllers.Admin
                             if (nomeArquivoImagem != null)
                             {
                                 pet.NomeArquivoImagem = nomeArquivoImagem;
-                                Console.WriteLine($"Imagem salva com sucesso: {nomeArquivoImagem}");
+                                _logger.LogInformation("Imagem salva com sucesso: {NomeArquivoImagem}", nomeArquivoImagem);
                             }
                             else
                             {
-                                Console.WriteLine("Falha ao processar a imagem");
+                                _logger.LogWarning("Falha ao processar a imagem");
                                 return Json(new { sucesso = false, mensagem = "Falha ao processar a imagem do pet." });
                             }
                         }
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"Erro ao processar imagem: {ex.Message}");
-                        Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                        _logger.LogError(ex, "Erro ao processar imagem");
                     }
                     
                     _contexto.Add(pet);
@@ -376,7 +377,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 try
                 {
                     await _contexto.SaveChangesAsync();
-                    Console.WriteLine("Alterações salvas no banco de dados com sucesso");
+                    _logger.LogInformation("Alterações salvas no banco de dados com sucesso");
                     
                     string mensagem = CadastroCompleto 
                         ? (novoPet ? "Pet cadastrado com sucesso!" : "Pet atualizado com sucesso!")
@@ -390,17 +391,13 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Erro ao salvar no banco de dados: {ex.Message}");
-                    Console.WriteLine($"Stack trace: {ex.StackTrace}");
-                    
-                    Console.WriteLine($"Detalhes adicionais: ID do Pet: {pet?.Id}, Nome: {pet?.Nome}");
-                    Console.WriteLine($"Possui foto: {(foto != null ? "Sim" : "Não")}, RemoverImagem: {RemoverImagem}, ManterImagemAtual: {ManterImagemAtual}");
-                    
-                    if (ex.InnerException != null)
-                    {
-                        Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
-                        Console.WriteLine($"Inner Exception Stack Trace: {ex.InnerException.StackTrace}");
-                    }
+                    _logger.LogError(ex,
+                        "Erro ao salvar no banco de dados para pet {PetId} - {PetNome}. Possui foto: {TemFoto}, RemoverImagem: {RemoverImagem}, ManterImagemAtual: {ManterImagemAtual}",
+                        pet?.Id,
+                        pet?.Nome,
+                        foto != null,
+                        RemoverImagem,
+                        ManterImagemAtual);
                     
                     return Json(new { 
                         sucesso = false, 
@@ -411,17 +408,13 @@ namespace CaotinhoAuMiau.Controllers.Admin
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erro geral ao salvar pet: {ex.Message}");
-                Console.WriteLine($"Stack trace: {ex.StackTrace}");
-                
-                Console.WriteLine($"Detalhes adicionais: ID do Pet: {pet?.Id}, Nome: {pet?.Nome}");
-                Console.WriteLine($"Possui foto: {(foto != null ? "Sim" : "Não")}, RemoverImagem: {RemoverImagem}, ManterImagemAtual: {ManterImagemAtual}");
-                
-                if (ex.InnerException != null)
-                {
-                    Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
-                    Console.WriteLine($"Inner Exception Stack Trace: {ex.InnerException.StackTrace}");
-                }
+                _logger.LogError(ex,
+                    "Erro geral ao salvar pet {PetId} - {PetNome}. Possui foto: {TemFoto}, RemoverImagem: {RemoverImagem}, ManterImagemAtual: {ManterImagemAtual}",
+                    pet?.Id,
+                    pet?.Nome,
+                    foto != null,
+                    RemoverImagem,
+                    ManterImagemAtual);
                 
                 return Json(new { 
                     sucesso = false, 
@@ -431,7 +424,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
             }
             finally
             {
-                Console.WriteLine("=========== FIM DO LOG DE SALVAMENTO DE PET ===========");
+                _logger.LogInformation("=========== FIM DO LOG DE SALVAMENTO DE PET ===========");
             }
         }
 
@@ -583,10 +576,10 @@ namespace CaotinhoAuMiau.Controllers.Admin
         {
             try
             {
-                Console.WriteLine("=========== INÍCIO DO LOG DE CADASTRO DE PET ===========");
-                Console.WriteLine($"Recebendo cadastro de pet: {modelo?.Nome ?? "null"}, Espécie: {modelo?.Especie ?? "null"}");
-                Console.WriteLine($"É rascunho: {modelo?.CadastroCompleto == false}");
-                Console.WriteLine($"Imagem recebida: {(imagemUpload != null ? $"Sim, nome: {imagemUpload.FileName}, tamanho: {imagemUpload.Length} bytes" : "Não")}");
+                _logger.LogInformation("=========== INÍCIO DO LOG DE CADASTRO DE PET ===========");
+                _logger.LogInformation("Recebendo cadastro de pet: {Nome}, Espécie: {Especie}", modelo?.Nome ?? "null", modelo?.Especie ?? "null");
+                _logger.LogInformation("É rascunho: {Rascunho}", modelo?.CadastroCompleto == false);
+                _logger.LogInformation("Imagem recebida: {InfoImagem}", imagemUpload != null ? $"Sim, nome: {imagemUpload.FileName}, tamanho: {imagemUpload.Length} bytes" : "Não");
                 
                 if (modelo == null)
                 {
@@ -658,8 +651,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erro ao cadastrar pet: {ex.Message}");
-                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                _logger.LogError(ex, "Erro ao cadastrar pet");
                 return Json(new { sucesso = false, mensagem = $"Erro ao processar cadastro: {ex.Message}" });
             }
         }
