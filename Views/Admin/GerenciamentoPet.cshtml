@@ -4,14 +4,15 @@
 
 @model List<CaotinhoAuMiau.Models.Pet>
 @using System.Linq
+@using CaotinhoAuMiau.Models.Enums
 
 @{
     ViewData["Title"] = "Gerenciamento de Pets";
     
     var totalPets = Model?.Count ?? 0;
-    var totalCachorros = Model?.Count(p => p.Especie == "Cachorro") ?? 0;
-    var totalGatos = Model?.Count(p => p.Especie == "Gato") ?? 0;
-    var adotados = Model?.Count(p => p.Status == "Adotado") ?? 0;
+    var totalCachorros = Model?.Count(p => p.Especie == Especie.Cachorro) ?? 0;
+    var totalGatos = Model?.Count(p => p.Especie == Especie.Gato) ?? 0;
+    var adotados = Model?.Count(p => p.Status == StatusPet.Adotado) ?? 0;
 }
 
 <!DOCTYPE html>
@@ -142,17 +143,17 @@
                     {
                         <div class="cartao-pet @(pet.CadastroCompleto ? "" : "border-warning")" 
                              data-id="@pet.Id" 
-                             data-especie="@pet.Especie.ToLower()" 
-                             data-status="@pet.Status.ToLower().Replace(" ", "_")"
+                             data-especie="@pet.Especie.ToString().ToLower()"
+                             data-status="@pet.Status.ToString().ToLower().Replace(" ", "_")"
                              data-nome-arquivo-imagem="@pet.NomeArquivoImagem"
                              data-json="@System.Net.WebUtility.HtmlEncode(System.Text.Json.JsonSerializer.Serialize(pet))">
                             <div class="container-imagem">
-                                <div class="etiqueta-pet @(pet.CadastroCompleto ? pet.Status.ToLower().Replace(" ", "_") : "rascunho")">
+                                <div class="etiqueta-pet @(pet.CadastroCompleto ? pet.Status.ToString().ToLower().Replace(" ", "_") : "rascunho")">
                                     @if(!pet.CadastroCompleto)
                                     {
                                         <text>Rascunho</text>
                                     }
-                                    else if(pet.Status.ToLower() == "disponivel")
+                                    else if(pet.Status.ToString().ToLower() == "disponivel")
                                     {
                                         <text>Disponível</text>
                                     }
@@ -196,9 +197,9 @@
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="etiquetas-pet">
-                                        <span class="etiqueta etiqueta-@(pet.Sexo == "Macho" ? "m" : "f")">
-                                            <i class="fas @(pet.Sexo == "Macho" ? "fa-mars" : "fa-venus")"></i> @pet.Sexo
-                                        </span>
+                                          <span class="etiqueta etiqueta-@(pet.Sexo == SexoPet.Macho ? "m" : "f")">
+                                              <i class="fas @(pet.Sexo == SexoPet.Macho ? "fa-mars" : "fa-venus")"></i> @pet.Sexo
+                                          </span>
                                         <span class="etiqueta">
                                             <i class="fas fa-ruler-vertical"></i> @pet.Porte
                                         </span>
