@@ -19,13 +19,14 @@ namespace CaotinhoAuMiau.Services
             if (string.IsNullOrWhiteSpace(nome))
                 return false;
 
-            var nomeNormalizado = nome.Trim().ToLower();
+            var nomeNormalizado = nome.Trim();
 
             return await _contexto.Pets
-                .AnyAsync(p => p.Nome.ToLower() == nomeNormalizado
-                             && p.Id != id
-                             && p.Status != "Finalizado"
-                             && p.Status != "Adotado");
+                .AnyAsync(p =>
+                    p.Id != id
+                    && !string.Equals(p.Status, "Finalizado", StringComparison.OrdinalIgnoreCase)
+                    && !string.Equals(p.Status, "Adotado", StringComparison.OrdinalIgnoreCase)
+                    && string.Equals(p.Nome.Trim(), nomeNormalizado, StringComparison.OrdinalIgnoreCase));
         }
     }
 }
