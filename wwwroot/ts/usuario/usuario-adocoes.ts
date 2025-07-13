@@ -12,13 +12,15 @@ interface AdocaoViewModel {
 }
 
 // Código responsável por lidar com a paginação e seleção de itens na listagem de adoções do usuário.
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', (): void => {
     // Manipulador para o seletor de itens por página
     const seletor = document.getElementById('selectItensPorPagina') as HTMLSelectElement | null;
     if (seletor) {
+        const baseUrl: string = seletor.dataset.baseUrl ?? '';
+
         seletor.addEventListener('change', function (this: HTMLSelectElement): void {
             const itensPorPagina: string = this.value;
-            const url: string = '@Url.Action("Listar", "Adocao")' + `?pagina=1&itensPorPagina=${itensPorPagina}`;
+            const url: string = `${baseUrl}?pagina=1&itensPorPagina=${encodeURIComponent(itensPorPagina)}`;
             window.location.href = url;
         });
     }
