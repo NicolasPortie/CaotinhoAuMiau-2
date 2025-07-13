@@ -88,11 +88,19 @@ namespace CaotinhoAuMiau.Controllers.Usuario
 
             if (modelo.FotoPerfilFile != null && modelo.FotoPerfilFile.Length > 0)
             {
-                usuario.FotoPerfil = await ImagemHelper.SalvarAsync(
-                    modelo.FotoPerfilFile,
-                    _ambienteHost.WebRootPath,
-                    "perfil",
-                    usuario.FotoPerfil);
+                try
+                {
+                    usuario.FotoPerfil = await ImagemHelper.SalvarAsync(
+                        modelo.FotoPerfilFile,
+                        _ambienteHost.WebRootPath,
+                        "perfil",
+                        usuario.FotoPerfil);
+                }
+                catch (ArgumentException ex)
+                {
+                    ModelState.AddModelError("FotoPerfilFile", ex.Message);
+                    return View("~/Views/Usuario/Perfil.cshtml", modelo);
+                }
             }
 
             usuario.Nome = modelo.Nome;
@@ -282,11 +290,6 @@ namespace CaotinhoAuMiau.Controllers.Usuario
                     return Json(new { success = false, message = "Nenhum arquivo selecionado" });
                 }
 
-                if (arquivo.Length > 5 * 1024 * 1024)
-                {
-                    return Json(new { success = false, message = "A imagem deve ter até 5MB" });
-                }
-
                 if (!arquivo.ContentType.StartsWith("image/"))
                 {
                     return Json(new { success = false, message = "Por favor, selecione um arquivo de imagem válido" });
@@ -297,10 +300,18 @@ namespace CaotinhoAuMiau.Controllers.Usuario
                     ImagemHelper.Remover(_ambienteHost.WebRootPath, "perfil", usuario.FotoPerfil);
                 }
 
-                string nomeArquivo = await ImagemHelper.SalvarAsync(
-                    arquivo,
-                    _ambienteHost.WebRootPath,
-                    "perfil");
+                string nomeArquivo;
+                try
+                {
+                    nomeArquivo = await ImagemHelper.SalvarAsync(
+                        arquivo,
+                        _ambienteHost.WebRootPath,
+                        "perfil");
+                }
+                catch (ArgumentException ex)
+                {
+                    return Json(new { success = false, message = ex.Message });
+                }
                 usuario.FotoPerfil = nomeArquivo;
                 usuario.DataAtualizacao = DateTime.Now;
 

@@ -7,10 +7,24 @@ namespace CaotinhoAuMiau.Utils
 {
     public static class ImagemHelper
     {
+        private const int MaxFileSizeInBytes = 2 * 1024 * 1024; // 2 MB
+        private static readonly string[] AllowedExtensions = { ".jpg", ".jpeg", ".png" };
+
         public static async Task<string> SalvarAsync(IFormFile imagem, string webRootPath, string subpasta, string? nomeAtual = null)
         {
             if (imagem == null || imagem.Length <= 0)
                 return null;
+
+            if (imagem.Length > MaxFileSizeInBytes)
+            {
+                throw new ArgumentException("O arquivo excede o tamanho máximo permitido de 2 MB.");
+            }
+
+            var extensao = Path.GetExtension(imagem.FileName).ToLowerInvariant();
+            if (string.IsNullOrEmpty(extensao) || !AllowedExtensions.Contains(extensao))
+            {
+                throw new ArgumentException("Formato de arquivo inválido. Apenas imagens .jpg e .png são permitidas.");
+            }
 
             if (!string.IsNullOrEmpty(nomeAtual))
             {
