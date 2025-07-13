@@ -52,7 +52,7 @@
                 </div>
             }
 
-            <form class="login-form" asp-controller="Autenticacao" asp-action="ProcessarLogin" asp-route-ReturnUrl="@ViewData["ReturnUrl"]" method="post">
+            <form class="login-form" asp-controller="Authentication" asp-action="ProcessarLogin" asp-route-ReturnUrl="@ViewData["ReturnUrl"]" method="post">
                 @Html.AntiForgeryToken()
                 <div class="linha-form">
                     <div class="form-grupo">

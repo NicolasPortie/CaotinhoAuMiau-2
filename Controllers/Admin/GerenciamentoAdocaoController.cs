@@ -40,7 +40,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
             var adminId = User.ObterIdUsuario();
             if (string.IsNullOrEmpty(adminId))
             {
-                return RedirectToAction("Login", "Autenticacao");
+                return RedirectToAction("ExibirTelaLogin", "Authentication");
             }
             
             // Lógica de expiração automática

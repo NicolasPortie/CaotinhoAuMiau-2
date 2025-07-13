@@ -34,7 +34,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
             var idUsuario = User.ObterIdUsuario();
             if (string.IsNullOrEmpty(idUsuario))
             {
-                return RedirectToAction("ExibirTelaLogin", "Autenticacao");
+                return RedirectToAction("ExibirTelaLogin", "Authentication");
             }
 
             var usuario = await _contexto.Usuarios.FirstOrDefaultAsync(u => u.Id.ToString() == idUsuario);
@@ -160,7 +160,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
                     {
                         return Json(new { success = false, message = "Usuário não autenticado" });
                     }
-                    return RedirectToAction("ExibirTelaLogin", "Autenticacao");
+                    return RedirectToAction("ExibirTelaLogin", "Authentication");
                 }
 
                 var usuario = await _contexto.Usuarios.FirstOrDefaultAsync(u => u.Id.ToString() == idUsuario);
@@ -214,7 +214,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
             var idUsuario = User.ObterIdUsuario();
             if (string.IsNullOrEmpty(idUsuario))
             {
-                return RedirectToAction("ExibirTelaLogin", "Autenticacao");
+                return RedirectToAction("ExibirTelaLogin", "Authentication");
             }
 
             var usuario = await _contexto.Usuarios.FirstOrDefaultAsync(u => u.Id.ToString() == idUsuario);

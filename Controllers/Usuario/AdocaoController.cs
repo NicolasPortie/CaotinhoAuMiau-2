@@ -38,7 +38,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
             var idUsuario = User.ObterIdUsuario();
             if (string.IsNullOrEmpty(idUsuario))
             {
-                return RedirectToAction("ExibirTelaLogin", "Autenticacao");
+                return RedirectToAction("ExibirTelaLogin", "Authentication");
             }
 
             // Garantir que itensPorPagina seja um valor válido
@@ -108,14 +108,14 @@ namespace CaotinhoAuMiau.Controllers.Usuario
             {
                 TempData["RedirectToPetId"] = petId;
                 var returnUrl = $"/usuario/adocao/formulario/{petId}";
-                return RedirectToAction("ExibirTelaLogin", "Autenticacao", new { returnUrl });
+                return RedirectToAction("ExibirTelaLogin", "Authentication", new { returnUrl });
             }
             
             var usuario = await _contexto.Usuarios.FirstOrDefaultAsync(u => u.Id.ToString() == idUsuario);
             
             if (usuario == null)
             {
-                return RedirectToAction("ExibirTelaLogin", "Autenticacao", new { returnUrl = $"/usuario/adocao/formulario/{petId}" });
+                return RedirectToAction("ExibirTelaLogin", "Authentication", new { returnUrl = $"/usuario/adocao/formulario/{petId}" });
             }
             
             var formularioExistente = await _contexto.FormulariosAdocao
@@ -202,7 +202,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
             var idUsuario = User.ObterIdUsuario();
             if (string.IsNullOrEmpty(idUsuario))
             {
-                return RedirectToAction("ExibirTelaLogin", "Autenticacao");
+                return RedirectToAction("ExibirTelaLogin", "Authentication");
             }
 
             var adocao = await _contexto.FormulariosAdocao
@@ -231,7 +231,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
                     {
                         return Json(new { success = false, message = "Usuário não autenticado" });
                     }
-                    return RedirectToAction("ExibirTelaLogin", "Autenticacao");
+                    return RedirectToAction("ExibirTelaLogin", "Authentication");
                 }
 
                 string motivoCancelamento = request?.MotivoCancelamento;
@@ -323,7 +323,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
             var idUsuario = User.ObterIdUsuario();
             if (string.IsNullOrEmpty(idUsuario))
             {
-                return RedirectToAction("ExibirTelaLogin", "Autenticacao");
+                return RedirectToAction("ExibirTelaLogin", "Authentication");
             }
 
             var formulario = await _contexto.FormulariosAdocao
