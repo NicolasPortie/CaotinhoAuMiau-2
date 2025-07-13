@@ -685,36 +685,51 @@ function abrirModalEdicao(petId) {
     const petCard = document.querySelector(`.cartao-pet[data-id="${petId}"]`);
     if (petCard) {
         
-        const petData = JSON.parse(petCard.getAttribute('data-json'));
-        
-        
-        const status = petData.Status?.toLowerCase();
+        const rawPetData = JSON.parse(petCard.getAttribute('data-json'));
+        // Converte propriedades para camelCase para manter consistência
+        const petData = {
+            id: rawPetData.id ?? rawPetData.Id,
+            nome: rawPetData.nome ?? rawPetData.Nome,
+            especie: rawPetData.especie ?? rawPetData.Especie,
+            raca: rawPetData.raca ?? rawPetData.Raca,
+            sexo: rawPetData.sexo ?? rawPetData.Sexo,
+            porte: rawPetData.porte ?? rawPetData.Porte,
+            anos: rawPetData.anos ?? rawPetData.Anos,
+            meses: rawPetData.meses ?? rawPetData.Meses,
+            descricao: rawPetData.descricao ?? rawPetData.Descricao,
+            status: rawPetData.status ?? rawPetData.Status,
+            nomeArquivoImagem: rawPetData.nomeArquivoImagem ?? rawPetData.NomeArquivoImagem,
+            dataCadastro: rawPetData.dataCadastro ?? rawPetData.DataCadastro,
+            dataAtualizacao: rawPetData.dataAtualizacao ?? rawPetData.DataAtualizacao
+        };
+
+        const status = petData.status?.toLowerCase();
         if (status === 'em processo' || status === 'adotado') {
             toastr.warning(`Não é possível editar um pet ${status === 'em processo' ? 'em processo de adoção' : 'já adotado'}.`);
             return;
         }
         
         
-        document.getElementById('petId').value = petData.Id;
-        document.getElementById('nomePet').value = petData.Nome || '';
-        document.getElementById('especiePet').value = petData.Especie || '';
-        document.getElementById('racaPet').value = petData.Raca || '';
-        document.getElementById('sexoPet').value = petData.Sexo || '';
-        document.getElementById('portePet').value = petData.Porte || '';
-        document.getElementById('anosPet').value = petData.Anos || 0;
-        document.getElementById('mesesPet').value = petData.Meses || 0;
-        document.getElementById('descricaoPet').value = petData.Descricao || '';
+        document.getElementById('petId').value = petData.id;
+        document.getElementById('nomePet').value = petData.nome || '';
+        document.getElementById('especiePet').value = petData.especie || '';
+        document.getElementById('racaPet').value = petData.raca || '';
+        document.getElementById('sexoPet').value = petData.sexo || '';
+        document.getElementById('portePet').value = petData.porte || '';
+        document.getElementById('anosPet').value = petData.anos || 0;
+        document.getElementById('mesesPet').value = petData.meses || 0;
+        document.getElementById('descricaoPet').value = petData.descricao || '';
         
-        document.getElementById('statusPet').value = petData.Status || 'Disponível';
+        document.getElementById('statusPet').value = petData.status || 'Disponível';
         
         
-        const descricao = petData.Descricao || '';
+        const descricao = petData.descricao || '';
         document.getElementById('contadorCaracteres').textContent = descricao.length;
         
         
-        if (petData.NomeArquivoImagem) {
+        if (petData.nomeArquivoImagem) {
             const previewImg = document.getElementById('previewImagem');
-            previewImg.src = `/imagens/pets/${petData.NomeArquivoImagem}`;
+            previewImg.src = `/imagens/pets/${petData.nomeArquivoImagem}`;
             previewImg.style.display = 'block';
             document.getElementById('btnRemoverImagem').style.display = 'block';
             document.querySelector('.mensagem-soltar').style.display = 'none';
@@ -993,21 +1008,21 @@ function visualizarPet(petId) {
         const petData = JSON.parse(petCard.getAttribute('data-json'));
         
         
-        document.getElementById('detalhePetId').value = petData.Id;
+        document.getElementById('detalhePetId').value = petData.id;
         
         
-        document.getElementById('nomeDetalhes').textContent = petData.Nome || 'Nome não informado';
-        document.getElementById('especieDetalhes').textContent = petData.Especie || 'Não informado';
-        document.getElementById('racaDetalhes').textContent = petData.Raca || 'Não informado';
+        document.getElementById('nomeDetalhes').textContent = petData.nome || 'Nome não informado';
+        document.getElementById('especieDetalhes').textContent = petData.especie || 'Não informado';
+        document.getElementById('racaDetalhes').textContent = petData.raca || 'Não informado';
         
         
         let idadeTexto = '';
-        if (petData.Anos > 0 && petData.Meses > 0) {
-            idadeTexto = `${petData.Anos} ano(s) e ${petData.Meses} mês(es)`;
-        } else if (petData.Anos > 0) {
-            idadeTexto = `${petData.Anos} ano(s)`;
-        } else if (petData.Meses > 0) {
-            idadeTexto = `${petData.Meses} mês(es)`;
+        if (petData.anos > 0 && petData.meses > 0) {
+            idadeTexto = `${petData.anos} ano(s) e ${petData.meses} mês(es)`;
+        } else if (petData.anos > 0) {
+            idadeTexto = `${petData.anos} ano(s)`;
+        } else if (petData.meses > 0) {
+            idadeTexto = `${petData.meses} mês(es)`;
         } else {
             idadeTexto = "0 ano(s)";
         }
@@ -1015,38 +1030,38 @@ function visualizarPet(petId) {
         
         
         const statusBadge = document.getElementById('pet-status-badge');
-        const statusLower = petData.Status ? petData.Status.toLowerCase().replace(' ', '_') : 'indisponivel';
-        
-        statusBadge.textContent = petData.Status || 'Indisponível';
+        const statusLower = petData.status ? petData.status.toLowerCase().replace(' ', '_') : 'indisponivel';
+
+        statusBadge.textContent = petData.status || 'Indisponível';
         statusBadge.className = 'pet-status-badge';
         statusBadge.classList.add(statusLower);
         
         
-        document.getElementById('especieDetalhesInfo').textContent = petData.Especie || 'Não informado';
-        document.getElementById('racaDetalhesInfo').textContent = petData.Raca || 'Não informado';
+        document.getElementById('especieDetalhesInfo').textContent = petData.especie || 'Não informado';
+        document.getElementById('racaDetalhesInfo').textContent = petData.raca || 'Não informado';
         document.getElementById('idadeDetalhesInfo').textContent = idadeTexto;
-        document.getElementById('statusDetalhesInfo').textContent = petData.Status || 'Não informado';
+        document.getElementById('statusDetalhesInfo').textContent = petData.status || 'Não informado';
         
         
         const sexoContainer = document.getElementById('sexoDetalhesContainer');
         const porteContainer = document.getElementById('porteDetalhesContainer');
         
-        if (petData.Sexo) {
-            document.getElementById('sexoDetalhesInfo').textContent = petData.Sexo;
+        if (petData.sexo) {
+            document.getElementById('sexoDetalhesInfo').textContent = petData.sexo;
             sexoContainer.style.display = 'flex';
         } else {
             sexoContainer.style.display = 'none';
         }
-        
-        if (petData.Porte) {
-            document.getElementById('porteDetalhesInfo').textContent = petData.Porte;
+
+        if (petData.porte) {
+            document.getElementById('porteDetalhesInfo').textContent = petData.porte;
             porteContainer.style.display = 'flex';
         } else {
             porteContainer.style.display = 'none';
         }
         
         
-        document.getElementById('descricaoDetalhes').textContent = petData.Descricao || 'Sem descrição disponível';
+        document.getElementById('descricaoDetalhes').textContent = petData.descricao || 'Sem descrição disponível';
         
         
         const datasCadastroContainer = document.getElementById('datasCadastroContainer');
@@ -1071,15 +1086,15 @@ function visualizarPet(petId) {
             }
         };
         
-        if (petData.DataCadastro) {
-            document.getElementById('dataCadastroInfo').textContent = formatarData(petData.DataCadastro);
+        if (petData.dataCadastro) {
+            document.getElementById('dataCadastroInfo').textContent = formatarData(petData.dataCadastro);
             datasCadastroContainer.style.display = 'block';
         } else {
             datasCadastroContainer.style.display = 'none';
         }
-        
-        if (petData.DataAtualizacao) {
-            document.getElementById('dataAtualizacaoInfo').textContent = formatarData(petData.DataAtualizacao);
+
+        if (petData.dataAtualizacao) {
+            document.getElementById('dataAtualizacaoInfo').textContent = formatarData(petData.dataAtualizacao);
             dataAtualizacaoContainer.style.display = 'flex';
         } else {
             dataAtualizacaoContainer.style.display = 'none';
@@ -1087,8 +1102,8 @@ function visualizarPet(petId) {
         
         
         const imgPet = document.getElementById('imgPetDetalhes');
-        if (petData.NomeArquivoImagem) {
-            imgPet.src = `/imagens/pets/${petData.NomeArquivoImagem}`;
+        if (petData.nomeArquivoImagem) {
+            imgPet.src = `/imagens/pets/${petData.nomeArquivoImagem}`;
         } else {
             imgPet.src = '/imagens/pets/pet-placeholder.jpg';
         }
@@ -1130,21 +1145,21 @@ function visualizarPet(petId) {
 
 function visualizarPetComDados(petData) {
     
-    document.getElementById('detalhePetId').value = petData.Id;
+    document.getElementById('detalhePetId').value = petData.id;
     
     
-    document.getElementById('nomeDetalhes').textContent = petData.Nome || 'Nome não informado';
-    document.getElementById('especieDetalhes').textContent = petData.Especie || 'Não informado';
-    document.getElementById('racaDetalhes').textContent = petData.Raca || 'Não informado';
+    document.getElementById('nomeDetalhes').textContent = petData.nome || 'Nome não informado';
+    document.getElementById('especieDetalhes').textContent = petData.especie || 'Não informado';
+    document.getElementById('racaDetalhes').textContent = petData.raca || 'Não informado';
     
     
     let idadeTexto = '';
-    if (petData.Anos > 0 && petData.Meses > 0) {
-        idadeTexto = `${petData.Anos} ano(s) e ${petData.Meses} mês(es)`;
-    } else if (petData.Anos > 0) {
-        idadeTexto = `${petData.Anos} ano(s)`;
-    } else if (petData.Meses > 0) {
-        idadeTexto = `${petData.Meses} mês(es)`;
+    if (petData.anos > 0 && petData.meses > 0) {
+        idadeTexto = `${petData.anos} ano(s) e ${petData.meses} mês(es)`;
+    } else if (petData.anos > 0) {
+        idadeTexto = `${petData.anos} ano(s)`;
+    } else if (petData.meses > 0) {
+        idadeTexto = `${petData.meses} mês(es)`;
     } else {
         idadeTexto = "0 ano(s)";
     }
@@ -1152,38 +1167,38 @@ function visualizarPetComDados(petData) {
     
     
     const statusBadge = document.getElementById('pet-status-badge');
-    const statusLower = petData.Status ? petData.Status.toLowerCase().replace(' ', '_') : 'indisponivel';
-    
-    statusBadge.textContent = petData.Status || 'Indisponível';
+    const statusLower = petData.status ? petData.status.toLowerCase().replace(' ', '_') : 'indisponivel';
+
+    statusBadge.textContent = petData.status || 'Indisponível';
     statusBadge.className = 'pet-status-badge';
     statusBadge.classList.add(statusLower);
     
     
-    document.getElementById('especieDetalhesInfo').textContent = petData.Especie || 'Não informado';
-    document.getElementById('racaDetalhesInfo').textContent = petData.Raca || 'Não informado';
+    document.getElementById('especieDetalhesInfo').textContent = petData.especie || 'Não informado';
+    document.getElementById('racaDetalhesInfo').textContent = petData.raca || 'Não informado';
     document.getElementById('idadeDetalhesInfo').textContent = idadeTexto;
-    document.getElementById('statusDetalhesInfo').textContent = petData.Status || 'Não informado';
+    document.getElementById('statusDetalhesInfo').textContent = petData.status || 'Não informado';
     
     
     const sexoContainer = document.getElementById('sexoDetalhesContainer');
     const porteContainer = document.getElementById('porteDetalhesContainer');
     
-    if (petData.Sexo) {
-        document.getElementById('sexoDetalhesInfo').textContent = petData.Sexo;
+    if (petData.sexo) {
+        document.getElementById('sexoDetalhesInfo').textContent = petData.sexo;
         sexoContainer.style.display = 'flex';
     } else {
         sexoContainer.style.display = 'none';
     }
-    
-    if (petData.Porte) {
-        document.getElementById('porteDetalhesInfo').textContent = petData.Porte;
+
+    if (petData.porte) {
+        document.getElementById('porteDetalhesInfo').textContent = petData.porte;
         porteContainer.style.display = 'flex';
     } else {
         porteContainer.style.display = 'none';
     }
     
     
-    document.getElementById('descricaoDetalhes').textContent = petData.Descricao || 'Sem descrição disponível';
+    document.getElementById('descricaoDetalhes').textContent = petData.descricao || 'Sem descrição disponível';
     
     
     const datasCadastroContainer = document.getElementById('datasCadastroContainer');
@@ -1208,15 +1223,15 @@ function visualizarPetComDados(petData) {
         }
     };
     
-    if (petData.DataCadastro) {
-        document.getElementById('dataCadastroInfo').textContent = formatarData(petData.DataCadastro);
+    if (petData.dataCadastro) {
+        document.getElementById('dataCadastroInfo').textContent = formatarData(petData.dataCadastro);
         datasCadastroContainer.style.display = 'block';
     } else {
         datasCadastroContainer.style.display = 'none';
     }
-    
-    if (petData.DataAtualizacao) {
-        document.getElementById('dataAtualizacaoInfo').textContent = formatarData(petData.DataAtualizacao);
+
+    if (petData.dataAtualizacao) {
+        document.getElementById('dataAtualizacaoInfo').textContent = formatarData(petData.dataAtualizacao);
         dataAtualizacaoContainer.style.display = 'flex';
     } else {
         dataAtualizacaoContainer.style.display = 'none';
@@ -1224,8 +1239,8 @@ function visualizarPetComDados(petData) {
     
     
     const imgPet = document.getElementById('imgPetDetalhes');
-    if (petData.NomeArquivoImagem) {
-        imgPet.src = `/imagens/pets/${petData.NomeArquivoImagem}`;
+    if (petData.nomeArquivoImagem) {
+        imgPet.src = `/imagens/pets/${petData.nomeArquivoImagem}`;
     } else {
         imgPet.src = '/imagens/pets/pet-placeholder.jpg';
     }
@@ -1544,10 +1559,13 @@ function confirmarExclusao(petId) {
     const petCard = document.querySelector(`.cartao-pet[data-id="${petId}"]`);
     if (petCard) {
         
-        const petData = JSON.parse(petCard.getAttribute('data-json'));
-        
-        
-        const status = petData.Status?.toLowerCase();
+        const rawPetData = JSON.parse(petCard.getAttribute('data-json'));
+        const petData = {
+            nome: rawPetData.nome ?? rawPetData.Nome,
+            status: rawPetData.status ?? rawPetData.Status
+        };
+
+        const status = petData.status?.toLowerCase();
         if (status === 'em processo' || status === 'adotado') {
             toastr.warning(`Não é possível excluir um pet ${status === 'em processo' ? 'em processo de adoção' : 'já adotado'}.`);
             return;
@@ -1555,7 +1573,7 @@ function confirmarExclusao(petId) {
         
         
         document.getElementById('petIdParaExcluir').value = petId;
-        document.getElementById('nomePetExclusao').textContent = petData.Nome;
+        document.getElementById('nomePetExclusao').textContent = petData.nome;
         
         
         if (modalConfirmacaoExclusao) {

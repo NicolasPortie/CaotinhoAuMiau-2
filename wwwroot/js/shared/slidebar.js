@@ -83,23 +83,24 @@ function fecharPainelNotificacoesSeAberto() {
 }
 
 
-function realizarLogout() {
-    fetch('/Autenticacao/Logout', {
-        method: 'GET',
-        credentials: 'include' 
-    })
-    .then(response => {
+async function realizarLogout() {
+    // Utilizar async/await melhora a legibilidade e segue o padrão assíncrono do projeto
+    try {
+        const response = await fetch('/Autenticacao/Logout', {
+            method: 'GET',
+            credentials: 'include'
+        });
+
         if (response.ok || response.redirected) {
-            window.location.href = '/Home/Index'; 
+            window.location.href = '/Home/Index';
         } else {
             console.error('Erro ao fazer logout');
             alert('Ocorreu um erro ao fazer logout. Por favor, tente novamente.');
         }
-    })
-    .catch(error => {
+    } catch (error) {
         console.error('Erro ao fazer logout:', error);
         alert('Ocorreu um erro ao fazer logout. Por favor, tente novamente.');
-    });
+    }
 }
 
 
