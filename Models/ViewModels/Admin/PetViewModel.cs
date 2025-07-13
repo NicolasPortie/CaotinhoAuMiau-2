@@ -1,13 +1,14 @@
 using CaotinhoAuMiau.Models.ViewModels.Comuns;
+using CaotinhoAuMiau.Models.Enums;
 
 namespace CaotinhoAuMiau.Models.ViewModels.Admin
 {
     public class PetViewModel : PetViewModelBase
     {
-        public string FiltroEspecie { get; set; } = string.Empty;
-        public string FiltroSexo { get; set; } = string.Empty;
+        public Especie? FiltroEspecie { get; set; }
+        public SexoPet? FiltroSexo { get; set; }
         public string FiltroPorte { get; set; } = string.Empty;
-        public string FiltroStatus { get; set; } = string.Empty;
+        public StatusPet? FiltroStatus { get; set; }
 
         public int? UsuarioId { get; set; } = 1;
 

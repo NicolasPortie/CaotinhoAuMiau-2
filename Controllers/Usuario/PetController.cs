@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CaotinhoAuMiau.Data;
 using CaotinhoAuMiau.Models;
+using CaotinhoAuMiau.Models.Enums;
 using CaotinhoAuMiau.Models.ViewModels;
 using CaotinhoAuMiau.Models.ViewModels.Usuario;
 using System.Linq;
@@ -42,7 +43,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
             }
 
             var pets = await _contexto.Pets
-                .Where(p => p.Status == "Disponível" && p.CadastroCompleto)
+                .Where(p => p.Status == StatusPet.Disponivel && p.CadastroCompleto)
                 .OrderByDescending(p => p.DataCriacao)
                 .ToListAsync();
 
@@ -107,7 +108,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
                 
                 _logger.LogInformation($"Usando {itensPorPagina} itens por página, página {pagina}");
                 
-                var query = _contexto.Pets.Where(p => p.Status == "Disponível");
+                var query = _contexto.Pets.Where(p => p.Status == StatusPet.Disponivel);
                 
                 var petsDisponiveis = await query.Where(p => p.CadastroCompleto).CountAsync();
                 _logger.LogInformation($"Total de pets disponíveis e com cadastro completo: {petsDisponiveis}");
@@ -129,12 +130,14 @@ namespace CaotinhoAuMiau.Controllers.Usuario
                 
                 if (!string.IsNullOrEmpty(filtroEspecie))
                 {
-                    query = query.Where(p => p.Especie == filtroEspecie);
+                    var especieEnum = EnumExtensions.ParseEnumMemberValue<Especie>(filtroEspecie);
+                    query = query.Where(p => p.Especie == especieEnum);
                 }
 
                 if (!string.IsNullOrEmpty(filtroSexo))
                 {
-                    query = query.Where(p => p.Sexo == filtroSexo);
+                    var sexoEnum = EnumExtensions.ParseEnumMemberValue<SexoPet>(filtroSexo);
+                    query = query.Where(p => p.Sexo == sexoEnum);
                 }
 
                 if (!string.IsNullOrEmpty(filtroPorte))
@@ -228,8 +231,8 @@ namespace CaotinhoAuMiau.Controllers.Usuario
                     TotalPaginas = Math.Max(1, totalPaginas), // Garantir que sempre haja pelo menos 1 página
                     TotalItens = totalItens,
                     FiltroNome = filtroNome,
-                    FiltroEspecie = filtroEspecie,
-                    FiltroSexo = filtroSexo,
+                    FiltroEspecie = !string.IsNullOrEmpty(filtroEspecie) ? EnumExtensions.ParseEnumMemberValue<Especie>(filtroEspecie) : (Especie?)null,
+                    FiltroSexo = !string.IsNullOrEmpty(filtroSexo) ? EnumExtensions.ParseEnumMemberValue<SexoPet>(filtroSexo) : (SexoPet?)null,
                     FiltroPorte = filtroPorte,
                     FiltroIdade = filtroIdade,
                     FiltroRaca = filtroRaca,
@@ -299,20 +302,21 @@ namespace CaotinhoAuMiau.Controllers.Usuario
         {
             var petsQuery = _contexto.Pets.AsQueryable();
             
-            petsQuery = petsQuery.Where(p => p.Status == "Disponível" && p.CadastroCompleto);
+            petsQuery = petsQuery.Where(p => p.Status == StatusPet.Disponivel && p.CadastroCompleto);
             
             if (!string.IsNullOrEmpty(termoBusca))
             {
                 termoBusca = termoBusca.ToLower();
                 petsQuery = petsQuery.Where(p => 
-                    p.Nome.ToLower().Contains(termoBusca) || 
-                    p.Raca.ToLower().Contains(termoBusca) || 
-                    p.Especie.ToLower().Contains(termoBusca));
+                    p.Nome.ToLower().Contains(termoBusca) ||
+                    p.Raca.ToLower().Contains(termoBusca) ||
+                    p.Especie.ToString().ToLower().Contains(termoBusca));
             }
             
             if (!string.IsNullOrEmpty(especie) && especie != "Todos")
             {
-                petsQuery = petsQuery.Where(p => p.Especie == especie);
+                var especieEnum = EnumExtensions.ParseEnumMemberValue<Especie>(especie);
+                petsQuery = petsQuery.Where(p => p.Especie == especieEnum);
             }
             
             if (!string.IsNullOrEmpty(idade))
@@ -333,7 +337,8 @@ namespace CaotinhoAuMiau.Controllers.Usuario
             
             if (!string.IsNullOrEmpty(sexo) && sexo != "Todos")
             {
-                petsQuery = petsQuery.Where(p => p.Sexo == sexo);
+                var sexoEnum = EnumExtensions.ParseEnumMemberValue<SexoPet>(sexo);
+                petsQuery = petsQuery.Where(p => p.Sexo == sexoEnum);
             }
             
             var pets = await petsQuery

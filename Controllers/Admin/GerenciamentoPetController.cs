@@ -5,6 +5,7 @@ using CaotinhoAuMiau.Data;
 using CaotinhoAuMiau.Models;
 using CaotinhoAuMiau.Models.ViewModels;
 using CaotinhoAuMiau.Models.ViewModels.Admin;
+using CaotinhoAuMiau.Models.Enums;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
 using System.Threading.Tasks;
@@ -142,7 +143,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 return Json(new { sucesso = false, mensagem = "Pet não encontrado." });
             }
 
-            if (pet.Status == "Adotado" || pet.Status == "Em Processo")
+            if (pet.Status == StatusPet.Adotado || pet.Status == StatusPet.EmProcesso)
             {
                 return Json(new { sucesso = false, mensagem = "Não é possível excluir um pet que está em processo de adoção ou já foi adotado." });
             }
@@ -190,7 +191,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     return Json(new { sucesso = false, mensagem = "Pet não encontrado." });
                 }
                 
-                pet.Status = novoStatus;
+                pet.Status = EnumExtensions.ParseEnumMemberValue<StatusPet>(novoStatus);
                 pet.DataAtualizacao = DateTime.Now;
                 
                 await _contexto.SaveChangesAsync();
@@ -224,7 +225,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     raca = pet.Raca,
                     anos = pet.Anos,
                     meses = pet.Meses,
-                    sexo = pet.Sexo == "M" ? "Macho" : "Fêmea",
+                    sexo = pet.Sexo.GetEnumMemberValue(),
                     porte = pet.Porte,
                     status = pet.Status,
                     descricao = pet.Descricao,
@@ -270,8 +271,8 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
                 if (modelo.CadastroCompleto)
                 {
-                    if (string.IsNullOrEmpty(modelo.Especie) || string.IsNullOrEmpty(modelo.Raca) ||
-                        string.IsNullOrEmpty(modelo.Sexo) || string.IsNullOrEmpty(modelo.Porte) ||
+                    if (modelo.Especie == null || string.IsNullOrEmpty(modelo.Raca) ||
+                        modelo.Sexo == null || string.IsNullOrEmpty(modelo.Porte) ||
                         string.IsNullOrEmpty(modelo.Descricao))
                     {
                         return Json(new { sucesso = false, mensagem = "Todos os campos são obrigatórios para cadastro completo." });
@@ -288,7 +289,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     Sexo = modelo.Sexo,
                     Porte = modelo.Porte,
                     Descricao = modelo.Descricao,
-                    Status = modelo.CadastroCompleto ? "Disponível" : "Rascunho",
+                    Status = modelo.CadastroCompleto ? StatusPet.Disponivel : StatusPet.Rascunho,
                     DataCriacao = DateTime.Now,
                     CadastroCompleto = modelo.CadastroCompleto,
                     UsuarioId = 0,
@@ -349,9 +350,9 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     nome = pet.Nome,
                     especie = pet.Especie,
                     raca = pet.Raca,
-                    sexo = pet.Sexo,
+                    sexo = pet.Sexo.GetEnumMemberValue(),
                     porte = pet.Porte,
-                    status = pet.Status,
+                    status = pet.Status.GetEnumMemberValue(),
                     idade = idadeFormatada,
                     anos = pet.Anos,
                     meses = pet.Meses,

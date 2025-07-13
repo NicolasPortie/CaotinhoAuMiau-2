@@ -5,6 +5,7 @@ using CaotinhoAuMiau.Models;
 using CaotinhoAuMiau.Models.ViewModels.Admin;
 using CaotinhoAuMiau.Models.ViewModels.Usuario;
 using CaotinhoAuMiau.Models.ViewModels;
+using CaotinhoAuMiau.Models.Enums;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
@@ -150,7 +151,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     return Json(new { sucesso = false, mensagem = "Pet não encontrado." });
                 }
 
-                if (pet.Status == "Em Processo")
+                if (pet.Status == StatusPet.EmProcesso)
                 {
                     var formularioAprovado = await _contexto.FormulariosAdocao
                         .FirstOrDefaultAsync(f => f.PetId == pet.Id && f.Status == "Aprovado" && f.Id != id);
@@ -161,7 +162,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     }
                     
                 }
-                else if (pet.Status != "Disponível" && pet.Status != "")
+                else if (pet.Status != StatusPet.Disponivel)
                 {
                     return Json(new { sucesso = false, mensagem = $"Este pet não está disponível para adoção. Status atual: {pet.Status}" });
                 }
@@ -200,7 +201,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     formulario.ObservacaoAdminFormulario = observacao;
                 }
 
-                pet.Status = "Em Processo";
+                pet.Status = StatusPet.EmProcesso;
 
                 var adocao = new Adocao
                 {

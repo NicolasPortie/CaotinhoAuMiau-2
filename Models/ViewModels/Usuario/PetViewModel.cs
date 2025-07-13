@@ -1,13 +1,14 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using CaotinhoAuMiau.Models;
+using CaotinhoAuMiau.Models.Enums;
 using CaotinhoAuMiau.Models.ViewModels.Comuns;
 
 namespace CaotinhoAuMiau.Models.ViewModels.Usuario
 {
     public class PetViewModel : PetViewModelBase
     {
-        public new string Status { get; set; } = "Disponível";
+        public new StatusPet Status { get; set; } = StatusPet.Disponivel;
         
         public int PaginaAtual { get; set; } = 1;
         public int TotalPaginas { get; set; } = 1;
@@ -15,8 +16,8 @@ namespace CaotinhoAuMiau.Models.ViewModels.Usuario
         public bool TemPaginaAnterior => PaginaAtual > 1;
         public bool TemProximaPagina => PaginaAtual < TotalPaginas;
 
-        public string FiltroEspecie { get; set; } = string.Empty;
-        public string FiltroSexo { get; set; } = string.Empty;
+        public Especie? FiltroEspecie { get; set; }
+        public SexoPet? FiltroSexo { get; set; }
         public string FiltroPorte { get; set; } = string.Empty;
         public string FiltroIdade { get; set; } = string.Empty;
         public string TermoBusca { get; set; } = string.Empty;
@@ -37,14 +38,14 @@ namespace CaotinhoAuMiau.Models.ViewModels.Usuario
             {
                 Id = pet.Id,
                 Nome = pet.Nome ?? string.Empty,
-                Especie = pet.Especie ?? string.Empty,
+                Especie = pet.Especie,
                 Raca = pet.Raca ?? string.Empty,
                 Anos = pet.Anos,
                 Meses = pet.Meses,
-                Sexo = pet.Sexo ?? string.Empty,
+                Sexo = pet.Sexo,
                 Porte = pet.Porte ?? string.Empty,
                 Descricao = pet.Descricao ?? string.Empty,
-                Status = pet.Status ?? "Disponível",
+                Status = pet.Status,
                 NomeArquivoImagem = pet.NomeArquivoImagem
             };
         }
