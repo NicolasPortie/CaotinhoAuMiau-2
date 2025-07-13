@@ -266,7 +266,8 @@ function calcularIdadeEmAnos(): number {
 
 function atualizarCampoIdadeTotal(): void {
     const idadeEmAnos = calcularIdadeEmAnos();
-    document.getElementById('idadePet').value = idadeEmAnos;
+    const inputIdade = document.getElementById('idadePet') as HTMLInputElement | null;
+    if (inputIdade) inputIdade.value = idadeEmAnos.toString();
 }
 
 
@@ -378,7 +379,7 @@ async function carregarDadosGraficos(
 
 
 function atualizarGraficoAdocoes(dados: GraficoDataItem[], filtro: string): void {
-    const canvas = document.getElementById('graficoAdocoesMes');
+    const canvas = document.getElementById('graficoAdocoesMes') as HTMLCanvasElement | null;
     if (!canvas) return;
     
     
@@ -386,6 +387,7 @@ function atualizarGraficoAdocoes(dados: GraficoDataItem[], filtro: string): void
     
     
     const ctx = canvas.getContext('2d');
+    if (!ctx) return;
     
     
     if (window.graficoAdocoes) {
@@ -456,12 +458,13 @@ function atualizarGraficoAdocoes(dados: GraficoDataItem[], filtro: string): void
 
 
 function atualizarGraficoPetsEspecie(dados: EspecieDataItem[]): void {
-    const canvas = document.getElementById('graficoPetsEspecie');
+    const canvas = document.getElementById('graficoPetsEspecie') as HTMLCanvasElement | null;
     if (!canvas) return;
     
     
     const ctx = canvas.getContext('2d');
     
+    if (!ctx) return;
     
     if (window.graficoPetsEspecie) {
         window.graficoPetsEspecie.destroy();
@@ -519,7 +522,7 @@ function atualizarGraficoPetsEspecie(dados: EspecieDataItem[]): void {
     });
 }
 
-function atualizarGraficoUsuarios(dados: GraficoDataItem[], filtro: string): void {
+    const canvas = document.getElementById('graficoUsuariosMes') as HTMLCanvasElement | null;
     const canvas = document.getElementById('graficoUsuariosMes');
     if (!canvas) return;
     
@@ -527,6 +530,7 @@ function atualizarGraficoUsuarios(dados: GraficoDataItem[], filtro: string): voi
     const dadosFiltrados = filtrarDadosPorPeriodo(dados, filtro);
     
     
+    if (!ctx) return;
     const ctx = canvas.getContext('2d');
     
     
@@ -601,12 +605,10 @@ function atualizarGraficoUsuarios(dados: GraficoDataItem[], filtro: string): voi
 }
 
 
-function atualizarGraficoStatusFormularios(dados: StatusDataItem[]): void {
-    const canvas = document.getElementById('graficoStatusFormularios');
+    const canvas = document.getElementById('graficoStatusFormularios') as HTMLCanvasElement | null;
     if (!canvas) return;
-    
-    
     const ctx = canvas.getContext('2d');
+    if (!ctx) return;
     
     
     if (window.graficoStatusFormularios) {
@@ -1095,3 +1097,4 @@ function configurarModalAdmin(): void {
 document.addEventListener('DOMContentLoaded', function() {
     inicializarDashboard();
 });
+export {};

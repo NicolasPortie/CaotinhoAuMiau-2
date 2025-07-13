@@ -799,3 +799,5 @@ function abrirModalExcluir(id: string, nome: string): void {
     (document.getElementById('nomeColaboradorExclusao') as HTMLElement).textContent = nome;
     bootstrap.Modal.getOrCreateInstance(document.getElementById('modalExcluir')!).show();
 }
+
+export {};
