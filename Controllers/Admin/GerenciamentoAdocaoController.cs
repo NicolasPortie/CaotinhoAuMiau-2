@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using CaotinhoAuMiau.Services;
 using System.Text.Json;
 using CaotinhoAuMiau.Utils;
+using Microsoft.Extensions.Logging;
 
 namespace CaotinhoAuMiau.Controllers.Admin
 {
@@ -23,12 +24,14 @@ namespace CaotinhoAuMiau.Controllers.Admin
         private readonly ApplicationDbContext _contexto;
         private readonly NotificacaoServico _servicoNotificacao;
         private readonly HistoricoAdocaoServico _historicoServico;
+        private readonly ILogger<GerenciamentoAdocaoController> _logger;
 
-        public GerenciamentoAdocaoController(ApplicationDbContext contexto, NotificacaoServico servicoNotificacao, HistoricoAdocaoServico historicoServico)
+        public GerenciamentoAdocaoController(ApplicationDbContext contexto, NotificacaoServico servicoNotificacao, HistoricoAdocaoServico historicoServico, ILogger<GerenciamentoAdocaoController> logger)
         {
             _contexto = contexto;
             _servicoNotificacao = servicoNotificacao;
             _historicoServico = historicoServico;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -405,7 +408,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 }
                 catch (Exception notifEx)
                 {
-                    Console.WriteLine($"Erro ao criar notificação: {notifEx.Message}");
+                    _logger.LogError(notifEx, "Erro ao criar notificação");
                 }
 
                 await _contexto.SaveChangesAsync();
@@ -627,7 +630,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Erro ao criar notificação: {ex.Message}");
+                    _logger.LogError(ex, "Erro ao criar notificação");
                 }
 
                 await _contexto.SaveChangesAsync();
@@ -1218,7 +1221,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erro ao obter histórico de adoções: {ex.Message}");
+                _logger.LogError(ex, "Erro ao obter histórico de adoções");
                 return BadRequest(new { sucesso = false, mensagem = $"Erro ao obter histórico de adoções: {ex.Message}" });
             }
         }
