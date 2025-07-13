@@ -3,9 +3,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // Manipulador para o seletor de itens por página
     var seletor = document.getElementById('selectItensPorPagina');
     if (seletor) {
+        var baseUrl = seletor.dataset.baseUrl || '';
         seletor.addEventListener('change', function () {
             var itensPorPagina = this.value;
-            var url = '@Url.Action("Listar", "Adocao")' + "?pagina=1&itensPorPagina=".concat(itensPorPagina);
+            var url = baseUrl + '?pagina=1&itensPorPagina=' + encodeURIComponent(itensPorPagina);
             window.location.href = url;
         });
     }
