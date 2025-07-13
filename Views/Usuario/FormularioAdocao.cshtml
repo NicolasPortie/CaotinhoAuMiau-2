@@ -50,8 +50,8 @@
                 {
                     <img src="/imagens/pets/default-pet.jpg" alt="Imagem do Pet">
                 }
-                <div class="pet-type-badge @(Model.Pet?.Especie?.ToLower() == "cachorro" ? "dog-badge" : (Model.Pet?.Especie?.ToLower() == "gato" ? "cat-badge" : "other-badge"))">
-                    <i class="fas @(Model.Pet?.Especie?.ToLower() == "cachorro" ? "fa-dog" : (Model.Pet?.Especie?.ToLower() == "gato" ? "fa-cat" : "fa-paw"))"></i>
+                <div class="pet-type-badge @(Model.Pet?.Especie.ToString().ToLower() == "cachorro" ? "dog-badge" : (Model.Pet?.Especie.ToString().ToLower() == "gato" ? "cat-badge" : "other-badge"))">
+                    <i class="fas @(Model.Pet?.Especie.ToString().ToLower() == "cachorro" ? "fa-dog" : (Model.Pet?.Especie.ToString().ToLower() == "gato" ? "fa-cat" : "fa-paw"))"></i>
                 </div>
             </div>
             <div class="pet-info">

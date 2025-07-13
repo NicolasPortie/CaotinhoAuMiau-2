@@ -313,11 +313,11 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 var pet = new Pet
                 {
                     Nome = modelo.Nome,
-                    Especie = modelo.Especie,
+                    Especie = modelo.Especie ?? Especie.Cachorro,
                     Raca = modelo.Raca,
                     Anos = modelo.Anos,
                     Meses = modelo.Meses,
-                    Sexo = modelo.Sexo,
+                    Sexo = modelo.Sexo ?? SexoPet.Macho,
                     Porte = modelo.Porte,
                     Descricao = modelo.Descricao,
                     Status = modelo.CadastroCompleto ? StatusPet.Disponivel : StatusPet.Rascunho,

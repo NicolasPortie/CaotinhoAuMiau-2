@@ -1,4 +1,5 @@
 @model IEnumerable<CaotinhoAuMiau.Models.FormularioAdocao>
+@using CaotinhoAuMiau.Models.Enums
 @{
     Layout = null;
     ViewData["Title"] = "Gerenciamento de Formulários";
@@ -269,7 +270,7 @@
                                         <div class="detalhes-pet ms-2">
                                             <span class="nome-pet">@form.Pet?.Nome</span>
                                             <small>
-                                                <i class="@(form.Pet?.Especie == "Cachorro" ? "fas fa-dog" : "fas fa-cat")"></i>
+                                                <i class="@(form.Pet?.Especie == Especie.Cachorro ? "fas fa-dog" : "fas fa-cat")"></i>
                                                 @form.Pet?.Especie, @form.Pet?.Porte
                                             </small>
                                         </div>
