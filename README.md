@@ -42,4 +42,4 @@ Com esses comandos, evitamos diferenças entre os arquivos TypeScript e JavaScri
 
 ## Sessões e cache
 
-O projeto utiliza o Redis para armazenar sessões e dados de cache quando um servidor está disponível. Se nenhuma string de conexão para o Redis for encontrada, o *Program.cs* configura automaticamente o uso do cache em memória, evitando atrasos no carregamento das páginas.
+O projeto utiliza o Redis para armazenar sessões e dados de cache quando um servidor está disponível. Se nenhuma string de conexão para o Redis for encontrada ou se a tentativa de conexão falhar, o *Program.cs* passa a utilizar o cache em memória, evitando atrasos no carregamento das páginas.
