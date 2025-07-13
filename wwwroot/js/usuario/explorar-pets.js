@@ -129,7 +129,7 @@ function initExplorarPets() {
                 gerenciarBarrasDeProgresso();
                 
                 
-                carrosselElement.addEventListener('slid.bs.carousel', function() {
+                carrosselElement.addEventListener('slid.bs.carousel', () => {
                     gerenciarBarrasDeProgresso();
                 });
             } else {
@@ -180,7 +180,7 @@ function initExplorarPets() {
 
     
     document.querySelectorAll('.botao-adotar, .adopt-button').forEach(botao => {
-        botao.addEventListener('click', function(e) {
+        botao.addEventListener('click', (e) => {
             if (!usuarioEstaLogado) {
                 e.preventDefault();
                 const petCard = this.closest('.cartao-pet, .pet-card');
@@ -195,7 +195,7 @@ function initExplorarPets() {
 
     
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    var tooltipList = tooltipTriggerList.map((tooltipTriggerEl) => {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
@@ -248,7 +248,7 @@ function configurarMenuENotificacoes() {
         btnMenuHamburguer.parentNode.replaceChild(novoBotao, btnMenuHamburguer);
         
         
-        novoBotao.addEventListener('click', function(e) {
+        novoBotao.addEventListener('click', (e) => {
             e.preventDefault();
             
             
@@ -280,7 +280,7 @@ function configurarMenuENotificacoes() {
     
     const menuSobreposicao = document.querySelector('.menu-sobreposicao');
     if (menuSobreposicao) {
-        menuSobreposicao.addEventListener('click', function() {
+        menuSobreposicao.addEventListener('click', () => {
             if (typeof window.fecharMenuLateral === 'function') {
                 window.fecharMenuLateral();
             } else {
@@ -290,7 +290,7 @@ function configurarMenuENotificacoes() {
                 
                 if (menuLateral) menuLateral.classList.remove('ativo');
                 if (btnHamburguer) btnHamburguer.classList.remove('ativo');
-                this.classList.remove('ativo');
+                menuSobreposicao.classList.remove('ativo');
             }
         });
     }
@@ -303,7 +303,7 @@ function configurarMenuENotificacoes() {
         iconeNotificacao.parentNode.replaceChild(novoIcone, iconeNotificacao);
         
         
-        novoIcone.addEventListener('click', function(e) {
+        novoIcone.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
             
@@ -319,14 +319,14 @@ function configurarMenuENotificacoes() {
 function inicializarFiltros() {
     const botaoLimpar = document.querySelector('#btnLimparFiltros, .botao-limpar, .clear-button');
     if (botaoLimpar) {
-        botaoLimpar.addEventListener('click', function(e) {
+        botaoLimpar.addEventListener('click', (e) => {
             e.preventDefault();
             limparFiltros();
         });
     }
     
     
-    document.getElementById('filtroNome')?.addEventListener('keypress', function(e) {
+    document.getElementById('filtroNome')?.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
             document.getElementById('formFiltros')?.submit();
@@ -349,7 +349,7 @@ function filtrarPets() {
     }
     
     
-    document.querySelector('.botao-filtrar')?.addEventListener('click', function(e) {
+    document.querySelector('.botao-filtrar')?.addEventListener('click', (e) => {
         e.preventDefault();
         form.submit();
     });
@@ -605,12 +605,13 @@ function abrirModalNotificacoes() {
         }
         
         
-        document.addEventListener('click', function fecharAoClicarFora(e) {
+        const fecharAoClicarFora = (e) => {
             if (!painelNotificacoes.contains(e.target) && !iconeNotificacao.contains(e.target)) {
                 painelNotificacoes.classList.remove('ativo');
                 document.removeEventListener('click', fecharAoClicarFora);
             }
-        });
+        };
+        document.addEventListener('click', fecharAoClicarFora);
     }
 }
 
@@ -988,7 +989,7 @@ function verificarLayoutEAjustar() {
     
     const btnLimparFiltros = document.querySelector('#btnLimparFiltros, .botao-limpar, .clear-button');
     if (btnLimparFiltros) {
-        btnLimparFiltros.addEventListener('click', function(e) {
+        btnLimparFiltros.addEventListener('click', (e) => {
             e.preventDefault();
             limparFiltros();
         });
@@ -1283,7 +1284,7 @@ function garantirFuncionamentoPaginacao() {
         const novaPaginacao = pagination.cloneNode(true);
         pagination.parentNode.replaceChild(novaPaginacao, pagination);
 
-        novaPaginacao.addEventListener('click', function (e) {
+        novaPaginacao.addEventListener('click', (e) => {
             const link = e.target.closest('.page-link');
             if (!link) return;
             e.preventDefault();
