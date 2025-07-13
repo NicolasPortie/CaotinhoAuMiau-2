@@ -31,7 +31,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         }
 
         [HttpGet]
-        public async Task<IActionResult> Listar(int pagina = 1, int itensPorPagina = 10, string filtroStatus = "", string filtroData = "", string pesquisa = "")
+        public async Task<IActionResult> ListarAsync(int pagina = 1, int itensPorPagina = 10, string filtroStatus = "", string filtroData = "", string pesquisa = "")
         {
             var adminId = User.ObterIdUsuario();
             if (string.IsNullOrEmpty(adminId))
@@ -116,7 +116,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         }
 
         [HttpGet("Detalhes/{id}")]
-        public async Task<IActionResult> ObterDetalhesAdocao(int id)
+        public async Task<IActionResult> ObterDetalhesAdocaoAsync(int id)
         {
             var formulario = await _contexto.FormulariosAdocao
                 .Include(a => a.Pet)
@@ -163,7 +163,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
         [HttpPost("aprovar/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AprovarAdocao(int id)
+        public async Task<IActionResult> AprovarAdocaoAsync(int id)
         {
             try
             {
@@ -204,7 +204,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 
                 if (adocao.Usuario != null)
                 {
-                    await _servicoNotificacao.CriarNotificacao(
+                    await _servicoNotificacao.CriarNotificacaoAsync(
                         adocao.UsuarioId.ToString(),
                         "Solicitação de adoção aprovada",
                         $"Sua solicitação de adoção para o pet {pet?.Nome} foi aprovada!",
@@ -225,7 +225,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
         [HttpPost("rejeitar/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RejeitarAdocao(int id, string motivo)
+        public async Task<IActionResult> RejeitarAdocaoAsync(int id, string motivo)
         {
             try
             {
@@ -272,7 +272,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 
                 if (adocao.Usuario != null)
                 {
-                    await _servicoNotificacao.CriarNotificacao(
+                    await _servicoNotificacao.CriarNotificacaoAsync(
                         adocao.UsuarioId.ToString(),
                         "Solicitação de adoção rejeitada",
                         $"Sua solicitação de adoção para o pet {pet?.Nome} foi rejeitada. Motivo: {motivo}",
@@ -293,7 +293,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
         [HttpPost("finalizar/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> FinalizarAdocao(int id)
+        public async Task<IActionResult> FinalizarAdocaoAsync(int id)
         {
             try
             {
@@ -309,7 +309,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         [HttpPost("Cancelar/{id}")]
         [HttpPost("CancelarAdocao/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CancelarAdocao(int id, string motivo)
+        public async Task<IActionResult> CancelarAdocaoAsync(int id, string motivo)
         {
             var isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
             try
@@ -393,7 +393,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 {
                     if (adocao.Usuario != null)
                     {
-                        await _servicoNotificacao.CriarNotificacao(
+                        await _servicoNotificacao.CriarNotificacaoAsync(
                             adocao.UsuarioId.ToString(),
                             "Adoção cancelada",
                             $"A adoção do pet {adocao.Pet?.Nome} foi cancelada pelo administrador. Motivo: {motivo}",
@@ -437,7 +437,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
         [HttpPost("aguardando-buscar/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> MarcarAguardandoRetirada(int id)
+        public async Task<IActionResult> MarcarAguardandoRetiradaAsync(int id)
         {
             try
             {
@@ -470,7 +470,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 
                 if (adocao.Usuario != null)
                 {
-                    await _servicoNotificacao.CriarNotificacao(
+                    await _servicoNotificacao.CriarNotificacaoAsync(
                         adocao.UsuarioId.ToString(),
                         "Pet pronto para retirada",
                         $"O pet {adocao.Pet?.Nome} está pronto para ser retirado. Entre em contato para agendar a retirada.",
@@ -494,7 +494,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
         [HttpPost("marcarParaRetirada/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> MarcarParaRetirada(int id)
+        public async Task<IActionResult> MarcarParaRetiradaAsync(int id)
         {
             try
             {
@@ -539,7 +539,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 
                 if (adocao.Usuario != null)
                 {
-                    await _servicoNotificacao.CriarNotificacao(
+                    await _servicoNotificacao.CriarNotificacaoAsync(
                         adocao.UsuarioId.ToString(),
                         "Pet pronto para retirada",
                         $"O pet {adocao.Pet?.Nome} está pronto para ser retirado. Entre em contato para agendar a retirada.",
@@ -563,7 +563,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
         [HttpPost("MarcarRetirado/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> MarcarRetirado(int id)
+        public async Task<IActionResult> MarcarRetiradoAsync(int id)
         {
             try
             {
@@ -616,7 +616,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
                 try
                 {
-                    await _servicoNotificacao.CriarNotificacao(
+                    await _servicoNotificacao.CriarNotificacaoAsync(
                         adocao.UsuarioId.ToString(),
                         "Adoção finalizada com sucesso",
                         $"A adoção do pet {pet.Nome} foi finalizada com sucesso! Obrigado por adotar um amigo.",
@@ -640,7 +640,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         }
 
         [HttpGet("DetalhesAdocao/{id}")]
-        public async Task<IActionResult> DetalhesAdocao(int id)
+        public async Task<IActionResult> DetalhesAdocaoAsync(int id)
         {
             try
             {
@@ -764,7 +764,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         }
 
         [HttpGet("StatusAtualAdocao/{id}")]
-        public async Task<IActionResult> StatusAtualAdocao(int id)
+        public async Task<IActionResult> StatusAtualAdocaoAsync(int id)
         {
             try
             {
@@ -786,7 +786,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
         [HttpPost("atualizarStatus/{adocaoId}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AtualizarStatusAdocao(int adocaoId, string novoStatus, string observacoes = "")
+        public async Task<IActionResult> AtualizarStatusAdocaoAsync(int adocaoId, string novoStatus, string observacoes = "")
         {
             try
             {
@@ -871,7 +871,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                         mensagem += $" Observações: {observacoes}";
                     }
                     
-                    await _servicoNotificacao.CriarNotificacao(
+                    await _servicoNotificacao.CriarNotificacaoAsync(
                         adocao.UsuarioId.ToString(),
                         titulo,
                         mensagem,
@@ -892,7 +892,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
 
         [HttpGet("Contadores")]
-        public async Task<IActionResult> ContadoresAdocao()
+        public async Task<IActionResult> ContadoresAdocaoAsync()
         {
             try
             {
@@ -915,7 +915,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         }
 
         [HttpGet("BuscarHistoricoAdocoes")]
-        public async Task<IActionResult> BuscarHistoricoAdocoes(int usuarioId)
+        public async Task<IActionResult> BuscarHistoricoAdocoesAsync(int usuarioId)
         {
             try
             {
@@ -949,20 +949,20 @@ namespace CaotinhoAuMiau.Controllers.Admin
         }
 
         [HttpGet("HistoricoAdocoes")]
-        public async Task<IActionResult> HistoricoAdocoes(int usuarioId)
+        public async Task<IActionResult> HistoricoAdocoesAsync(int usuarioId)
         {
             return await BuscarHistoricoAdocoes(usuarioId);
         }
 
         [HttpGet("HistoricoAdocoes/{id}")]
-        public async Task<IActionResult> HistoricoAdocoesComId(int id)
+        public async Task<IActionResult> HistoricoAdocoesComIdAsync(int id)
         {
             return await BuscarHistoricoAdocoes(id);
         }
 
         [HttpPost("FinalizarAdocao")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> FinalizarAdocaoAjax([FromBody] JsonDocument modelDocument)
+        public async Task<IActionResult> FinalizarAdocaoAjaxAsync([FromBody] JsonDocument modelDocument)
         {
             try
             {
@@ -1072,7 +1072,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
             if (adocao.Usuario != null)
             {
                 var usuarioId = !string.IsNullOrEmpty(adocao.Usuario.CPF) ? adocao.Usuario.CPF : adocao.UsuarioId.ToString();
-                await _servicoNotificacao.CriarNotificacao(
+                await _servicoNotificacao.CriarNotificacaoAsync(
                     usuarioId,
                     "Adoção finalizada",
                     $"A adoção do pet {adocao.Pet?.Nome ?? "pet"} foi finalizada com sucesso!",
@@ -1087,7 +1087,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         }
 
         [HttpGet("avaliar-formulario/{id}")]
-        public async Task<IActionResult> AvaliarFormularioAdocao(int id)
+        public async Task<IActionResult> AvaliarFormularioAdocaoAsync(int id)
         {
             var formulario = await _contexto.FormulariosAdocao
                 .Include(f => f.Pet)
@@ -1114,7 +1114,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         }
 
         [HttpGet("ObterDadosUsuario")]
-        public async Task<IActionResult> ObterDadosUsuario(int id)
+        public async Task<IActionResult> ObterDadosUsuarioAsync(int id)
         {
             try
             {
@@ -1156,7 +1156,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         }
 
         [HttpGet("ObterHistoricoAdocoesPorUsuario")]
-        public async Task<IActionResult> ObterHistoricoAdocoesPorUsuario(int usuarioId)
+        public async Task<IActionResult> ObterHistoricoAdocoesPorUsuarioAsync(int usuarioId)
         {
             try
             {
@@ -1223,7 +1223,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         }
 
         [HttpGet("ObterEstatisticasAdocaoUsuario")]
-        public async Task<IActionResult> ObterEstatisticasAdocaoUsuario(int id)
+        public async Task<IActionResult> ObterEstatisticasAdocaoUsuarioAsync(int id)
         {
             try
             {
@@ -1268,7 +1268,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         }
         
         [HttpGet("ObterHistoricoAdocoesUsuario")]
-        public async Task<IActionResult> ObterHistoricoAdocoesUsuario(int id)
+        public async Task<IActionResult> ObterHistoricoAdocoesUsuarioAsync(int id)
         {
             try
             {
@@ -1331,7 +1331,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         }
 
         [HttpGet("ObterPerfilUsuario")]
-        public async Task<IActionResult> ObterPerfilUsuario(int id)
+        public async Task<IActionResult> ObterPerfilUsuarioAsync(int id)
         {
             try
             {
@@ -1369,7 +1369,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         }
 
         [HttpGet("ObterHistoricoAdocoesPet")]
-        public async Task<IActionResult> ObterHistoricoAdocoesPet(int petId)
+        public async Task<IActionResult> ObterHistoricoAdocoesPetAsync(int petId)
         {
             if (!User.IsInRole("Administrador"))
             {

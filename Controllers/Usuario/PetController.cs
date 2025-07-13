@@ -32,12 +32,13 @@ namespace CaotinhoAuMiau.Controllers.Usuario
         }
 
         [HttpGet]
-        public async Task<IActionResult> Listar()
+        public async Task<IActionResult> ListarAsync()
         {
             var idUsuario = User.ObterIdUsuario();
             if (!string.IsNullOrEmpty(idUsuario))
             {
-                ViewBag.NotificacoesNaoLidas = await _servicoNotificacao.ContarNotificacoesNaoLidas(idUsuario);
+                // Atualização para o método com sufixo Async
+                ViewBag.NotificacoesNaoLidas = await _servicoNotificacao.ContarNotificacoesNaoLidasAsync(idUsuario);
             }
 
             var pets = await _contexto.Pets
@@ -67,7 +68,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
        
         [HttpGet("explorar")]
         [ActionName("ExplorarPets")]
-        public async Task<IActionResult> ExplorarPets(
+        public async Task<IActionResult> ExplorarPetsAsync(
             string filtroNome,
             string filtroEspecie, 
             string filtroSexo, 
@@ -272,12 +273,13 @@ namespace CaotinhoAuMiau.Controllers.Usuario
         }
 
         [HttpGet("detalhes/{id}")]
-        public async Task<IActionResult> DetalhesPet(int id)
+        public async Task<IActionResult> DetalhesPetAsync(int id)
         {
             var idUsuario = User.ObterIdUsuario();
             if (!string.IsNullOrEmpty(idUsuario))
             {
-                ViewBag.NotificacoesNaoLidas = await _servicoNotificacao.ContarNotificacoesNaoLidas(idUsuario);
+                // Chamada para método atualizado
+                ViewBag.NotificacoesNaoLidas = await _servicoNotificacao.ContarNotificacoesNaoLidasAsync(idUsuario);
             }
 
             var pet = await _contexto.Pets
@@ -293,7 +295,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
         }
 
         [HttpPost("buscar")]
-        public async Task<IActionResult> BuscarPets(string termoBusca, string especie, string idade, string sexo)
+        public async Task<IActionResult> BuscarPetsAsync(string termoBusca, string especie, string idade, string sexo)
         {
             var petsQuery = _contexto.Pets.AsQueryable();
             

@@ -24,7 +24,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         }
 
         [HttpGet]
-        public async Task<IActionResult> Inicio()
+        public async Task<IActionResult> InicioAsync()
         {
             var adminId = User.ObterIdUsuario();
             if (string.IsNullOrEmpty(adminId))
@@ -148,7 +148,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         }
 
         [HttpGet("DadosGraficos")]
-        public async Task<IActionResult> ObterDadosGraficos()
+        public async Task<IActionResult> ObterDadosGraficosAsync()
         {
             try
             {
@@ -240,7 +240,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         }
 
         [HttpGet("AtividadesRecentes")]
-        public async Task<IActionResult> ObterAtividadesRecentes()
+        public async Task<IActionResult> ObterAtividadesRecentesAsync()
         {
             try
             {

@@ -22,7 +22,7 @@ namespace CaotinhoAuMiau.Controllers.API
         }
 
         [HttpGet]
-        public async Task<IActionResult> ObterNotificacoes()
+        public async Task<IActionResult> ObterNotificacoesAsync()
         {
             var idUsuario = User.ObterIdUsuario();
             if (string.IsNullOrEmpty(idUsuario))
@@ -30,12 +30,13 @@ namespace CaotinhoAuMiau.Controllers.API
                 return Unauthorized();
             }
 
-            var notificacoes = await _servicoNotificacao.ObterNotificacoesUsuario(idUsuario);
+            // Chamada do método renomeado com sufixo Async
+            var notificacoes = await _servicoNotificacao.ObterNotificacoesUsuarioAsync(idUsuario);
             return Ok(notificacoes);
         }
 
         [HttpGet("nao-lidas")]
-        public async Task<IActionResult> ObterNotificacoesNaoLidas()
+        public async Task<IActionResult> ObterNotificacoesNaoLidasAsync()
         {
             var idUsuario = User.ObterIdUsuario();
             if (string.IsNullOrEmpty(idUsuario))
@@ -43,12 +44,13 @@ namespace CaotinhoAuMiau.Controllers.API
                 return Unauthorized();
             }
 
-            var notificacoes = await _servicoNotificacao.ContarNotificacoesNaoLidas(idUsuario);
+            // Ajuste para o novo nome do método
+            var notificacoes = await _servicoNotificacao.ContarNotificacoesNaoLidasAsync(idUsuario);
             return Ok(notificacoes);
         }
 
         [HttpPost("marcar-como-lida/{id}")]
-        public async Task<IActionResult> MarcarComoLida(int id)
+        public async Task<IActionResult> MarcarComoLidaAsync(int id)
         {
             var idUsuario = User.ObterIdUsuario();
             if (string.IsNullOrEmpty(idUsuario))
@@ -56,7 +58,8 @@ namespace CaotinhoAuMiau.Controllers.API
                 return Unauthorized();
             }
 
-            var resultado = await _servicoNotificacao.MarcarComoLida(id, idUsuario);
+            // Uso do método renomeado na camada de serviço
+            var resultado = await _servicoNotificacao.MarcarComoLidaAsync(id, idUsuario);
             if (!resultado)
             {
                 return Forbid();
@@ -65,7 +68,7 @@ namespace CaotinhoAuMiau.Controllers.API
         }
 
         [HttpPost("marcar-todas-como-lidas")]
-        public async Task<IActionResult> MarcarTodasComoLidas()
+        public async Task<IActionResult> MarcarTodasComoLidasAsync()
         {
             var idUsuario = User.ObterIdUsuario();
             if (string.IsNullOrEmpty(idUsuario))
@@ -73,7 +76,8 @@ namespace CaotinhoAuMiau.Controllers.API
                 return Unauthorized();
             }
 
-            await _servicoNotificacao.MarcarTodasComoLidas(idUsuario);
+            // Chamada ao método renomeado da camada de serviço
+            await _servicoNotificacao.MarcarTodasComoLidasAsync(idUsuario);
             return Ok();
         }
     }

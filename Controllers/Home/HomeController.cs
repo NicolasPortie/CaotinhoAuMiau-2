@@ -36,13 +36,14 @@ namespace CaotinhoAuMiau.Controllers.Home
                 var idUsuario = User.ObterIdUsuario();
                 if (!string.IsNullOrEmpty(idUsuario))
                 {
-                    ViewBag.NotificacoesNaoLidas = await _servicoNotificacao.ContarNotificacoesNaoLidas(idUsuario);
+                    // Atualizado para refletir o novo nome do método
+                    ViewBag.NotificacoesNaoLidas = await _servicoNotificacao.ContarNotificacoesNaoLidasAsync(idUsuario);
                 }
             }
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> IndexAsync()
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -62,32 +63,32 @@ namespace CaotinhoAuMiau.Controllers.Home
             return View("~/Views/Home/Index.cshtml", pets);
         }
 
-        public async Task<IActionResult> Sobre()
+        public async Task<IActionResult> SobreAsync()
         {
             await ConfigurarDadosComuns();
             return View("~/Views/Home/Sobre.cshtml");
         }
 
-        public async Task<IActionResult> Contato()
+        public async Task<IActionResult> ContatoAsync()
         {
             await ConfigurarDadosComuns();
             return View("~/Views/Home/Contato.cshtml");
         }
 
-        public async Task<IActionResult> Privacidade()
+        public async Task<IActionResult> PrivacidadeAsync()
         {
             await ConfigurarDadosComuns();
             return View("~/Views/Home/Privacidade.cshtml");
         }
         
-        public async Task<IActionResult> Termos()
+        public async Task<IActionResult> TermosAsync()
         {
             await ConfigurarDadosComuns();
             return View("~/Views/Home/Termos.cshtml");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public async Task<IActionResult> Erro()
+        public async Task<IActionResult> ErroAsync()
         {
             await ConfigurarDadosComuns();
             return View("~/Views/Shared/Error.cshtml", new ErrorViewModel
