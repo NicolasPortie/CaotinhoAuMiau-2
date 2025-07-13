@@ -315,7 +315,7 @@ function inicializarCampos(): void {
     });
     
     
-    const gruposFormulario = document.querySelectorAll('.grupo-formulario');
+    const gruposFormulario = document.querySelectorAll<HTMLElement>('.grupo-formulario');
     gruposFormulario.forEach(grupo => {
         grupo.addEventListener('mouseenter', function() {
             this.style.transform = 'translateY(-2px)';
@@ -777,7 +777,7 @@ function inicializarNavegacaoPainel(): void {
     
     
     function validarPainelAtual() {
-        const camposObrigatorios = paineis[painelAtual].querySelectorAll('[required]');
+        const camposObrigatorios = paineis[painelAtual].querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>('[required]');
         let valido = true;
         
         camposObrigatorios.forEach(campo => {
@@ -799,15 +799,15 @@ function inicializarNavegacaoPainel(): void {
 
 
 function inicializarContadoresCaracteres(): void {
-    document.querySelectorAll('textarea[data-max-length]').forEach(textarea => {
+    document.querySelectorAll<HTMLTextAreaElement>('textarea[data-max-length]').forEach(textarea => {
         const maxLength = parseInt(textarea.dataset.maxLength);
         const contador = document.createElement('div');
         contador.className = 'contador-caracteres';
         contador.innerHTML = `<span>0</span>/${maxLength}`;
         
-        textarea.parentNode.insertBefore(contador, textarea.nextSibling);
+        textarea.parentNode?.insertBefore(contador, textarea.nextSibling);
         
-        textarea.addEventListener('input', function() {
+        textarea.addEventListener('input', function(this: HTMLTextAreaElement) {
             const caracteresUsados = this.value.length;
             contador.querySelector('span').textContent = caracteresUsados;
             
@@ -824,7 +824,7 @@ function inicializarContadoresCaracteres(): void {
 
 
 function inicializarControlesNumericos(): void {
-    document.querySelectorAll('input[type="number"]').forEach(input => {
+    document.querySelectorAll<HTMLInputElement>('input[type="number"]').forEach(input => {
         const container = document.createElement('div');
         container.className = 'controle-numero';
         
@@ -863,14 +863,14 @@ function inicializarControlesNumericos(): void {
 
 
 function inicializarSliderTempo(): void {
-    const slider = document.getElementById('tempoDisponivel');
+    const slider = document.getElementById('tempoDisponivel') as HTMLInputElement | null;
     if (!slider) return;
-    
+
     const output = document.getElementById('valorTempoDisponivel');
     if (output) {
         output.textContent = slider.value + ' horas';
-        
-        slider.addEventListener('input', function() {
+
+        slider.addEventListener('input', function(this: HTMLInputElement) {
             output.textContent = this.value + ' horas';
         });
     }
@@ -879,42 +879,42 @@ function inicializarSliderTempo(): void {
 
 function inicializarCheckboxesERadios(): void {
     
-    document.querySelectorAll('.checkbox-personalizado input[type="checkbox"]').forEach(checkbox => {
-        const label = checkbox.parentElement;
+    document.querySelectorAll<HTMLInputElement>('.checkbox-personalizado input[type="checkbox"]').forEach(checkbox => {
+        const label = checkbox.parentElement as HTMLElement | null;
         
         checkbox.addEventListener('change', function() {
             if (this.checked) {
-                label.classList.add('checked');
+                label?.classList.add('checked');
             } else {
-                label.classList.remove('checked');
+                label?.classList.remove('checked');
             }
         });
         
         
         if (checkbox.checked) {
-            label.classList.add('checked');
+            label?.classList.add('checked');
         }
     });
     
     
-    document.querySelectorAll('.radio-personalizado input[type="radio"]').forEach(radio => {
-        const label = radio.parentElement;
+    document.querySelectorAll<HTMLInputElement>('.radio-personalizado input[type="radio"]').forEach(radio => {
+        const label = radio.parentElement as HTMLElement | null;
         
         radio.addEventListener('change', function() {
             
-            document.querySelectorAll(`input[name="${this.name}"]`).forEach(r => {
-                r.parentElement.classList.remove('checked');
+            document.querySelectorAll<HTMLInputElement>(`input[name="${this.name}"]`).forEach(r => {
+                r.parentElement!.classList.remove('checked');
             });
             
             
             if (this.checked) {
-                label.classList.add('checked');
+                label?.classList.add('checked');
             }
         });
         
         
         if (radio.checked) {
-            label.classList.add('checked');
+            label?.classList.add('checked');
         }
     });
 }

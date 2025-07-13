@@ -31,7 +31,6 @@ namespace CaotinhoAuMiau.Controllers.Autenticacao
         {
             _logger = logger;
             _usuarioService = usuarioService;
-            _ = Task.Run(() => _usuarioService.CriarAdminPadraoAsync());
         }
 
         [HttpGet("login")]

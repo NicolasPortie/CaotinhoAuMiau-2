@@ -10,9 +10,15 @@ using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews()
-    .AddRazorRuntimeCompilation()
-    .AddJsonOptions(options =>
+var mvcBuilder = builder.Services.AddControllersWithViews();
+
+// Em ambiente de desenvolvimento, habilita a recompilação das views
+if (builder.Environment.IsDevelopment())
+{
+    mvcBuilder = mvcBuilder.AddRazorRuntimeCompilation();
+}
+
+mvcBuilder.AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
         options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
@@ -174,6 +180,13 @@ builder.Services.AddSession(options =>
 builder.Services.AddMemoryCache();
 
 var app = builder.Build();
+
+// Cria o usuário administrador padrão uma única vez durante a inicialização
+using (var scope = app.Services.CreateScope())
+{
+    var usuarioService = scope.ServiceProvider.GetRequiredService<IUsuarioService>();
+    await usuarioService.CriarAdminPadraoAsync();
+}
 
 // Middleware global para tratamento de erros
 app.UseMiddleware<CaotinhoAuMiau.Middleware.GlobalErrorHandlingMiddleware>();
