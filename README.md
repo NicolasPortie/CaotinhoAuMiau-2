@@ -39,3 +39,7 @@ Para facilitar o desenvolvimento do frontend, foram adicionados scripts no `pack
 - **Compilação manual:** antes de publicar ou versionar o código, rode `npm run build` para compilar todos os arquivos `.ts` de uma vez.
 
 Com esses comandos, evitamos diferenças entre os arquivos TypeScript e JavaScript compilados e padronizamos o fluxo de trabalho.
+
+## Sessões e cache
+
+O projeto utiliza o Redis para armazenar sessões e dados de cache quando um servidor está disponível. Se nenhuma string de conexão para o Redis for encontrada, o *Program.cs* configura automaticamente o uso do cache em memória, evitando atrasos no carregamento das páginas.
