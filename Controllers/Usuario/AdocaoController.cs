@@ -32,7 +32,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
 
         [HttpGet]
         [Route("~/usuario/adocoes")]
-        public async Task<IActionResult> Listar(int pagina = 1, int itensPorPagina = 12)
+        public async Task<IActionResult> ListarAsync(int pagina = 1, int itensPorPagina = 12)
         {
             var idUsuario = User.ObterIdUsuario();
             if (string.IsNullOrEmpty(idUsuario))
@@ -92,7 +92,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
         [HttpGet]
         [Route("formulario/{petId:int}")]
         [AllowAnonymous]
-        public async Task<IActionResult> ExibirFormulario(int petId)
+        public async Task<IActionResult> ExibirFormularioAsync(int petId)
         {
             var pet = await _contexto.Pets.FirstOrDefaultAsync(p => p.Id == petId);
             
@@ -135,7 +135,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
         [HttpPost]
         [Route("formulario/{petId:int}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ProcessarFormulario(int petId, FormularioAdocaoViewModel viewModel)
+        public async Task<IActionResult> ProcessarFormularioAsync(int petId, FormularioAdocaoViewModel viewModel)
         {
             try
             {
@@ -178,7 +178,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
 
                 await _contexto.SaveChangesAsync();
 
-                await _servicoNotificacao.CriarNotificacao(
+                await _servicoNotificacao.CriarNotificacaoAsync(
                     idUsuario,
                     "Solicitação de adoção enviada",
                     $"Sua solicitação de adoção para o pet {pet.Nome} foi enviada com sucesso! Aguarde a análise da equipe.",
@@ -195,7 +195,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
         }
 
         [HttpGet("detalhes/{id}")]
-        public async Task<IActionResult> ExibirDetalhes(int id)
+        public async Task<IActionResult> ExibirDetalhesAsync(int id)
         {
             var idUsuario = User.ObterIdUsuario();
             if (string.IsNullOrEmpty(idUsuario))
@@ -218,7 +218,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
 
         [HttpPost("cancelar-formulario-adocao/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CancelarFormularioAdocao(int id, [FromBody] CancelamentoRequest request)
+        public async Task<IActionResult> CancelarFormularioAdocaoAsync(int id, [FromBody] CancelamentoRequest request)
         {
             try
             {
@@ -315,7 +315,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
 
         [HttpPost("reativar-formulario-adocao/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ReativarFormularioAdocao(int id)
+        public async Task<IActionResult> ReativarFormularioAdocaoAsync(int id)
         {
             var idUsuario = User.ObterIdUsuario();
             if (string.IsNullOrEmpty(idUsuario))
@@ -346,7 +346,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
         }
 
         [HttpGet("formulario-detalhes/{id}")]
-        public async Task<IActionResult> ObterDetalhesFormulario(int id)
+        public async Task<IActionResult> ObterDetalhesFormularioAsync(int id)
         {
             var idUsuario = User.ObterIdUsuario();
             if (string.IsNullOrEmpty(idUsuario))
@@ -402,7 +402,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
         }
 
         [HttpGet("historico")]
-        public async Task<IActionResult> BuscarHistoricoAdocoes()
+        public async Task<IActionResult> BuscarHistoricoAdocoesAsync()
         {
             try
             {
@@ -438,7 +438,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
         }
 
         [HttpGet("verificar-adocoes-pendentes")]
-        public async Task<IActionResult> VerificarAdocoesPendentes()
+        public async Task<IActionResult> VerificarAdocoesPendentesAsync()
         {
             var idUsuario = User.ObterIdUsuario();
             if (string.IsNullOrEmpty(idUsuario))
@@ -455,7 +455,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
         }
 
         [HttpGet("status-adocao/{id}")]
-        public async Task<IActionResult> StatusAdocao(int id)
+        public async Task<IActionResult> StatusAdocaoAsync(int id)
         {
             try
             {

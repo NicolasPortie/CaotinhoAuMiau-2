@@ -29,7 +29,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
 
         [HttpGet]
         [Route("")]
-        public async Task<IActionResult> ExibirPerfil()
+        public async Task<IActionResult> ExibirPerfilAsync()
         {
             var idUsuario = User.ObterIdUsuario();
             if (string.IsNullOrEmpty(idUsuario))
@@ -67,7 +67,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
         [HttpPost]
         [Route("atualizar")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ProcessarAtualizacaoPerfil(UsuarioViewModel modelo)
+        public async Task<IActionResult> ProcessarAtualizacaoPerfilAsync(UsuarioViewModel modelo)
         {
             if (!ModelState.IsValid)
             {
@@ -141,7 +141,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
         [HttpPost]
         [Route("remover-foto")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RemoverFotoPerfil()
+        public async Task<IActionResult> RemoverFotoPerfilAsync()
         {
             try
             {
@@ -201,7 +201,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
         [HttpPost]
         [Route("alterar-senha")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ProcessarAlteracaoSenha(string SenhaAtual, string NovaSenha, string ConfirmarSenha)
+        public async Task<IActionResult> ProcessarAlteracaoSenhaAsync(string SenhaAtual, string NovaSenha, string ConfirmarSenha)
         {
             var idUsuario = User.ObterIdUsuario();
             if (string.IsNullOrEmpty(idUsuario))
@@ -260,7 +260,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
         [HttpPost]
         [Route("atualizarFoto")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AtualizarFotoPerfil()
+        public async Task<IActionResult> AtualizarFotoPerfilAsync()
         {
             try
             {

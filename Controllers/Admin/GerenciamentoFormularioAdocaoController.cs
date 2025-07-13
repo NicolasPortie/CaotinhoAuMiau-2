@@ -29,7 +29,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         }
 
         [HttpGet]
-        public async Task<IActionResult> Listar(int pagina = 1, int itensPorPagina = 10, string filtroStatus = "", string filtroData = "", string pesquisa = "")
+        public async Task<IActionResult> ListarAsync(int pagina = 1, int itensPorPagina = 10, string filtroStatus = "", string filtroData = "", string pesquisa = "")
         {
             var adminId = User.ObterIdUsuario();
             if (string.IsNullOrEmpty(adminId))
@@ -99,7 +99,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         }
 
         [HttpGet("detalhes/{id}")]
-        public async Task<IActionResult> ObterDetalhesFormulario(int id)
+        public async Task<IActionResult> ObterDetalhesFormularioAsync(int id)
         {
             try
             {
@@ -130,7 +130,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
         [HttpPost("Aprovar/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AprovarFormulario(int id, string observacao = "")
+        public async Task<IActionResult> AprovarFormularioAsync(int id, string observacao = "")
         {
             try
             {
@@ -178,7 +178,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     
                     try
                     {
-                        await _servicoNotificacao.CriarNotificacao(
+            await _servicoNotificacao.CriarNotificacaoAsync(
                             outroForm.UsuarioId.ToString(),
                             "Formulário de adoção rejeitado",
                             $"Seu formulário de adoção para o pet {pet.Nome} foi rejeitado porque outro candidato foi aprovado.",
@@ -215,7 +215,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
                 if (formulario.Usuario != null)
                 {
-                    await _servicoNotificacao.CriarNotificacao(
+                    await _servicoNotificacao.CriarNotificacaoAsync(
                         formulario.UsuarioId.ToString(),
                         "Formulário de adoção aprovado",
                         $"Seu formulário de adoção para o pet {pet.Nome} foi aprovado! O pet está aguardando retirada.",
@@ -236,7 +236,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
         [HttpPost("Rejeitar/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RejeitarFormulario(int id, string motivo)
+        public async Task<IActionResult> RejeitarFormularioAsync(int id, string motivo)
         {
             try
             {
@@ -261,7 +261,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
                 if (formulario.Usuario != null)
                 {
-                    await _servicoNotificacao.CriarNotificacao(
+                    await _servicoNotificacao.CriarNotificacaoAsync(
                         formulario.UsuarioId.ToString(),
                         "Formulário de adoção rejeitado",
                         $"Seu formulário de adoção para o pet {formulario.Pet?.Nome} foi rejeitado. Motivo: {motivo}",
@@ -282,7 +282,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
         [HttpPost("solicitar-informacoes/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SolicitarInformacoesAdicionais(int id, [FromBody] string observacao)
+        public async Task<IActionResult> SolicitarInformacoesAdicionaisAsync(int id, [FromBody] string observacao)
         {
             try
             {
@@ -302,7 +302,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
                 if (formulario.Usuario != null)
                 {
-                    await _servicoNotificacao.CriarNotificacao(
+                    await _servicoNotificacao.CriarNotificacaoAsync(
                         formulario.UsuarioId.ToString(),
                         "Informações adicionais solicitadas",
                         $"Por favor, forneça informações adicionais para seu formulário de adoção do pet {formulario.Pet?.Nome}",

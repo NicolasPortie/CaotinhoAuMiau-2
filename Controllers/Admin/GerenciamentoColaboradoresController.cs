@@ -34,7 +34,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         }
 
         [HttpGet]
-        public async Task<IActionResult> Listar(int pagina = 1, int itensPorPagina = 10, string filtroStatus = "", string filtroCargo = "", string pesquisa = "")
+        public async Task<IActionResult> ListarAsync(int pagina = 1, int itensPorPagina = 10, string filtroStatus = "", string filtroCargo = "", string pesquisa = "")
         {
             if (!VerificarPermissaoAdministrar())
             {
@@ -88,7 +88,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
         [HttpPost("CadastrarColaborador")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Cadastrar(ColaboradorViewModel model)
+        public async Task<IActionResult> CadastrarAsync(ColaboradorViewModel model)
         {
             if (!VerificarPermissaoAdministrar())
             {
@@ -131,7 +131,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         }
 
         [HttpGet("VerificarUsuario")]
-        public async Task<IActionResult> VerificarUsuario(string email, string cpf)
+        public async Task<IActionResult> VerificarUsuarioAsync(string email, string cpf)
         {
             if (!VerificarPermissaoAdministrar())
             {
@@ -167,7 +167,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
         [HttpPost("PromoverUsuario")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> PromoverUsuario(int usuarioId, string cargo)
+        public async Task<IActionResult> PromoverUsuarioAsync(int usuarioId, string cargo)
         {
             if (!VerificarPermissaoAdministrar())
             {
@@ -214,7 +214,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         }
 
         [HttpGet("ObterColaborador/{id}")]
-        public async Task<IActionResult> Obter(int id)
+        public async Task<IActionResult> ObterAsync(int id)
         {
             if (!VerificarPermissaoAdministrar())
             {
@@ -241,7 +241,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         }
 
         [HttpGet("DetalhesColaborador/{id}")]
-        public async Task<IActionResult> ObterDetalhes(int id)
+        public async Task<IActionResult> ObterDetalhesAsync(int id)
         {
             if (!VerificarPermissaoAdministrar())
             {
@@ -269,7 +269,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
         [HttpPost("AtualizarColaborador")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Atualizar(ColaboradorViewModel model)
+        public async Task<IActionResult> AtualizarAsync(ColaboradorViewModel model)
         {
             if (!VerificarPermissaoAdministrar())
             {
@@ -360,7 +360,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
         [HttpPost("AtivarColaborador/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Ativar(int id)
+        public async Task<IActionResult> AtivarAsync(int id)
         {
             if (!VerificarPermissaoAdministrar())
             {
@@ -390,7 +390,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
         [HttpPost("DesativarColaborador/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Desativar(int id)
+        public async Task<IActionResult> DesativarAsync(int id)
         {
             if (!VerificarPermissaoAdministrar())
             {
@@ -427,7 +427,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         }
 
         [HttpGet("ObterListaColaboradores")]
-        public async Task<IActionResult> ListarTodos()
+        public async Task<IActionResult> ListarTodosAsync()
         {
             if (!VerificarPermissaoAdministrar())
             {
@@ -462,7 +462,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         [AllowAnonymous]
         [HttpPost("Login")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> FazerLogin(AutenticacaoLoginViewModel modelo, string urlRetorno = null)
+        public async Task<IActionResult> FazerLoginAsync(AutenticacaoLoginViewModel modelo, string urlRetorno = null)
         {
             if (!ModelState.IsValid)
             {
@@ -517,7 +517,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
         [HttpPost("Logout")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Sair()
+        public async Task<IActionResult> SairAsync()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Home");
@@ -537,7 +537,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
         [HttpPost("ExcluirColaborador/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Excluir(int id)
+        public async Task<IActionResult> ExcluirAsync(int id)
         {
             if (!VerificarPermissaoAdministrar())
             {
