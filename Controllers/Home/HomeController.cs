@@ -29,7 +29,8 @@ namespace CaotinhoAuMiau.Controllers.Home
             _logger = logger;
         }
 
-        private async Task ConfigurarDadosComuns()
+        // Método assíncrono renomeado para seguir a convenção de sufixo 'Async'
+        private async Task ConfigurarDadosComunsAsync()
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -65,32 +66,37 @@ namespace CaotinhoAuMiau.Controllers.Home
 
         public async Task<IActionResult> SobreAsync()
         {
-            await ConfigurarDadosComuns();
+            // Ajuste de nome do método invocado após renomeação
+            await ConfigurarDadosComunsAsync();
             return View("~/Views/Home/Sobre.cshtml");
         }
 
         public async Task<IActionResult> ContatoAsync()
         {
-            await ConfigurarDadosComuns();
+            // Ajuste de nome do método invocado após renomeação
+            await ConfigurarDadosComunsAsync();
             return View("~/Views/Home/Contato.cshtml");
         }
 
         public async Task<IActionResult> PrivacidadeAsync()
         {
-            await ConfigurarDadosComuns();
+            // Ajuste de nome do método invocado após renomeação
+            await ConfigurarDadosComunsAsync();
             return View("~/Views/Home/Privacidade.cshtml");
         }
         
         public async Task<IActionResult> TermosAsync()
         {
-            await ConfigurarDadosComuns();
+            // Ajuste de nome do método invocado após renomeação
+            await ConfigurarDadosComunsAsync();
             return View("~/Views/Home/Termos.cshtml");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> ErroAsync()
         {
-            await ConfigurarDadosComuns();
+            // Ajuste de nome do método invocado após renomeação
+            await ConfigurarDadosComunsAsync();
             return View("~/Views/Shared/Error.cshtml", new ErrorViewModel
             {
                 RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier

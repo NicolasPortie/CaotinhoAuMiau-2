@@ -72,7 +72,8 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 dashboardViewModel.Estatisticas.PetsAguardandoRetirada = await _contexto.FormulariosAdocao.CountAsync(f => f.Status == "Aguardando buscar");
                 dashboardViewModel.Estatisticas.AdocoesFinalizadas = await _contexto.FormulariosAdocao.CountAsync(f => f.Status == "Finalizada");
                 
-                await ConfigurarDadosGraficos(dashboardViewModel.Estatisticas);
+                // Invocação atualizada após renomear o método para seguir a convenção
+                await ConfigurarDadosGraficosAsync(dashboardViewModel.Estatisticas);
                 
                 ViewBag.AdocoesRecentes = formularios;
                 
@@ -92,7 +93,8 @@ namespace CaotinhoAuMiau.Controllers.Admin
             return View("~/Views/Admin/GerenciamentoDashboard.cshtml", dashboardViewModel);
         }
         
-        private async Task ConfigurarDadosGraficos(EstatisticasViewModel estatisticas)
+        // Método assíncrono renomeado para seguir a convenção de sufixo 'Async'
+        private async Task ConfigurarDadosGraficosAsync(EstatisticasViewModel estatisticas)
         {
             try
             {
