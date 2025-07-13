@@ -21,3 +21,21 @@ builder.Services.AddControllersWithViews()
 O backend está configurado para converter automaticamente as propriedades em PascalCase das classes C# para camelCase ao serializar JSON. A opção `PropertyNameCaseInsensitive` também está habilitada, permitindo que os dados enviados em camelCase ou PascalCase sejam lidos sem erros.
 
 No frontend, trabalhe sempre com objetos em camelCase, tanto ao enviar quanto ao receber informações da API. Essa abordagem mantém a consistência com a convenção do JavaScript/TypeScript e evita conversões manuais.
+
+## Compilação do TypeScript
+
+Para facilitar o desenvolvimento do frontend, foram adicionados scripts no `package.json` que automatizam a compilação dos arquivos `.ts`:
+
+```json
+"scripts": {
+  "build": "tsc",
+  "watch": "tsc --watch"
+}
+```
+
+### Uso diário
+
+- **Desenvolvimento contínuo:** execute `npm run watch` na raiz do projeto e deixe o comando rodando em segundo plano enquanto codifica. O TypeScript será recompilado sempre que você salvar um arquivo.
+- **Compilação manual:** antes de publicar ou versionar o código, rode `npm run build` para compilar todos os arquivos `.ts` de uma vez.
+
+Com esses comandos, evitamos diferenças entre os arquivos TypeScript e JavaScript compilados e padronizamos o fluxo de trabalho.
