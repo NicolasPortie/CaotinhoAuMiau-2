@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Microsoft.AspNetCore.Authorization;
 using CaotinhoAuMiau.Services;
 using CaotinhoAuMiau.Utils;
@@ -98,9 +99,20 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 var resultado = await _petService.SalvarPetAsync(pet, foto, _ambiente.WebRootPath, RemoverImagem, CadastroCompleto, ManterImagemAtual);
                 return Json(new { sucesso = resultado.Sucesso, mensagem = resultado.Mensagem, petId = resultado.PetId });
             }
+            catch (DbUpdateException dbEx)
+            {
+                _logger.LogWarning(dbEx, "Erro de banco ao salvar pet.");
+                return Json(new { sucesso = false, mensagem = "Não foi possível salvar o pet devido a um problema de dados." });
+            }
+            catch (IOException ioEx)
+            {
+                _logger.LogWarning(ioEx, "Falha de I/O ao processar imagem do pet.");
+                return Json(new { sucesso = false, mensagem = "Erro ao processar a imagem do pet." });
+            }
             catch (Exception ex)
             {
-                return Json(new { sucesso = false, mensagem = $"Erro ao salvar pet: {ex.Message}" });
+                _logger.LogError(ex, "Erro inesperado ao salvar pet.");
+                throw;
             }
         }
 
@@ -163,9 +175,15 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
                 return Json(new { sucesso = true, mensagem = "Pet excluído com sucesso!" });
             }
+            catch (DbUpdateException dbEx)
+            {
+                _logger.LogWarning(dbEx, "Erro ao excluir pet, possível conflito no banco.");
+                return Json(new { sucesso = false, mensagem = "Não foi possível excluir o pet devido a um problema de dados." });
+            }
             catch (Exception ex)
             {
-                return Json(new { sucesso = false, mensagem = "Erro ao excluir pet: " + ex.Message });
+                _logger.LogError(ex, "Erro inesperado ao excluir pet.");
+                throw;
             }
         }
 
@@ -201,9 +219,20 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 
                 return Json(new { sucesso = true, mensagem = $"Status do pet alterado para {novoStatus} com sucesso!" });
             }
+            catch (DbUpdateConcurrencyException dbConcEx)
+            {
+                _logger.LogWarning(dbConcEx, "Conflito de concorrência ao alterar status do pet.");
+                return Json(new { sucesso = false, mensagem = "O status do pet já foi alterado por outro usuário." });
+            }
+            catch (DbUpdateException dbEx)
+            {
+                _logger.LogWarning(dbEx, "Erro de banco ao alterar status do pet.");
+                return Json(new { sucesso = false, mensagem = "Não foi possível alterar o status devido a um problema de dados." });
+            }
             catch (Exception ex)
             {
-                return Json(new { sucesso = false, mensagem = $"Erro ao alterar status do pet: {ex.Message}" });
+                _logger.LogError(ex, "Erro inesperado ao alterar status do pet.");
+                throw;
             }
         }
 
@@ -240,9 +269,15 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 
                 return Json(new { sucesso = true, dados = resultado });
             }
+            catch (DbUpdateException dbEx)
+            {
+                _logger.LogWarning(dbEx, "Erro de banco ao obter dados do pet.");
+                return Json(new { sucesso = false, mensagem = "Não foi possível carregar os dados do pet." });
+            }
             catch (Exception ex)
             {
-                return Json(new { sucesso = false, mensagem = $"Erro ao obter pet: {ex.Message}" });
+                _logger.LogError(ex, "Erro inesperado ao obter pet.");
+                throw;
             }
         }
 
@@ -314,10 +349,20 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     } 
                 });
             }
+            catch (DbUpdateException dbEx)
+            {
+                _logger.LogWarning(dbEx, "Erro de banco ao cadastrar pet.");
+                return Json(new { sucesso = false, mensagem = "Não foi possível cadastrar o pet por um problema de dados." });
+            }
+            catch (IOException ioEx)
+            {
+                _logger.LogWarning(ioEx, "Falha de I/O ao salvar imagem do pet.");
+                return Json(new { sucesso = false, mensagem = "Erro ao salvar a imagem do pet." });
+            }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro ao cadastrar pet");
-                return Json(new { sucesso = false, mensagem = $"Erro ao processar cadastro: {ex.Message}" });
+                _logger.LogError(ex, "Erro inesperado ao cadastrar pet.");
+                throw;
             }
         }
 
@@ -354,9 +399,15 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 
                 return Json(new { success = true, pet = petDto });
             }
+            catch (DbUpdateException dbEx)
+            {
+                _logger.LogWarning(dbEx, "Erro de banco ao obter detalhes do pet.");
+                return Json(new { success = false, message = "Não foi possível obter detalhes do pet." });
+            }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                _logger.LogError(ex, "Erro inesperado ao obter detalhes do pet.");
+                throw;
             }
         }
 

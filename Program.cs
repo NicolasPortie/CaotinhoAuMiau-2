@@ -149,6 +149,9 @@ builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 
+// Middleware global para tratamento de erros
+app.UseMiddleware<CaotinhoAuMiau.Middleware.GlobalErrorHandlingMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();

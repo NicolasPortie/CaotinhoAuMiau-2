@@ -45,9 +45,15 @@ namespace CaotinhoAuMiau.Services
                     await _contexto.SaveChangesAsync();
                 }
             }
+            catch (DbUpdateException dbEx)
+            {
+                _logger.LogWarning(dbEx, "Erro de banco ao criar admin padrão.");
+                throw;
+            }
             catch (Exception ex)
             {
-                _logger.LogError($"Erro ao criar admin padrão: {ex.Message}");
+                _logger.LogError(ex, "Erro inesperado ao criar admin padrão.");
+                throw;
             }
         }
 

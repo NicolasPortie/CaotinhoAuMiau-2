@@ -16,6 +16,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using CaotinhoAuMiau.Services;
 using CaotinhoAuMiau.Utils;
+using Microsoft.EntityFrameworkCore;
+using System.IO;
 
 namespace CaotinhoAuMiau.Controllers.Autenticacao
 {
@@ -224,12 +226,16 @@ namespace CaotinhoAuMiau.Controllers.Autenticacao
                 TempData["Erro"] = "Credenciais inválidas. Por favor, verifique seu email e senha.";
                 return View("~/Views/Autenticacao/Login.cshtml", modelo);
             }
+            catch (DbUpdateException dbEx)
+            {
+                _logger.LogWarning(dbEx, "Erro de banco ao validar login para {Email}", modelo.Email);
+                TempData["Erro"] = "Ocorreu um problema ao verificar suas credenciais.";
+                return View("~/Views/Autenticacao/Login.cshtml", modelo);
+            }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro ao processar login para {Email}", modelo.Email);
-                TempData["Erro"] = "Ocorreu um erro ao processar o login. Por favor, tente novamente.";
-                
-                return View("~/Views/Autenticacao/Login.cshtml", modelo);
+                _logger.LogError(ex, "Erro inesperado ao processar login para {Email}", modelo.Email);
+                throw;
             }
         }
 
@@ -352,8 +358,8 @@ namespace CaotinhoAuMiau.Controllers.Autenticacao
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro ao realizar logout");
-                return RedirectToAction("Index", "Home");
+                _logger.LogError(ex, "Erro inesperado ao realizar logout");
+                throw;
             }
         }
 
@@ -463,12 +469,16 @@ namespace CaotinhoAuMiau.Controllers.Autenticacao
                 
                 return RedirectToAction("ExibirTelaLogin", "Autenticacao");
             }
+            catch (DbUpdateException dbEx)
+            {
+                _logger.LogWarning(dbEx, "Erro de banco ao cadastrar usuário {Email}", usuarioVM.Email);
+                TempData["Erro"] = "Dados inconsistentes impedem o cadastro.";
+                return View("~/Views/Autenticacao/Cadastro.cshtml", usuarioVM);
+            }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro ao processar cadastro para usuário {Email}", usuarioVM.Email);
-                
-                TempData["Erro"] = "Não foi possível completar seu cadastro. Por favor, tente novamente.";
-                return View("~/Views/Autenticacao/Cadastro.cshtml", usuarioVM);
+                _logger.LogError(ex, "Erro inesperado ao processar cadastro para usuário {Email}", usuarioVM.Email);
+                throw;
             }
         }
         
