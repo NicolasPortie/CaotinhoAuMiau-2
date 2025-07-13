@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using CaotinhoAuMiau.Services;
 using CaotinhoAuMiau.Utils;
 using System.Text.Json;
+using System.IO;
 
 namespace CaotinhoAuMiau.Controllers.Admin
 {
@@ -387,6 +388,16 @@ namespace CaotinhoAuMiau.Controllers.Admin
                         mensagem = mensagem,
                         petId = pet.Id
                     });
+                }
+                catch (DbUpdateException dbEx)
+                {
+                    Console.WriteLine($"Erro ao salvar no banco de dados: {dbEx.Message}");
+                    return Json(new { sucesso = false, mensagem = "Erro ao salvar no banco de dados." });
+                }
+                catch (IOException ioEx)
+                {
+                    Console.WriteLine($"Erro de I/O ao processar imagem: {ioEx.Message}");
+                    return Json(new { sucesso = false, mensagem = "Erro ao processar arquivos." });
                 }
                 catch (Exception ex)
                 {

@@ -59,9 +59,14 @@ namespace CaotinhoAuMiau.Controllers.Autenticacao
                     await _contexto.SaveChangesAsync();
                 }
             }
+            catch (DbUpdateException dbEx)
+            {
+                _logger.LogWarning(dbEx, "Erro ao salvar admin padrão no banco.");
+            }
             catch (Exception ex)
             {
-                _logger.LogError($"Erro ao criar admin padrão: {ex.Message}");
+                _logger.LogError(ex, "Erro inesperado ao criar admin padrão.");
+                throw;
             }
         }
 
@@ -262,12 +267,16 @@ namespace CaotinhoAuMiau.Controllers.Autenticacao
                 TempData["Erro"] = "Credenciais inválidas. Por favor, verifique seu email e senha.";
                 return View("~/Views/Autenticacao/Login.cshtml", modelo);
             }
+            catch (DbUpdateException dbEx)
+            {
+                _logger.LogWarning(dbEx, "Falha ao atualizar informações durante o login");
+                TempData["Erro"] = "Problema ao atualizar seus dados. Tente novamente.";
+                return View("~/Views/Autenticacao/Login.cshtml", modelo);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao processar login para {Email}", modelo.Email);
-                TempData["Erro"] = "Ocorreu um erro ao processar o login. Por favor, tente novamente.";
-                
-                return View("~/Views/Autenticacao/Login.cshtml", modelo);
+                throw;
             }
         }
 
@@ -514,12 +523,16 @@ namespace CaotinhoAuMiau.Controllers.Autenticacao
                 
                 return RedirectToAction("ExibirTelaLogin", "Autenticacao");
             }
+            catch (DbUpdateException dbEx)
+            {
+                _logger.LogWarning(dbEx, "Erro de conflito ao cadastrar usuário");
+                TempData["Erro"] = "Já existe um registro com estas informações.";
+                return View("~/Views/Autenticacao/Cadastro.cshtml", usuarioVM);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao processar cadastro para usuário {Email}", usuarioVM.Email);
-                
-                TempData["Erro"] = "Não foi possível completar seu cadastro. Por favor, tente novamente.";
-                return View("~/Views/Autenticacao/Cadastro.cshtml", usuarioVM);
+                throw;
             }
         }
         

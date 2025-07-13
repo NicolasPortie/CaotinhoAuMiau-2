@@ -7,6 +7,7 @@ using System.Security.Claims;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Caching.Memory;
 using CaotinhoAuMiau.Utils;
+using CaotinhoAuMiau.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -142,6 +143,9 @@ builder.Services.AddSession(options =>
 builder.Services.AddMemoryCache();
 
 var app = builder.Build();
+
+// Middleware global de tratamento de erros
+app.UseMiddleware<GlobalErrorHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {

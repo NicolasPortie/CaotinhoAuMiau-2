@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using System.IO;
 using CaotinhoAuMiau.Utils;
 
 namespace CaotinhoAuMiau.Controllers.Usuario
@@ -186,15 +187,30 @@ namespace CaotinhoAuMiau.Controllers.Usuario
 
                 return RedirectToAction(nameof(ExibirPerfil));
             }
-            catch (Exception ex)
+            catch (IOException ioEx)
             {
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {
-                    return Json(new { success = false, message = $"Erro ao remover foto: {ex.Message}" });
+                    return Json(new { success = false, message = $"Falha ao manipular arquivos: {ioEx.Message}" });
                 }
-                
-                TempData["Erro"] = $"Erro ao remover foto: {ex.Message}";
+
+                TempData["Erro"] = $"Erro ao remover foto: {ioEx.Message}";
                 return RedirectToAction(nameof(ExibirPerfil));
+            }
+            catch (DbUpdateException dbEx)
+            {
+                _logger.LogWarning(dbEx, "Erro ao atualizar usuário após remover foto");
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = false, message = "Erro ao salvar alterações." });
+                }
+                TempData["Erro"] = "Erro ao salvar alterações.";
+                return RedirectToAction(nameof(ExibirPerfil));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro inesperado ao remover foto");
+                throw;
             }
         }
 
@@ -309,9 +325,19 @@ namespace CaotinhoAuMiau.Controllers.Usuario
 
                 return Json(new { success = true, fileName = nomeArquivo });
             }
+            catch (IOException ioEx)
+            {
+                return Json(new { success = false, message = $"Falha ao manipular arquivos: {ioEx.Message}" });
+            }
+            catch (DbUpdateException dbEx)
+            {
+                _logger.LogWarning(dbEx, "Erro ao salvar imagem do perfil no banco");
+                return Json(new { success = false, message = "Erro ao salvar alterações no banco." });
+            }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = $"Erro ao atualizar foto: {ex.Message}" });
+                _logger.LogError(ex, "Erro inesperado ao atualizar foto de perfil");
+                throw;
             }
         }
     }
