@@ -14,17 +14,32 @@ namespace CaotinhoAuMiau.Utils
             return attribute?.Value ?? enumValue.ToString();
         }
 
-        public static T ParseEnumMemberValue<T>(string value) where T : Enum
+        public static T ParseEnumMemberValue<T>(string? value) where T : Enum
         {
+            // Retorna o valor padrão do enum caso a string seja nula ou vazia
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return default;
+            }
+
+            // Procura pelo atributo EnumMember com valor correspondente
             foreach (var field in typeof(T).GetFields())
             {
                 var attribute = field.GetCustomAttribute<EnumMemberAttribute>();
-                if (attribute != null && attribute.Value == value)
+                if (attribute != null && string.Equals(attribute.Value, value, StringComparison.OrdinalIgnoreCase))
                 {
                     return (T)field.GetValue(null)!;
                 }
             }
-            return (T)Enum.Parse(typeof(T), value, ignoreCase: true);
+
+            // Tenta fazer o parse pelo nome do enum ignorando maiúsculas/minúsculas
+            if (Enum.TryParse(typeof(T), value, ignoreCase: true, out var result))
+            {
+                return (T)result!;
+            }
+
+            // Caso não consiga converter, retorna o valor padrão para evitar exceção
+            return default;
         }
     }
 }
