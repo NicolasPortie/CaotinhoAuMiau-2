@@ -45,7 +45,7 @@
             <div class="cartao-status total">
                 <div class="conteudo-cartao-status">
                     <div class="icone">
-                        <i class="fas fa-heart"></i>
+                        <i class="fa-solid fa-heart"></i>
                     </div>
                     <div>
                         <div class="rotulo">Total de Adoções</div>
@@ -56,7 +56,7 @@
             <div class="cartao-status em-processo">
                 <div class="conteudo-cartao-status">
                     <div class="icone">
-                        <i class="fas fa-spinner"></i>
+                        <i class="fa-solid fa-spinner"></i>
                     </div>
                     <div>
                         <div class="rotulo">Em Processo</div>
@@ -67,7 +67,7 @@
             <div class="cartao-status aguardando-buscar">
                 <div class="conteudo-cartao-status">
                     <div class="icone">
-                        <i class="fas fa-clock"></i>
+                        <i class="fa-solid fa-clock"></i>
                     </div>
                     <div>
                         <div class="rotulo">Aguardando buscar</div>
@@ -78,7 +78,7 @@
             <div class="cartao-status finalizadas">
                 <div class="conteudo-cartao-status">
                     <div class="icone">
-                        <i class="fas fa-check-circle"></i>
+                        <i class="fa-solid fa-check-circle"></i>
                     </div>
                     <div>
                         <div class="rotulo">Finalizadas</div>
@@ -89,7 +89,7 @@
             <div class="cartao-status expiradas">
                 <div class="conteudo-cartao-status">
                     <div class="icone">
-                        <i class="fas fa-hourglass-end"></i>
+                        <i class="fa-solid fa-hourglass-end"></i>
                     </div>
                     <div>
                         <div class="rotulo">Expiradas</div>
@@ -102,7 +102,7 @@
         
         <div class="secao-filtros">
             <div class="caixa-pesquisa">
-                <i class="fas fa-search"></i>
+                <i class="fa-solid fa-search"></i>
                 <input type="text" id="pesquisaAdocao" class="form-control input-pesquisa" placeholder="Buscar por adotante, pet ou status...">
             </div>
             
@@ -125,7 +125,7 @@
             </select>
             
             <button id="btnLimparFiltros" class="botao-secundario">
-                <i class="fas fa-undo me-1"></i> Limpar
+                <i class="fa-solid fa-undo me-1"></i> Limpar
             </button>
         </div>
 
@@ -169,7 +169,7 @@
                                                 }
                                                 else
                                                 {
-                                                    <div class="sem-imagem"><i class="fas fa-paw"></i></div>
+                                                    <div class="sem-imagem"><i class="fa-solid fa-paw"></i></div>
                                                 }
                                             </div>
                                             <div class="info-pet">
@@ -197,7 +197,7 @@
                                                 <span class="nome">@adocao.Usuario?.Nome</span>
                                                 <span class="email">@adocao.Usuario?.Email</span>
                                                 <button class="botao-ver-perfil" data-usuario-id="@adocao.Usuario?.Id">
-                                                    <i class="fas fa-user-circle"></i>Ver Perfil
+                                                    <i class="fa-solid fa-user-circle"></i>Ver Perfil
                                                 </button>
                                             </div>
                                         </div>
@@ -233,7 +233,7 @@
                                     <td class="coluna-dados">
                                         <div class="coluna-acoes">
                                             <button class="botao-acao visualizar" onclick="verDetalhes(@adocao.Id)" title="Ver detalhes">
-                                                <i class="fas fa-eye"></i>
+                                                <i class="fa-solid fa-eye"></i>
                                             </button>
                                             
                                             @if (!isExpirada)
@@ -241,30 +241,30 @@
                                                 @if (adocao.Status == "Pendente")
                                                 {
                                                     <button class="botao-acao aprovar" onclick="mostrarModalAcao(@adocao.Id, 'aprovar')" title="Aprovar adoção">
-                                                        <i class="fas fa-check"></i>
+                                                        <i class="fa-solid fa-check"></i>
                                                     </button>
                                                     <button class="botao-acao rejeitar" onclick="mostrarModalAcao(@adocao.Id, 'rejeitar')" title="Rejeitar adoção">
-                                                        <i class="fas fa-times"></i>
+                                                        <i class="fa-solid fa-times"></i>
                                                     </button>
                                                 }
                                                 
                                                 @if (adocao.Status == "Em Processo" || adocao.Status == "Aprovado")
                                                 {
                                                     <button class="botao-acao aguardar" onclick="mostrarModalAcao(@adocao.Id, 'aguardandoBuscar')" title="Confirmar que pet está pronto para busca">
-                                                        <i class="fas fa-truck-pickup"></i>
+                                                        <i class="fa-solid fa-truck-pickup"></i>
                                                     </button>
                                                     <button class="botao-acao cancelar" onclick="mostrarModalAcao(@adocao.Id, 'cancelar')" title="Cancelar processo de adoção">
-                                                        <i class="fas fa-ban"></i>
+                                                        <i class="fa-solid fa-ban"></i>
                                                     </button>
                                                 }
                                                 
                                                 @if (adocao.Status == "Aguardando buscar" && diasRestantes.Days > 0)
                                                 {
                                                     <button class="botao-acao finalizar" onclick="mostrarModalAcao(@adocao.Id, 'finalizar')" title="Finalizar processo de adoção">
-                                                        <i class="fas fa-check-circle"></i>
+                                                        <i class="fa-solid fa-check-circle"></i>
                                                     </button>
                                                     <button class="botao-acao cancelar" onclick="mostrarModalAcao(@adocao.Id, 'cancelar')" title="Cancelar processo de adoção">
-                                                        <i class="fas fa-ban"></i>
+                                                        <i class="fa-solid fa-ban"></i>
                                                     </button>
                                                 }
                                             }
@@ -289,14 +289,14 @@
                                     {
                                         <li class="page-item">
                                             <a class="page-link" href="@Url.Action("Listar", "GerenciamentoAdocao", new { pagina = ViewBag.PaginaAtual - 1, itensPorPagina = ViewBag.ItensPorPagina })">
-                                                <i class="fas fa-chevron-left"></i>
+                                                <i class="fa-solid fa-chevron-left"></i>
                                             </a>
                                         </li>
                                     }
                                     else
                                     {
                                         <li class="page-item disabled">
-                                            <span class="page-link"><i class="fas fa-chevron-left"></i></span>
+                                            <span class="page-link"><i class="fa-solid fa-chevron-left"></i></span>
                                         </li>
                                     }
 
@@ -324,14 +324,14 @@
                                     {
                                         <li class="page-item">
                                             <a class="page-link" href="@Url.Action("Listar", "GerenciamentoAdocao", new { pagina = ViewBag.PaginaAtual + 1, itensPorPagina = ViewBag.ItensPorPagina })">
-                                                <i class="fas fa-chevron-right"></i>
+                                                <i class="fa-solid fa-chevron-right"></i>
                                             </a>
                                         </li>
                                     }
                                     else
                                     {
                                         <li class="page-item disabled">
-                                            <span class="page-link"><i class="fas fa-chevron-right"></i></span>
+                                            <span class="page-link"><i class="fa-solid fa-chevron-right"></i></span>
                                         </li>
                                     }
                                 </ul>
@@ -361,7 +361,7 @@
             {
                 <div class="estado-vazio">
                     <div class="icone-vazio">
-                        <i class="fas fa-file-alt"></i>
+                        <i class="fa-solid fa-file-alt"></i>
                     </div>
                     <h3 class="titulo-sem-adocoes">Não há adoções em andamento no momento.</h3>
                     <p class="texto-sem-adocoes">Quando houver adoções em andamento, elas aparecerão aqui.</p>
@@ -404,7 +404,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalDetalhesAdocaoLabel">
-                        <i class="fas fa-paw me-2"></i>Detalhes da Adoção
+                        <i class="fa-solid fa-paw me-2"></i>Detalhes da Adoção
                     </h5>
                     <div class="detalhes-tags">
                         <div class="detalhes-status-tag" id="detalhesStatusAdocao">Aguardando buscar</div>
@@ -427,10 +427,10 @@
                         <div class="detalhes-navegacao">
                             <ul class="detalhes-abas">
                                 <li class="detalhes-aba ativa" data-painel="painel-informacoes">
-                                    <i class="fas fa-info-circle"></i> Informações Básicas
+                                    <i class="fa-solid fa-info-circle"></i> Informações Básicas
                                 </li>
                                 <li class="detalhes-aba" data-painel="painel-processo">
-                                    <i class="fas fa-clipboard-list"></i> Processo de Adoção
+                                    <i class="fa-solid fa-clipboard-list"></i> Processo de Adoção
                                 </li>
                             </ul>
                         </div>
@@ -444,12 +444,12 @@
                                     <div class="detalhes-card">
                                         <div class="detalhes-card-header">
                                             <h6 class="detalhes-card-titulo">
-                                                <i class="fas fa-paw"></i> Informações do Pet
+                                                <i class="fa-solid fa-paw"></i> Informações do Pet
                                             </h6>
                                         </div>
                                         <div class="detalhes-card-body">
                                             <div class="detalhes-pet-imagem" id="detalhesPetImagem">
-                                                <i class="fas fa-paw"></i>
+                                                <i class="fa-solid fa-paw"></i>
                                             </div>
                                             <div class="detalhes-info-lista">
                                                 <div class="detalhes-info-linha">
@@ -484,12 +484,12 @@
                                     <div class="detalhes-card">
                                         <div class="detalhes-card-header">
                                             <h6 class="detalhes-card-titulo">
-                                                <i class="fas fa-user"></i> Informações do Adotante
+                                                <i class="fa-solid fa-user"></i> Informações do Adotante
                                             </h6>
                                         </div>
                                         <div class="detalhes-card-body">
                                             <div class="detalhes-adotante-avatar" id="detalhesAdotanteAvatar">
-                                                <i class="fas fa-user"></i>
+                                                <i class="fa-solid fa-user"></i>
                                             </div>
                                             <div class="detalhes-info-lista">
                                                 <div class="detalhes-info-linha">
@@ -510,7 +510,7 @@
                                                 </div>
                                                 <div class="detalhes-info-linha mt-3">
                                                     <button class="botao-ver-perfil-completo" id="botaoVerPerfilCompleto">
-                                                        <i class="fas fa-user-circle me-1"></i>Ver perfil completo
+                                                        <i class="fa-solid fa-user-circle me-1"></i>Ver perfil completo
                                                     </button>
                                                 </div>
                                             </div>
@@ -522,7 +522,7 @@
                                 <div class="detalhes-card mt-4">
                                     <div class="detalhes-card-header">
                                         <h6 class="detalhes-card-titulo">
-                                            <i class="fas fa-comment-alt"></i> Observações
+                                            <i class="fa-solid fa-comment-alt"></i> Observações
                                         </h6>
                                     </div>
                                     <div class="detalhes-card-body">
@@ -539,7 +539,7 @@
                                 <div class="detalhes-card">
                                     <div class="detalhes-card-header">
                                         <h6 class="detalhes-card-titulo">
-                                            <i class="fas fa-tasks"></i> Progresso da Adoção
+                                            <i class="fa-solid fa-tasks"></i> Progresso da Adoção
                                         </h6>
                                     </div>
                                     <div class="detalhes-card-body">
@@ -547,7 +547,7 @@
                                             <div class="timeline-progresso">
                                                 <div class="timeline-progresso-item" id="timelineSolicitacao">
                                                     <div class="timeline-progresso-icone">
-                                                        <i class="fas fa-file-alt"></i>
+                                                        <i class="fa-solid fa-file-alt"></i>
                                                     </div>
                                                     <div class="timeline-progresso-info">
                                                         <div class="timeline-progresso-texto">Solicitação</div>
@@ -559,7 +559,7 @@
                                                 
                                                 <div class="timeline-progresso-item" id="timelineAprovacao">
                                                     <div class="timeline-progresso-icone">
-                                                        <i class="fas fa-check"></i>
+                                                        <i class="fa-solid fa-check"></i>
                                                     </div>
                                                     <div class="timeline-progresso-info">
                                                         <div class="timeline-progresso-texto">Aprovação</div>
@@ -571,7 +571,7 @@
                                                 
                                                 <div class="timeline-progresso-item" id="timelineBusca">
                                                     <div class="timeline-progresso-icone">
-                                                        <i class="fas fa-truck-pickup"></i>
+                                                        <i class="fa-solid fa-truck-pickup"></i>
                                                     </div>
                                                     <div class="timeline-progresso-info">
                                                         <div class="timeline-progresso-texto">Retirada</div>
@@ -583,7 +583,7 @@
                                                 
                                                 <div class="timeline-progresso-item" id="timelineFinalizacao">
                                                     <div class="timeline-progresso-icone">
-                                                        <i class="fas fa-home"></i>
+                                                        <i class="fa-solid fa-home"></i>
                                                     </div>
                                                     <div class="timeline-progresso-info">
                                                         <div class="timeline-progresso-texto">Finalização</div>
@@ -599,14 +599,14 @@
                                 <div class="detalhes-card mt-4">
                                     <div class="detalhes-card-header">
                                         <h6 class="detalhes-card-titulo">
-                                            <i class="fas fa-calendar-alt"></i> Datas Importantes
+                                            <i class="fa-solid fa-calendar-alt"></i> Datas Importantes
                                         </h6>
                                     </div>
                                     <div class="detalhes-card-body">
                                         <div class="detalhes-datas-grid">
                                             <div class="detalhes-data-item">
                                                 <div class="detalhes-data-icon">
-                                                    <i class="fas fa-paper-plane"></i>
+                                                    <i class="fa-solid fa-paper-plane"></i>
                                                 </div>
                                                 <div class="detalhes-data-info">
                                                     <div class="detalhes-data-label">Solicitação enviada</div>
@@ -616,7 +616,7 @@
                                             
                                             <div class="detalhes-data-item">
                                                 <div class="detalhes-data-icon">
-                                                    <i class="fas fa-reply"></i>
+                                                    <i class="fa-solid fa-reply"></i>
                                                 </div>
                                                 <div class="detalhes-data-info">
                                                     <div class="detalhes-data-label">Resposta</div>
@@ -626,7 +626,7 @@
                                             
                                             <div class="detalhes-data-item" id="detalhesDataBuscaContainer">
                                                 <div class="detalhes-data-icon">
-                                                    <i class="fas fa-truck-pickup"></i>
+                                                    <i class="fa-solid fa-truck-pickup"></i>
                                                 </div>
                                                 <div class="detalhes-data-info">
                                                     <div class="detalhes-data-label">Pronto para busca</div>
@@ -636,7 +636,7 @@
                                             
                                             <div class="detalhes-data-item" id="detalhesDataFinalizacaoContainer">
                                                 <div class="detalhes-data-icon">
-                                                    <i class="fas fa-home"></i>
+                                                    <i class="fa-solid fa-home"></i>
                                                 </div>
                                                 <div class="detalhes-data-info">
                                                     <div class="detalhes-data-label">Finalização</div>
@@ -651,7 +651,7 @@
                                 <div class="detalhes-card mt-4">
                                     <div class="detalhes-card-header">
                                         <h6 class="detalhes-card-titulo">
-                                            <i class="fas fa-comment-alt"></i> Observações
+                                            <i class="fa-solid fa-comment-alt"></i> Observações
                                         </h6>
                                     </div>
                                     <div class="detalhes-card-body">
@@ -666,7 +666,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="botao-fechar" data-bs-dismiss="modal">
-                        <i class="fas fa-times me-2"></i>Fechar
+                        <i class="fa-solid fa-times me-2"></i>Fechar
                     </button>
                 </div>
             </div>
@@ -700,7 +700,7 @@
                     
                     <div id="conteudoPerfilUsuario" style="display: none;">
                         <div class="estatisticas-container">
-                            <h5><i class="fas fa-chart-bar me-2 texto-primario"></i>Estatísticas de Adoção</h5>
+                            <h5><i class="fa-solid fa-chart-bar me-2 texto-primario"></i>Estatísticas de Adoção</h5>
                             <div class="estatisticas-items">
                                 <div class="estatistica total">
                                     <div class="estatistica-valor" id="estatisticaTotal">0</div>
@@ -728,7 +728,7 @@
                         <div class="perfil-container">
                             <div class="perfil-secao">
                                 <div class="perfil-card dados-pessoais">
-                                    <h5><i class="fas fa-id-card me-2 texto-primario"></i>Dados Pessoais</h5>
+                                    <h5><i class="fa-solid fa-id-card me-2 texto-primario"></i>Dados Pessoais</h5>
                                     <div class="perfil-grid">
                                         <div class="perfil-campo">
                                             <span class="campo-label">Nome Completo</span>
@@ -762,7 +762,7 @@
                                 </div>
                                 
                                 <div class="perfil-card endereco">
-                                    <h5><i class="fas fa-map-marker-alt me-2 texto-primario"></i>Endereço</h5>
+                                    <h5><i class="fa-solid fa-map-marker-alt me-2 texto-primario"></i>Endereço</h5>
                                     <div class="perfil-grid">
                                         <div class="perfil-campo">
                                             <span class="campo-label">Logradouro</span>
@@ -798,7 +798,7 @@
                         </div>
                         
                         <div class="historico-container">
-                            <h5><i class="fas fa-history me-2 texto-primario"></i>Histórico de Adoções</h5>
+                            <h5><i class="fa-solid fa-history me-2 texto-primario"></i>Histórico de Adoções</h5>
                             <div id="historicoAdocoesUsuarioContainer" class="historico-adocoes">
                                 <div class="carregando">
                                     <div class="spinner-border texto-primario" role="status">
