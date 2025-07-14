@@ -6,7 +6,7 @@ let toastrConfig = {
 };
 
 
-const URL_API_DETALHES_ADOCAO = "/admin/adocoes/DetalhesAdocao/";
+const URL_API_DETALHES_ADOCAO = "/admin/adocoes/Detalhes/";
 const URL_API_APROVAR_ADOCAO = "/admin/adocoes/aprovar/";
 const URL_API_REJEITAR_ADOCAO = "/admin/adocoes/rejeitar/";
 const URL_API_AGUARDANDO_BUSCAR = "/admin/adocoes/aguardando-buscar/";
@@ -250,8 +250,9 @@ async function verDetalhes(id, fromProfile = false) {
         const resp = await fetch(URL_API_DETALHES_ADOCAO + id);
         if (!resp.ok) throw new Error(resp.statusText);
         const dados = await resp.json();
-        if (dados && dados.id) {
-            preencherDetalhesAdocao(dados, fromProfile);
+        const detalhes = dados && dados.sucesso ? dados.dados : dados;
+        if (detalhes && detalhes.id) {
+            preencherDetalhesAdocao(detalhes, fromProfile);
             setTimeout(configurarNavegacaoAbas, 100);
         } else {
             carregando.innerHTML = `
@@ -414,9 +415,10 @@ function preencherDetalhesAdocao(adocao, fromProfile = false) {
     }
     
     
-    if (adocao.observacoes) {
-        document.getElementById('detalhesObservacoes').innerHTML = adocao.observacoes;
-        document.getElementById('detalhesObservacoesProcesso').innerHTML = adocao.observacoes;
+    const obs = adocao.observacoes || adocao.observacaoAdminFormulario || adocao.observacoesCancelamento;
+    if (obs) {
+        document.getElementById('detalhesObservacoes').innerHTML = obs;
+        document.getElementById('detalhesObservacoesProcesso').innerHTML = obs;
     } else {
         const vazio = '<div class="sem-observacoes">Sem observações adicionais.</div>';
         document.getElementById('detalhesObservacoes').innerHTML = vazio;
