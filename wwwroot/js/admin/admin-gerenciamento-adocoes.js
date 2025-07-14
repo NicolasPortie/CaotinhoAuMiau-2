@@ -6,7 +6,12 @@ let toastrConfig = {
 };
 
 
-const URL_API_DETALHES_ADOCAO = "/admin/adocoes/Detalhes/";
+// Utiliza o endpoint que retorna todas as informações
+// necessárias para preenchimento do modal.
+// O endpoint anterior ("Detalhes/") buscava apenas o formulário,
+// resultando em propriedades diferentes das esperadas no JavaScript
+// e ocasionando o modal vazio.
+const URL_API_DETALHES_ADOCAO = "/admin/adocoes/DetalhesAdocao/";
 const URL_API_APROVAR_ADOCAO = "/admin/adocoes/aprovar/";
 const URL_API_REJEITAR_ADOCAO = "/admin/adocoes/rejeitar/";
 const URL_API_AGUARDANDO_BUSCAR = "/admin/adocoes/aguardando-buscar/";
