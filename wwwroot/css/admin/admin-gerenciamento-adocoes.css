@@ -1761,15 +1761,14 @@ body {
 }
 
 .paginacao-container {
-    position: fixed;
-    bottom: 1rem;
-    left: calc(var(--sidebar-width) + 1rem);
-    right: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 2rem;
-    z-index: 1000;
+    width: 100%;
+    margin-top: 2rem;
+    background-color: white;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    position: relative;
+    z-index: 1;
 }
 .paginacao-info {
     display: flex;
@@ -2168,9 +2167,7 @@ body {
 
 @media (max-width: 900px) {
     .paginacao-container {
-        left: 0;
-        right: 0;
-        width: 100vw;
-        max-width: 100vw;
+        width: 100%;
+        max-width: 100%;
     }
 }
