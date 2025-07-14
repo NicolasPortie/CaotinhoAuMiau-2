@@ -522,26 +522,20 @@ function atualizarGraficoPetsEspecie(dados: EspecieDataItem[]): void {
     });
 }
 
+function atualizarGraficoUsuarios(dados: GraficoDataItem[], filtro: string): void {
     const canvas = document.getElementById('graficoUsuariosMes') as HTMLCanvasElement | null;
-    const canvas = document.getElementById('graficoUsuariosMes');
     if (!canvas) return;
-    
-    
-    const dadosFiltrados = filtrarDadosPorPeriodo(dados, filtro);
-    
-    
-    if (!ctx) return;
     const ctx = canvas.getContext('2d');
-    
-    
+    if (!ctx) return;
+
+    const dadosFiltrados = filtrarDadosPorPeriodo(dados, filtro);
+
     if (window.graficoUsuarios) {
         window.graficoUsuarios.destroy();
     }
-    
-    
+
     const gradienteFill = criarGradiente('rgba(16, 185, 129, 0.7)', 'rgba(16, 185, 129, 0.05)', ctx);
-    
-    
+
     window.graficoUsuarios = new Chart(ctx, {
         type: 'line',
         data: {
@@ -604,32 +598,28 @@ function atualizarGraficoPetsEspecie(dados: EspecieDataItem[]): void {
     });
 }
 
-
+function atualizarGraficoStatusFormularios(dados: StatusDataItem[]): void {
     const canvas = document.getElementById('graficoStatusFormularios') as HTMLCanvasElement | null;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    
-    
+
     if (window.graficoStatusFormularios) {
         window.graficoStatusFormularios.destroy();
     }
-    
-    
+
     const coresStatus = {
-        'Aprovada': '#22C55E',      
-        'Rejeitada': '#EF4444',      
-        'Pendente': '#F59E0B',       
-        'Em Análise': '#6366F1',     
-        'Cancelada': '#6B7280'       
+        'Aprovada': '#22C55E',
+        'Rejeitada': '#EF4444',
+        'Pendente': '#F59E0B',
+        'Em Análise': '#6366F1',
+        'Cancelada': '#6B7280'
     };
-    
-    
+
     const labels = dados.map(item => item.status);
     const valores = dados.map(item => item.total);
     const cores = dados.map(item => coresStatus[item.status] || '#6B7280');
-    
-    
+
     window.graficoStatusFormularios = new Chart(ctx, {
         type: 'polarArea',
         data: {
