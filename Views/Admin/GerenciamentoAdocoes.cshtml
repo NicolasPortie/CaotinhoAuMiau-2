@@ -279,10 +279,7 @@
                 @if (ViewBag.TotalPaginas > 0)
                 {
                     <div class="paginacao-container w-100">
-                        <div id="infoPaginacaoAdocoes" class="info-paginacao me-auto">
-                            Exibindo <span>@Model.Count()</span> de <span>@ViewBag.TotalItens</span> adoções
-                        </div>
-                        <div class="paginacao">
+                        <div class="paginacao mt-4">
                             <nav aria-label="Navegação de páginas">
                                 <ul class="pagination justify-content-center flex-wrap">
                                     @if (ViewBag.PaginaAtual > 1)
@@ -337,13 +334,17 @@
                                 </ul>
                             </nav>
                         </div>
-                        
-                        <div class="itens-por-pagina ms-auto">
-                            <label for="selectItensPorPagina">Itens por página:</label>
-                            <select id="selectItensPorPagina" class="form-select form-select-sm">
-                                @foreach (var opcao in new[] { 10, 20, 50 })
-                                {
-                                    if (ViewBag.ItensPorPagina == opcao)
+
+                        <div class="paginacao-info mt-3 d-flex justify-content-between align-items-center">
+                            <div class="info-paginacao">
+                                Exibindo <span>@Model.Count()</span> de <span>@ViewBag.TotalItens</span> adoções
+                            </div>
+                            <div class="itens-por-pagina">
+                                <label for="selectItensPorPagina">Itens por página:</label>
+                                <select id="selectItensPorPagina" class="form-select form-select-sm">
+                                    @foreach (var opcao in new[] { 10, 20, 50 })
+                                    {
+                                        if (ViewBag.ItensPorPagina == opcao)
                                     {
                                         <option value="@opcao" selected>@opcao</option>
                                     }
@@ -353,6 +354,7 @@
                                     }
                                 }
                             </select>
+                            </div>
                         </div>
                     </div>
                 }
