@@ -16,6 +16,7 @@ using CaotinhoAuMiau.Models.Enums;
 namespace CaotinhoAuMiau.Controllers.Admin
 {
     [Authorize(Roles = "Administrador")]
+    [Route("admin/dashboard")]
     public class GerenciamentoDashboardController : Controller
     {
         private readonly ApplicationDbContext _contexto;
