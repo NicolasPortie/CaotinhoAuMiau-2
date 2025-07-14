@@ -78,8 +78,8 @@ function inicializarEventos() {
         document.getElementById('detalhesDataFinalizacaoContainer').classList.add('d-none');
         document.getElementById('detalhesPrazoBusca').classList.add('d-none');
 
-        document.getElementById('detalhesPetImagem').innerHTML = '<i class="fas fa-paw"></i>';
-        document.getElementById('detalhesAdotanteAvatar').innerHTML = '<i class="fas fa-user"></i>';
+        document.getElementById('detalhesPetImagem').innerHTML = '<i class="fa-solid fa-paw"></i>';
+        document.getElementById('detalhesAdotanteAvatar').innerHTML = '<i class="fa-solid fa-user"></i>';
     });
 
     modalDetalhes.addEventListener('shown.bs.modal', () => {
@@ -256,14 +256,14 @@ async function verDetalhes(id, fromProfile = false) {
         } else {
             carregando.innerHTML = `
                 <div class="alert alert-danger m-3">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <i class="fa-solid fa-exclamation-triangle me-2"></i>
                     Não foi possível carregar os detalhes da adoção. ${dados.mensagem || 'Tente novamente mais tarde.'}
                 </div>`;
         }
     } catch (error) {
         carregando.innerHTML = `
             <div class="alert alert-danger m-3">
-                <i class="fas fa-exclamation-triangle me-2"></i>
+                <i class="fa-solid fa-exclamation-triangle me-2"></i>
                 Erro ao carregar detalhes: ${error}
             </div>`;
     }
@@ -350,7 +350,7 @@ function preencherDetalhesAdocao(adocao, fromProfile = false) {
         img.alt = adocao.pet.nome;
         petImagemContainer.appendChild(img);
     } else {
-        petImagemContainer.innerHTML = '<i class="fas fa-paw"></i>';
+        petImagemContainer.innerHTML = '<i class="fa-solid fa-paw"></i>';
     }
     
     
@@ -371,7 +371,7 @@ function preencherDetalhesAdocao(adocao, fromProfile = false) {
     } else if (adocao.usuario && adocao.usuario.nome) {
         adotanteAvatarContainer.textContent = adocao.usuario.nome.charAt(0).toUpperCase();
     } else {
-        adotanteAvatarContainer.innerHTML = '<i class="fas fa-user"></i>';
+        adotanteAvatarContainer.innerHTML = '<i class="fa-solid fa-user"></i>';
     }
     
     
@@ -430,7 +430,7 @@ function preencherDetalhesAdocao(adocao, fromProfile = false) {
         if (!botaoVoltar) {
             footer.insertAdjacentHTML('afterbegin', `
                 <button type="button" class="botao-secundario me-auto" onclick="voltarParaPerfil()">
-                    <i class="fas fa-arrow-left me-2"></i>Voltar ao perfil
+                    <i class="fa-solid fa-arrow-left me-2"></i>Voltar ao perfil
                 </button>
             `);
         }
@@ -575,7 +575,7 @@ async function executarAcao() {
     
     const botaoConfirmar = document.getElementById('botaoConfirmarAcao');
     botaoConfirmar.disabled = true;
-    botaoConfirmar.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processando...';
+    botaoConfirmar.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Processando...';
     
     
     const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
@@ -762,7 +762,7 @@ function preencherHistoricoAdocoesUsuario(historico, usuarioId) {
     if (!historico || historico.length === 0) {
         container.innerHTML = `
             <div class="text-center py-4">
-                <i class="fas fa-heart-broken fa-3x text-muted mb-3"></i>
+                <i class="fa-solid fa-heart-broken fa-3x text-muted mb-3"></i>
                 <p class="mb-0">Este usuário ainda não realizou nenhuma adoção.</p>
             </div>`;
         return;
@@ -798,18 +798,18 @@ function preencherHistoricoAdocoesUsuario(historico, usuarioId) {
                 <div class="historico-pet-img-container">
                     ${item.imagemPet ?
                         `<img src="${item.imagemPet}" alt="${item.nomePet}" class="historico-pet-img">` :
-                        `<div class="historico-default-img"><i class="fas fa-paw"></i></div>`}
+                        `<div class="historico-default-img"><i class="fa-solid fa-paw"></i></div>`}
                 </div>
                 <div class="historico-pet-info">
                     <div class="historico-pet-nome">${item.nomePet || 'Pet não identificado'}</div>
                     <div class="historico-pet-data">
                         <span class="badge ${classeStatus}">${item.status}</span>
-                        <span><i class="far fa-calendar-alt me-1"></i>${dataAdocao}</span>
+                        <span><i class="fa-regular fa-calendar-alt me-1"></i>${dataAdocao}</span>
                     </div>
                 </div>
                 <div class="historico-acoes">
                     <button class="btn btn-sm btn-outline-primary" onclick="verDetalhes(${item.id}, true)" title="Ver detalhes da adoção">
-                        <i class="fas fa-eye me-1"></i> Detalhes
+                        <i class="fa-solid fa-eye me-1"></i> Detalhes
                     </button>
                 </div>
             </div>`;
