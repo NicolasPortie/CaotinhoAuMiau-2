@@ -780,6 +780,42 @@ body {
     margin-top: 1rem;
 }
 
+.detalhes-titulo {
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.info-bloco {
+    background-color: var(--gray-50);
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px dashed var(--gray-200);
+    padding: 0.25rem 0;
+    font-size: 0.9rem;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    font-weight: 600;
+    color: var(--gray-600);
+}
+
+.info-valor {
+    color: var(--gray-800);
+    text-align: right;
+}
+
 
 @media (max-width: 1200px) {
     .cartoes-status {
