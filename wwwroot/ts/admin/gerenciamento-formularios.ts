@@ -206,11 +206,52 @@ async function visualizarFormulario(id: string): Promise<void> {
 function construirHTMLDetalhesFormulario(formulario: FormularioAdocao): string {
     try {
         const s = escapeHtml;
-        const dataEnvio = new Date(formulario.dataEnvio);
-        const dataFormatada = dataEnvio.toLocaleString('pt-BR');
+        const dataEnvio = new Date(formulario.dataEnvio).toLocaleString('pt-BR');
         const dataResposta = formulario.dataResposta ? new Date(formulario.dataResposta).toLocaleString('pt-BR') : '-';
+
+        const usuario = formulario.usuario || {} as Usuario;
+        const pet = formulario.pet || {} as Pet;
+
         let htmlConteudo = `<div class="container-fluid p-0">`;
-        htmlConteudo += `<!-- detalhes do formulário omitidos para brevidade -->`;
+
+        htmlConteudo += `
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <h6 class="fw-bold mb-2"><i class="fas fa-user me-2"></i>Informações do Usuário</h6>
+                    <p><strong>Nome:</strong> ${s(usuario.nome)}</p>
+                    <p><strong>E-mail:</strong> ${s(usuario.email)}</p>
+                    <p><strong>Telefone:</strong> ${s(usuario.telefone)}</p>
+                    <p><strong>Localização:</strong> ${s(usuario.cidade)} - ${s(usuario.estado)}</p>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <h6 class="fw-bold mb-2"><i class="fas fa-paw me-2"></i>Pet de Interesse</h6>
+                    <p><strong>Nome:</strong> ${s(pet.nome)}</p>
+                    <p><strong>Espécie:</strong> ${s(pet.especie)}</p>
+                    <p><strong>Porte:</strong> ${s(pet.porte)}</p>
+                    <p><strong>Sexo:</strong> ${s(pet.sexo)}</p>
+                </div>
+            </div>
+            <hr class="my-3">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <p><strong>Data de Envio:</strong> ${s(dataEnvio)}</p>
+                    <p><strong>Status:</strong> ${s(formulario.status)}</p>
+                    <p><strong>Data de Resposta:</strong> ${s(dataResposta)}</p>
+                </div>
+            </div>
+            <div class="mt-3">
+                <h6 class="fw-bold mb-2"><i class="fas fa-file-alt me-2"></i>Respostas do Formulário</h6>
+                <p><strong>Motivação para Adoção:</strong> ${s(formulario.motivacaoAdocao)}</p>
+                <p><strong>Experiência Anterior:</strong> ${s(formulario.experienciaAnterior)}</p>
+                <p><strong>Espaço Adequado:</strong> ${s(formulario.espacoAdequado)}</p>
+                <p><strong>Planejamento de Viagens:</strong> ${s(formulario.planejamentoViagens)}</p>
+                <p><strong>Condições Financeiras:</strong> ${s(formulario.condicoesFinanceiras)}</p>
+                <p><strong>Descrição da Moradia:</strong> ${s(formulario.descricaoMoradia)}</p>
+                <p><strong>Renda Mensal:</strong> ${formulario.rendaMensal ?? ''}</p>
+                <p><strong>Nº de Moradores:</strong> ${formulario.numeroMoradores ?? ''}</p>
+            </div>
+        `;
+
         htmlConteudo += `</div>`;
         return htmlConteudo;
     } catch (erro) {
