@@ -99,8 +99,14 @@ let modalAdmin;
 let modalPet;
 
 document.addEventListener('DOMContentLoaded', function() {
-    modalAdmin = new bootstrap.Modal(document.getElementById('modalAdmin'));
-    modalPet = new bootstrap.Modal(document.getElementById('modalPet'));
+    const modalAdminElement = document.getElementById('modalAdmin');
+    if (modalAdminElement) {
+        modalAdmin = new bootstrap.Modal(modalAdminElement);
+    }
+    const modalPetElement = document.getElementById('modalPet');
+    if (modalPetElement) {
+        modalPet = new bootstrap.Modal(modalPetElement);
+    }
 
     carregarDadosGraficos();
     
@@ -257,7 +263,7 @@ async function carregarDadosGraficos(filtroAdocoes = 'Anual', filtroUsuarios = '
     });
 
     try {
-        const response = await fetch(`/GerenciamentoDashboard/DadosGraficos?periodoAdocoes=${encodeURIComponent(filtroAdocoes)}&periodoUsuarios=${encodeURIComponent(filtroUsuarios)}`);
+        const response = await fetch(`/admin/dashboard/DadosGraficos?periodoAdocoes=${encodeURIComponent(filtroAdocoes)}&periodoUsuarios=${encodeURIComponent(filtroUsuarios)}`);
         if (!response.ok) {
             throw new Error('Falha ao carregar dados dos gráficos');
         }
@@ -812,22 +818,22 @@ async function carregarAtividadesRecentes() {
     const container = document.querySelector('.lista-atividade');
     if (!container) return;
 
-    container.innerHTML = `<div class="text-center p-3"><i class="fas fa-spinner fa-spin me-2"></i> Carregando atividades...</div>`;
+    container.innerHTML = `<div class="text-center p-3"><i class="fa-solid fa-spinner fa-spin me-2"></i> Carregando atividades...</div>`;
 
     try {
-        const response = await fetch('/GerenciamentoDashboard/AtividadesRecentes');
+        const response = await fetch('/admin/dashboard/AtividadesRecentes');
         if (!response.ok) {
             throw new Error('Falha ao carregar atividades recentes');
         }
         const dados = await response.json();
-        if (Array.isArray(dados) && dados.length > 0) {
-            atualizarListaAtividades(container, dados);
+        if (dados.sucesso && Array.isArray(dados.atividades) && dados.atividades.length > 0) {
+            atualizarListaAtividades(container, dados.atividades);
         } else {
             container.innerHTML = `<div class="text-center p-3">Nenhuma atividade recente encontrada.</div>`;
         }
     } catch (erro) {
         console.error('Erro ao carregar atividades recentes:', erro);
-        container.innerHTML = `<div class="text-center p-3 text-danger"><i class="fas fa-exclamation-circle me-2"></i> Erro ao carregar atividades.</div>`;
+        container.innerHTML = `<div class="text-center p-3 text-danger"><i class="fa-solid fa-exclamation-circle me-2"></i> Erro ao carregar atividades.</div>`;
     }
 }
 
@@ -862,7 +868,7 @@ function atualizarListaAtividades(container, atividades) {
         elementoAtividade.className = 'item-atividade';
         elementoAtividade.innerHTML = `
             <div class="icone-atividade ${iconeClasse}">
-                <i class="fas ${icone}"></i>
+                <i class="fa-solid ${icone}"></i>
             </div>
             <div class="conteudo-atividade">
                 <div class="acao-atividade">${atividade.descricao}</div>
@@ -981,10 +987,10 @@ function inicializarDashboard() {
             if (campoSenha) {
                 if (campoSenha.type === 'password') {
                     campoSenha.type = 'text';
-                    this.innerHTML = '<i class="fas fa-eye-slash"></i>';
+                    this.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
                 } else {
                     campoSenha.type = 'password';
-                    this.innerHTML = '<i class="fas fa-eye"></i>';
+                    this.innerHTML = '<i class="fa-solid fa-eye"></i>';
                 }
             }
         });
@@ -998,10 +1004,10 @@ function inicializarDashboard() {
             if (campoConfirmSenha) {
                 if (campoConfirmSenha.type === 'password') {
                     campoConfirmSenha.type = 'text';
-                    this.innerHTML = '<i class="fas fa-eye-slash"></i>';
+                    this.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
                 } else {
                     campoConfirmSenha.type = 'password';
-                    this.innerHTML = '<i class="fas fa-eye"></i>';
+                    this.innerHTML = '<i class="fa-solid fa-eye"></i>';
                 }
             }
         });
