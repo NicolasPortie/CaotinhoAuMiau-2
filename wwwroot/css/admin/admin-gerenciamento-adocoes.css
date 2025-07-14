@@ -349,8 +349,12 @@ body {
     font-size: 0.75rem;
     letter-spacing: 0.5px;
     padding: var(--space-4) var(--space-4);
-    text-align: left;
+    text-align: center;
     border-bottom: 2px solid var(--gray-200);
+}
+
+.coluna-cabecalho {
+    text-align: center;
 }
 
 .tabela tbody tr {
@@ -367,6 +371,11 @@ body {
     vertical-align: middle;
     color: var(--gray-700);
     font-size: 0.9rem;
+    text-align: center;
+}
+
+.coluna-dados {
+    text-align: center;
 }
 
 
@@ -374,6 +383,7 @@ body {
     display: flex;
     align-items: center;
     gap: var(--space-3);
+    text-align: left;
 }
 
 .imagem-container {
@@ -422,6 +432,7 @@ body {
     display: flex;
     align-items: center;
     gap: var(--space-3);
+    text-align: left;
 }
 
 .avatar-container {
@@ -590,6 +601,7 @@ body {
     gap: var(--space-2);
     justify-content: center;
     flex-wrap: wrap;
+    text-align: center;
 }
 
 .botao-acao {
