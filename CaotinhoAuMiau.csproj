@@ -4,6 +4,10 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Desativa a compressão automática dos assets estáticos durante o build
+         para evitar conflitos de arquivos duplicados. A tarefa
+         ApplyCompressionNegotiation lançava erro devido a chaves repetidas -->
+    <DisableBuildCompression>true</DisableBuildCompression>
   </PropertyGroup>
 
   <ItemGroup>
