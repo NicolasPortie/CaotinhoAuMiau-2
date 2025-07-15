@@ -1,12 +1,5 @@
 {
-  "scripts": {
-    "build": "tsc",
-    "watch": "tsc --watch"
-  },
-  "devDependencies": {
-    "@types/bootstrap": "^5.2.10",
-    "typescript": "^5.8.3"
-  },
+  "scripts": {},
   "dependencies": {
     "@popperjs/core": "^2.11.8"
   }
