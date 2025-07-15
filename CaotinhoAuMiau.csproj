@@ -8,6 +8,10 @@
          para evitar conflitos de arquivos duplicados. A tarefa
          ApplyCompressionNegotiation lançava erro devido a chaves repetidas -->
     <DisableBuildCompression>true</DisableBuildCompression>
+    <!-- Define um caminho base único para os assets estáticos gerados.
+         Sem essa configuração o MSBuild tenta mesclar arquivos de diretórios
+         diferentes com o mesmo nome, resultando no erro de "Conflicting assets" -->
+    <StaticWebAssetBasePath>_content/CaotinhoAuMiau2</StaticWebAssetBasePath>
   </PropertyGroup>
 
   <ItemGroup>
