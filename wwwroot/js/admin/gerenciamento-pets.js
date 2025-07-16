@@ -2,6 +2,21 @@ let modalPet;
 let modalDetalhesPet;
 let modalConfirmacaoExclusao;
 
+// Função auxiliar para decodificar as entidades HTML presentes no atributo
+// data-json dos cards de pets. Sem esta etapa o JSON.parse gera erro.
+function decodificarHtml(texto) {
+    const parser = new DOMParser();
+    return parser.parseFromString(texto, 'text/html').documentElement.textContent;
+}
+
+// Função responsável por popular a grade de pets.
+// A implementação original não está disponível, então mantemos
+// um corpo vazio para evitar erros de referência.
+function carregarPets() {
+    // Neste contexto os pets já estão presentes na página,
+    // portanto não é necessário realizar requisição adicional.
+}
+
 
 function limparBackdrops() {
     document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
@@ -684,8 +699,8 @@ function abrirModalEdicao(petId) {
     
     const petCard = document.querySelector(`.cartao-pet[data-id="${petId}"]`);
     if (petCard) {
-        
-        const rawPetData = JSON.parse(petCard.getAttribute('data-json'));
+
+        const rawPetData = JSON.parse(decodificarHtml(petCard.getAttribute('data-json')));
         // Converte propriedades para camelCase para manter consistência
         const petData = {
             id: rawPetData.id ?? rawPetData.Id,
@@ -1004,8 +1019,8 @@ function aplicarEstilosModalDetalhesPet() {
 async function visualizarPet(petId) {
     const petCard = document.querySelector(`.cartao-pet[data-id="${petId}"]`);
     if (petCard) {
-        
-        const petData = JSON.parse(petCard.getAttribute('data-json'));
+
+        const petData = JSON.parse(decodificarHtml(petCard.getAttribute('data-json')));
         
         
         document.getElementById('detalhePetId').value = petData.id;
@@ -1451,12 +1466,12 @@ function filtrarPets() {
     
     cardsPets.forEach(card => {
         const nomePet = card.querySelector('.nome-pet')?.textContent.toLowerCase() || '';
-        const descricaoPet = card.getAttribute('data-json') ? 
-            JSON.parse(card.getAttribute('data-json')).Descricao?.toLowerCase() || '' : '';
+        const jsonStr = card.getAttribute('data-json');
+        const dados = jsonStr ? JSON.parse(decodificarHtml(jsonStr)) : {};
+        const descricaoPet = dados.Descricao?.toLowerCase() || '';
         const especiePet = card.getAttribute('data-especie')?.toLowerCase() || '';
         const statusPet = card.getAttribute('data-status')?.toLowerCase() || '';
-        const racaPet = card.getAttribute('data-json') ? 
-            JSON.parse(card.getAttribute('data-json')).Raca?.toLowerCase() || '' : '';
+        const racaPet = dados.Raca?.toLowerCase() || '';
         
         const atendePesquisa = termoPesquisa === '' || 
             nomePet.includes(termoPesquisa) || 
@@ -1555,8 +1570,8 @@ function resetarFormulario() {
 function confirmarExclusao(petId) {
     const petCard = document.querySelector(`.cartao-pet[data-id="${petId}"]`);
     if (petCard) {
-        
-        const rawPetData = JSON.parse(petCard.getAttribute('data-json'));
+
+        const rawPetData = JSON.parse(decodificarHtml(petCard.getAttribute('data-json')));
         const petData = {
             nome: rawPetData.nome ?? rawPetData.Nome,
             status: rawPetData.status ?? rawPetData.Status
