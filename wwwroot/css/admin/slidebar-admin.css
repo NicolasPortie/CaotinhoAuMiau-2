@@ -349,21 +349,9 @@
 }
 
 
-.link-nav.link-home, .link-nav.link-sair {
-    margin-top: 0.5rem;
-}
-
-.link-nav.link-home {
-    background-color: rgba(255, 255, 255, 0.1);
-    margin-top: auto;
-    margin-bottom: 0.5rem;
-}
-
-.link-nav.link-home:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-}
 
 .link-nav.link-sair {
+    margin-top: 0.5rem;
     color: #ffffff;
     background-color: rgba(220, 53, 69, 0.2);
 }
