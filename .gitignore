@@ -402,3 +402,5 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+*.runtimeconfig.json
+*.exe.config
