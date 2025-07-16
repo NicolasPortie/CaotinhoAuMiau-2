@@ -11,10 +11,14 @@
          para evitar conflitos de arquivos duplicados. A tarefa
          ApplyCompressionNegotiation lançava erro devido a chaves repetidas -->
     <DisableBuildCompression>true</DisableBuildCompression>
-    <!-- Define um caminho base único para os assets estáticos gerados.
-         Sem essa configuração o MSBuild tenta mesclar arquivos de diretórios
-         diferentes com o mesmo nome, resultando no erro de "Conflicting assets" -->
-    <StaticWebAssetBasePath>_content/CaotinhoAuMiau2</StaticWebAssetBasePath>
+    <!--
+         Removemos o caminho base personalizado para que o ASP.NET trate os
+         arquivos estáticos apenas com o caminho padrão do projeto. Com o
+         assembly renomeado, o MSBuild já utiliza _content/CaotinhoAuMiau2
+         automaticamente e a configuração anterior resultava em dois caminhos
+         distintos (_content/CaotinhoAuMiau e _content/CaotinhoAuMiau2),
+         causando conflito.
+    -->
   </PropertyGroup>
 
   <ItemGroup>
