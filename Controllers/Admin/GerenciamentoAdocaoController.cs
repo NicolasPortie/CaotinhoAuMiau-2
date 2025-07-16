@@ -158,7 +158,8 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     nome = formulario.Usuario.Nome,
                     email = formulario.Usuario.Email,
                     telefone = formulario.Usuario.Telefone,
-                    cpf = formulario.Usuario.CPF
+                    cpf = formulario.Usuario.CPF,
+                    fotoPerfil = formulario.Usuario.FotoPerfil
                 }
             };
 
@@ -706,13 +707,14 @@ namespace CaotinhoAuMiau.Controllers.Admin
                             logradouro = formulario.Usuario.Logradouro ?? "Não informado",
                             numero = formulario.Usuario.Numero ?? "S/N",
                             complemento = formulario.Usuario.Complemento ?? "",
-                            bairro = formulario.Usuario.Bairro ?? "Não informado",
-                            cidade = formulario.Usuario.Cidade ?? "Não informada",
-                            estado = formulario.Usuario.Estado ?? "Não informado",
-                            uf = formulario.Usuario.Estado ?? "Não informado",
-                            cep = formulario.Usuario.CEP ?? "Não informado"
-                        }
-                    });
+                        bairro = formulario.Usuario.Bairro ?? "Não informado",
+                        cidade = formulario.Usuario.Cidade ?? "Não informada",
+                        estado = formulario.Usuario.Estado ?? "Não informado",
+                        uf = formulario.Usuario.Estado ?? "Não informado",
+                        cep = formulario.Usuario.CEP ?? "Não informado",
+                        fotoPerfil = formulario.Usuario.FotoPerfil
+                    }
+                });
                 }
                 
                 if (adocao.Pet == null || adocao.Usuario == null)
@@ -758,7 +760,8 @@ namespace CaotinhoAuMiau.Controllers.Admin
                         cidade = adocao.Usuario.Cidade ?? "Não informada",
                         estado = adocao.Usuario.Estado ?? "Não informado",
                         uf = adocao.Usuario.Estado ?? "Não informado",
-                        cep = adocao.Usuario.CEP ?? "Não informado"
+                        cep = adocao.Usuario.CEP ?? "Não informado",
+                        fotoPerfil = adocao.Usuario.FotoPerfil
                     }
                 });
             }
