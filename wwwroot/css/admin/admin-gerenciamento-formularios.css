@@ -697,6 +697,10 @@ body {
 
 
 .grupo-formulario {
+    background-color: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 1rem;
     margin-bottom: 1.5rem;
 }
 
@@ -788,10 +792,36 @@ body {
 }
 
 .info-bloco {
-    background-color: var(--gray-50);
-    border-radius: 8px;
-    padding: 1rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    background-color: var(--gray-100);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+#modalDetalhesFormulario .info-bloco + .info-bloco {
+    margin-top: 1rem;
+}
+
+#modalDetalhesFormulario .info-bloco.respostas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.75rem 1rem;
+}
+
+#modalDetalhesFormulario .info-bloco.respostas .info-item {
+    flex-direction: column;
+    align-items: flex-start;
+    border-bottom: none;
+    padding: 0;
+}
+
+#modalDetalhesFormulario .info-bloco.respostas .info-label {
+    margin-bottom: 0.25rem;
+}
+
+#modalDetalhesFormulario .info-bloco.respostas .info-valor {
+    text-align: left;
+    color: var(--gray-700);
 }
 
 .info-item {

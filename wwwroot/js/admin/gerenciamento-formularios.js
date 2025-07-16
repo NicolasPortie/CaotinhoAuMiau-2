@@ -213,7 +213,7 @@ function construirHTMLDetalhesFormulario(formulario) {
             </div>
             <div class="mt-3">
                 <h6 class="fw-bold detalhes-titulo mb-3"><i class="fas fa-file-alt me-2"></i>Respostas do Formulário</h6>
-                <div class="info-bloco">
+                <div class="info-bloco respostas">
                     <div class="info-item"><span class="info-label">Motivação para Adoção</span><span class="info-valor">${s(formulario.motivacaoAdocao)}</span></div>
                     <div class="info-item"><span class="info-label">Experiência Anterior</span><span class="info-valor">${s(formulario.experienciaAnterior)}</span></div>
                     <div class="info-item"><span class="info-label">Espaço Adequado</span><span class="info-valor">${s(formulario.espacoAdequado)}</span></div>
