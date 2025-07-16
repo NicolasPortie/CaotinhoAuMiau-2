@@ -26,3 +26,7 @@ No frontend, trabalhe sempre com objetos em camelCase, tanto ao enviar quanto ao
 ## Sessões e cache
 
 O projeto utiliza o Redis para armazenar sessões e dados de cache quando um servidor está disponível. Se nenhuma string de conexão para o Redis for encontrada ou se a tentativa de conexão falhar, o *Program.cs* passa a utilizar o cache em memória, evitando atrasos no carregamento das páginas.
+
+## Dependências de JavaScript
+
+Após clonar o repositório, execute `npm install` para baixar o **Font Awesome** e o **Chart.js** utilizados no painel administrativo. O script `postinstall` copia os arquivos necessários para `wwwroot/lib`, garantindo que os ícones e gráficos sejam carregados mesmo sem acesso à internet.
