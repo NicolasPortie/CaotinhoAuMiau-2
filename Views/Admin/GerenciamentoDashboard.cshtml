@@ -21,6 +21,13 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css" />
     <script src="~/lib/chart.js/chart.umd.min.js"></script>
+    <script>
+        if (typeof Chart === 'undefined') {
+            var fallback = document.createElement('script');
+            fallback.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js';
+            document.head.appendChild(fallback);
+        }
+    </script>
     <link rel="stylesheet" href="~/css/admin/admin-dashboard.css" asp-append-version="true" />
     <style>
         
