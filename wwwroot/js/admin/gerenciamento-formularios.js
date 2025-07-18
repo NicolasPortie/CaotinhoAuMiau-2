@@ -214,14 +214,14 @@ function construirHTMLDetalhesFormulario(formulario) {
             <div class="mt-3">
                 <h6 class="fw-bold detalhes-titulo mb-3"><i class="fas fa-file-alt me-2"></i>Respostas do Formulário</h6>
                 <div class="info-bloco respostas">
-                    <div class="info-item"><span class="info-label">Motivação para Adoção</span><span class="info-valor">${s(formulario.motivacaoAdocao)}</span></div>
-                    <div class="info-item"><span class="info-label">Experiência Anterior</span><span class="info-valor">${s(formulario.experienciaAnterior)}</span></div>
-                    <div class="info-item"><span class="info-label">Espaço Adequado</span><span class="info-valor">${s(formulario.espacoAdequado)}</span></div>
-                    <div class="info-item"><span class="info-label">Planejamento de Viagens</span><span class="info-valor">${s(formulario.planejamentoViagens)}</span></div>
-                    <div class="info-item"><span class="info-label">Condições Financeiras</span><span class="info-valor">${s(formulario.condicoesFinanceiras)}</span></div>
-                    <div class="info-item"><span class="info-label">Descrição da Moradia</span><span class="info-valor">${s(formulario.descricaoMoradia)}</span></div>
-                    <div class="info-item"><span class="info-label">Renda Mensal</span><span class="info-valor">${(_a = formulario.rendaMensal) !== null && _a !== void 0 ? _a : ''}</span></div>
-                    <div class="info-item"><span class="info-label">Nº de Moradores</span><span class="info-valor">${(_b = formulario.numeroMoradores) !== null && _b !== void 0 ? _b : ''}</span></div>
+                    <div class="info-item"><span class="info-label"><i class="fas fa-heart me-2"></i>Por que você quer adotar especificamente o(a) ${s(pet.nome)}?</span><span class="info-valor">${s(formulario.motivacaoAdocao)}</span></div>
+                    <div class="info-item"><span class="info-label"><i class="fas fa-paw me-2"></i>Conte-nos sobre sua experiência com pets</span><span class="info-valor">${s(formulario.experienciaAnterior)}</span></div>
+                    <div class="info-item"><span class="info-label"><i class="fas fa-expand me-2"></i>Qual espaço o pet terá disponível?</span><span class="info-valor">${s(formulario.espacoAdequado)}</span></div>
+                    <div class="info-item"><span class="info-label"><i class="fas fa-plane me-2"></i>O que fará com o pet quando precisar viajar?</span><span class="info-valor">${s(formulario.planejamentoViagens)}</span></div>
+                    <div class="info-item"><span class="info-label"><i class="fas fa-comment-dollar me-2"></i>Como planeja arcar com os custos do pet?</span><span class="info-valor">${s(formulario.condicoesFinanceiras)}</span></div>
+                    <div class="info-item"><span class="info-label"><i class="fas fa-home me-2"></i>Descreva sua moradia</span><span class="info-valor">${s(formulario.descricaoMoradia)}</span></div>
+                    <div class="info-item"><span class="info-label"><i class="fas fa-money-bill-wave me-2"></i>Renda mensal aproximada</span><span class="info-valor">${(_a = formulario.rendaMensal) !== null && _a !== void 0 ? _a : ''}</span></div>
+                    <div class="info-item"><span class="info-label"><i class="fas fa-users me-2"></i>Pessoas na residência</span><span class="info-valor">${(_b = formulario.numeroMoradores) !== null && _b !== void 0 ? _b : ''}</span></div>
                 </div>
             </div>
         `;
