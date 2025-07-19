@@ -750,9 +750,7 @@
         });
     </script>
 }
-
 @Html.AntiForgeryToken()
-
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
     <script src="~/lib/vanilla-masker/vanilla-masker.js"></script>
@@ -949,3 +947,4 @@
             });
         });
     </script>
+}
