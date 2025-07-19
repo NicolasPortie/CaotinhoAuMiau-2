@@ -92,9 +92,9 @@ namespace CaotinhoAuMiau.Controllers.Admin
             {
                 pesquisa = pesquisa.ToLower();
                 query = query.Where(a => 
-                    (a.Usuario.Nome != null && a.Usuario.Nome.ToLower().Contains(pesquisa)) ||
-                    (a.Usuario.Email != null && a.Usuario.Email.ToLower().Contains(pesquisa)) ||
-                    (a.Pet.Nome != null && a.Pet.Nome.ToLower().Contains(pesquisa)) ||
+                    (a.Usuario != null && a.Usuario.Nome != null && a.Usuario.Nome.ToLower().Contains(pesquisa)) ||
+                    (a.Usuario != null && a.Usuario.Email != null && a.Usuario.Email.ToLower().Contains(pesquisa)) ||
+                    (a.Pet != null && a.Pet.Nome != null && a.Pet.Nome.ToLower().Contains(pesquisa)) ||
                     (a.Status != null && a.Status.ToLower().Contains(pesquisa))
                 );
             }
@@ -142,7 +142,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 observacoesCancelamento = formulario.ObservacoesCancelamento,
                 pet = new
                 {
-                    id = formulario.Pet.Id,
+                    id = formulario.Pet?.Id,
                     nome = formulario.Pet.Nome,
                     especie = formulario.Pet.Especie,
                     raca = formulario.Pet.Raca,
@@ -154,7 +154,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                 },
                 adotante = new
                 {
-                    id = formulario.Usuario.Id,
+                    id = formulario.Usuario?.Id,
                     nome = formulario.Usuario.Nome,
                     email = formulario.Usuario.Email,
                     telefone = formulario.Usuario.Telefone,

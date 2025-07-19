@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm uninstall:*)",
+      "Bash(dotnet build)",
+      "Bash(ls:*)",
+      "Bash(npm run lint)",
+      "Bash(mkdir:*)",
+      "Bash(dotnet build:*)",
+      "mcp__ide__getDiagnostics"
+    ],
+    "deny": []
+  }
+}

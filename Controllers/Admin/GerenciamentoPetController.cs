@@ -202,7 +202,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     return Json(new { sucesso = false, mensagem = "O status do pet não foi informado." });
                 }
                 
-                string novoStatus = novoStatusElement.GetString();
+                string? novoStatus = novoStatusElement.GetString();
                 
                 if (string.IsNullOrEmpty(novoStatus))
                 {

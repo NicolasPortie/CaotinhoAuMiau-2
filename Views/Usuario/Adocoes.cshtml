@@ -281,83 +281,129 @@
 
 <div class="modal fade" id="modalDetalhesAdocao" tabindex="-1" role="dialog" aria-labelledby="modalDetalhesAdocaoLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalDetalhesAdocaoLabel">
-                    <i class="fa-solid fa-paw me-2"></i> Detalhes da Adoção
-                </h5>
-                <button type="button" class="botao-fechar" data-bs-dismiss="modal" aria-label="Close">
+        <div class="modal-content modal-usuario-detalhes">
+            <div class="modal-header modal-header-usuario">
+                <div class="modal-header-content">
+                    <div class="modal-titulo-section">
+                        <h5 class="modal-title modal-title-usuario" id="modalDetalhesAdocaoLabel">
+                            <div class="modal-icone-wrapper-usuario">
+                                <i class="fa-solid fa-heart"></i>
+                            </div>
+                            <span>Minha Adoção</span>
+                        </h5>
+                        <p class="modal-subtitulo-usuario">Acompanhe o processo de adoção do seu novo amigo</p>
+                    </div>
+                    <div class="status-badge-usuario" id="statusAdocaoUsuario">
+                        <i class="fa-solid fa-clock"></i>
+                        <span>Em andamento</span>
+                    </div>
+                </div>
+                <button type="button" class="btn-close-usuario" data-bs-dismiss="modal" aria-label="Close">
                     <i class="fa-solid fa-times"></i>
                 </button>
             </div>
-            <div class="modal-body">
-                <div id="loadingDetalhesAdocao" class="text-center py-5 loading-container">
-                    <div class="spinner-border" role="status">
-                        <span class="visually-hidden">Carregando...</span>
+            <div class="modal-body modal-body-usuario">
+                <div id="loadingDetalhesAdocao" class="loading-container-usuario">
+                    <div class="loading-animation-usuario">
+                        <div class="loading-heart">
+                            <i class="fa-solid fa-heart"></i>
+                        </div>
+                        <div class="loading-text-usuario">Carregando seus detalhes...</div>
+                        <div class="loading-dots-usuario">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
                     </div>
                 </div>
-                <div id="conteudoDetalhes" class="d-none">
+                <div id="conteudoDetalhes" class="d-none conteudo-detalhes-usuario">
                     
                 </div>
             </div>
-            <div class="modal-footer">
-                <div class="w-100 d-flex justify-content-end">
-                    <button type="button" class="btn btn-outline-warning" data-bs-dismiss="modal">Fechar</button>
+            <div class="modal-footer modal-footer-usuario">
+                <div class="footer-actions">
+                    <button type="button" class="btn-secundario-usuario" data-bs-dismiss="modal">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Voltar</span>
+                    </button>
+                    <button type="button" class="btn-primario-usuario" id="btnContatarSuporte">
+                        <i class="fa-solid fa-headset"></i>
+                        <span>Contatar Suporte</span>
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<link rel="stylesheet" href="~/css/usuario/modal-detalhes-usuario.css" asp-append-version="true" />
+
 <style>
 
-.detalhe-respostas-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1rem;
-    padding: 1rem;
-}
-
 .detalhe-resposta-item {
-    background-color: #f8f9fa;
-    border-radius: 10px;
-    padding: 1.2rem;
-    border-left: 4px solid #FF8C00;
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    border: 1px solid #E5E7EB;
     transition: all 0.3s ease;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
     height: 100%;
     animation: entradaSuave 0.5s ease-out forwards;
     opacity: 0;
     transform: translateY(10px);
+    position: relative;
+    overflow: hidden;
+}
+
+.detalhe-resposta-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+    transition: width 0.3s ease;
 }
 
 .detalhe-resposta-item:hover {
-    background-color: #fff;
-    transform: translateY(-5px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
-    border-left-width: 6px;
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(255, 107, 107, 0.15);
+    border-color: #FF6B6B;
+}
+
+.detalhe-resposta-item:hover::before {
+    width: 8px;
 }
 
 .detalhe-resposta-item .pergunta {
     font-weight: 700;
-    color: #343a40;
-    margin-bottom: 0.7rem;
-    font-size: 1.05rem;
+    color: #1F2937;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
     position: relative;
-    padding-left: 1.5rem;
+    padding-left: 2.5rem;
+    line-height: 1.4;
 }
 
 .detalhe-resposta-item .pergunta::before {
     content: '\f059';
-    font-family: 'Font Awesome 5 Free';
+    font-family: 'Font Awesome 6 Free';
     font-weight: 900;
     position: absolute;
     left: 0;
-    top: 1px;
-    color: #FF8C00;
-    font-size: 1rem;
+    top: 2px;
+    color: #FF6B6B;
+    font-size: 1.25rem;
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 107, 107, 0.1);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .detalhe-resposta-item .resposta {

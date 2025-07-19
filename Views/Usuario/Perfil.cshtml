@@ -92,7 +92,8 @@
                     else
                     {
                         <img src="~/imagens/perfil/@Model.FotoPerfil"
-                             alt="@Model.Nome" />
+                             alt="@Model.Nome" 
+                             onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=&quot;perfil__avatar-initial&quot;><span>@Model.ObterInicialNome()</span></div><div class=&quot;perfil__avatar-upload&quot; onclick=&quot;document.getElementById(\\&quot;uploadFoto\\&quot;).click()&quot; title=&quot;Adicionar foto&quot;><i class=&quot;fas fa-camera&quot;></i></div>';" />
                         <div class="perfil__avatar-remove" onclick="abrirModal('modalConfirmarRemoverFoto')" title="Remover foto">
                             <i class="fas fa-trash"></i>
                         </div>

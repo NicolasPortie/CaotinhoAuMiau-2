@@ -373,11 +373,19 @@ function preencherDetalhesAdocao(adocao, fromProfile = false) {
         const img = document.createElement('img');
         img.src = `/imagens/perfil/${adocao.usuario.fotoPerfil}`;
         img.alt = adocao.usuario.nome;
+        img.onerror = function() {
+            this.style.display = 'none';
+            if (adocao.usuario && adocao.usuario.nome) {
+                adotanteAvatarContainer.innerHTML = `<div class="adotante-avatar-placeholder"><span>${adocao.usuario.nome.charAt(0).toUpperCase()}</span></div>`;
+            } else {
+                adotanteAvatarContainer.innerHTML = '<div class="adotante-avatar-placeholder"><i class="fa-solid fa-user"></i><span>Adotante</span></div>';
+            }
+        };
         adotanteAvatarContainer.appendChild(img);
     } else if (adocao.usuario && adocao.usuario.nome) {
-        adotanteAvatarContainer.textContent = adocao.usuario.nome.charAt(0).toUpperCase();
+        adotanteAvatarContainer.innerHTML = `<div class="adotante-avatar-placeholder"><span>${adocao.usuario.nome.charAt(0).toUpperCase()}</span></div>`;
     } else {
-        adotanteAvatarContainer.innerHTML = '<i class="fa-solid fa-user"></i>';
+        adotanteAvatarContainer.innerHTML = '<div class="adotante-avatar-placeholder"><i class="fa-solid fa-user"></i><span>Adotante</span></div>';
     }
     
     

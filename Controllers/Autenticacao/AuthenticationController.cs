@@ -105,14 +105,14 @@ namespace CaotinhoAuMiau.Controllers.Autenticacao
                             Tipo = "Admin",
                             Nome = "Administrador",
                             AvatarUrl = "/imagens/perfil1.jpg",
-                            ActionUrl = Url.Action("EscolherPerfil", "Authentication", new { perfil = "Admin", colaboradorId = colaborador!.Id, usuarioId = usuario!.Id, continuarConectado = modelo.ContinuarConectado })
+                            ActionUrl = Url.Action("EscolherPerfil", "Authentication", new { perfil = "Admin", colaboradorId = colaborador!.Id, usuarioId = usuario!.Id, continuarConectado = modelo.ContinuarConectado }) ?? ""
                         },
                         new PerfilViewModel
                         {
                             Tipo = "Adotante",
                             Nome = "Adotante",
                             AvatarUrl = "/imagens/perfil2.jpg",
-                            ActionUrl = Url.Action("EscolherPerfil", "Authentication", new { perfil = "Usuario", colaboradorId = colaborador!.Id, usuarioId = usuario!.Id, continuarConectado = modelo.ContinuarConectado })
+                            ActionUrl = Url.Action("EscolherPerfil", "Authentication", new { perfil = "Usuario", colaboradorId = colaborador!.Id, usuarioId = usuario!.Id, continuarConectado = modelo.ContinuarConectado }) ?? ""
                         }
                     };
                     
@@ -435,7 +435,7 @@ namespace CaotinhoAuMiau.Controllers.Autenticacao
         [HttpGet("cadastro")]
         public IActionResult ExibirTelaCadastro()
         {
-            if (User.Identity.IsAuthenticated)
+            if (User.Identity?.IsAuthenticated == true)
             {
                 if (User.IsInRole("Administrador"))
                 {

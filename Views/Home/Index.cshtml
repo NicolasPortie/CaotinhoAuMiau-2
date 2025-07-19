@@ -1,28 +1,14 @@
 ﻿@{
     ViewData["Title"] = "Início";
-    Layout = null;
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <base href="~/" />
-    <title>@ViewData["Title"] - CaotinhoAuMiau</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <!-- Importa estilos globais com as variáveis de cor utilizadas nas demais folhas -->
-    <link rel="stylesheet" href="~/css/shared/global.css" asp-append-version="true" />
+@section Styles {
     <link rel="stylesheet" href="~/css/home/home.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body>
-        <partial name="_NavbarPublic" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+}
+
+<partial name="_NavbarPublic" />
 
     <section class="banner container-fluid p-0">
         <div class="conteudo-banner">
@@ -208,9 +194,7 @@
         </div>
     </footer>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+@section Scripts {
     <script src="~/js/home/home.js" asp-append-version="true"></script>
     <script>
         window.addEventListener('scroll', function() {
@@ -222,5 +206,4 @@
             }
         });
     </script>
-</body>
-</html>
+}

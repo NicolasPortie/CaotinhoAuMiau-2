@@ -1,5 +1,5 @@
 @{
-    Layout = null;
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
 @model List<CaotinhoAuMiau.Models.Pet>
@@ -15,16 +15,7 @@
     var adotados = Model?.Count(p => p.Status == StatusPet.Adotado) ?? 0;
 }
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Cãotinho AuMiau</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+@section Styles {
     <link rel="stylesheet" href="~/css/admin/admin-gerenciamento-pets.css" asp-append-version="true" />
     <style>
         select.select-personalizado,
@@ -39,12 +30,7 @@
             padding-right: 2.5rem !important;
         }
     </style>
-</head>
-<body class="d-flex">
-    
-    @await Html.PartialAsync("~/Views/Shared/_SlidebarAdmin.cshtml")
-    
-    <div class="conteudo-principal">
+}
         <div class="cabecalho-painel">
             <h1 class="titulo-pagina">Gerenciamento de Pets</h1>
             
@@ -341,16 +327,6 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <script src="~/js/shared/slidebar.js" asp-append-version="true"></script>
-    <script src="~/js/admin/gerenciamento-pets.js" asp-append-version="true"></script>
-    
-    
     <div class="modal fade" id="modalConfirmacaoExclusao" tabindex="-1" aria-labelledby="modalConfirmacaoExclusaoLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -637,5 +613,6 @@
             </div>
         </div>
     </div>
-</body>
-</html>
+@section Scripts {
+    <script src="~/js/admin/gerenciamento-pets.js" asp-append-version="true"></script>
+}

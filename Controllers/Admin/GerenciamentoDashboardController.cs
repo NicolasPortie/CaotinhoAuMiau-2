@@ -155,10 +155,11 @@ namespace CaotinhoAuMiau.Controllers.Admin
         }
 
         [HttpGet("DadosGraficos")]
-        public async Task<IActionResult> ObterDadosGraficosAsync()
+        public async Task<IActionResult> ObterDadosGraficosAsync(string periodoAdocoes = "Anual", string periodoUsuarios = "Anual")
         {
             try
             {
+                _logger.LogInformation("Iniciando carregamento de dados dos gráficos. Periodo Adoções: {PeriodoAdocoes}, Período Usuários: {PeriodoUsuarios}", periodoAdocoes, periodoUsuarios);
                 var ultimosDoze = Enumerable.Range(0, 12)
                     .Select(i => DateTime.Now.AddMonths(-i))
                     .Select(d => new { Mes = d.Month, Ano = d.Year })
@@ -223,7 +224,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     .Select(g => new { Status = g.Key, Quantidade = g.Count() })
                     .ToListAsync();
 
-                return Json(new
+                var resultado = new
                 {
                     sucesso = true,
                     adocoesPorMes,
@@ -231,12 +232,30 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     statusFormularios,
                     usuariosPorMes,
                     usuariosAcumulados,
-                    statusPets
-                });
+                    statusPets,
+                    debug = new {
+                        totalAdocoes = adocoes.Count,
+                        totalEspecies = especiesDistribuicao.Count,
+                        totalFormularios = statusFormularios.Sum(s => s.Quantidade),
+                        totalUsuarios = usuarios.Count,
+                        periodoAdocoes,
+                        periodoUsuarios
+                    }
+                };
+                
+                _logger.LogInformation("Dados dos gráficos carregados com sucesso. Total de adoções: {TotalAdocoes}, Total de espécies: {TotalEspecies}", adocoes.Count, especiesDistribuicao.Count);
+                
+                return Json(resultado);
             }
             catch (Exception ex)
             {
-                return Json(new { sucesso = false, mensagem = "Erro ao buscar os dados dos gráficos.", erro = ex.Message });
+                _logger.LogError(ex, "Erro ao buscar os dados dos gráficos");
+                return Json(new { 
+                    sucesso = false, 
+                    mensagem = "Erro ao buscar os dados dos gráficos.", 
+                    erro = ex.Message,
+                    stackTrace = ex.StackTrace
+                });
             }
         }
 
@@ -256,14 +275,15 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     .Include(f => f.Pet)
                     .OrderByDescending(f => f.DataEnvio)
                     .Take(3)
-                    .Select(f => new {
-                        Tipo = "formulario",
-                        Descricao = $"Formulário de adoção para {f.Pet.Nome}",
-                        NomeUsuario = f.Usuario.Nome,
-                        DataOcorrencia = f.DataEnvio,
-                        Status = f.Status
-                    })
                     .ToListAsync();
+                    
+                var formulariosFormatados = formularios.Select(f => new {
+                    Tipo = "formulario",
+                    Descricao = $"Formulário de adoção para {f.Pet?.Nome ?? "Pet desconhecido"}",
+                    NomeUsuario = f.Usuario?.Nome ?? "Usuário desconhecido",
+                    DataOcorrencia = f.DataEnvio,
+                    Status = f.Status
+                }).ToList();
                     
                 var pets = await _contexto.Pets
                     .OrderByDescending(p => p.DataCriacao)
@@ -289,7 +309,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
                     })
                     .ToListAsync();
                     
-                var todasAtividades = formularios
+                var todasAtividades = formulariosFormatados
                     .Concat(pets)
                     .Concat(usuarios)
                     .OrderByDescending(a => a.DataOcorrencia)

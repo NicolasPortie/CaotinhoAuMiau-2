@@ -108,8 +108,33 @@ document.addEventListener('DOMContentLoaded', function() {
         modalPet = new bootstrap.Modal(modalPetElement);
     }
 
-    carregarDadosGraficos();
-    
+    // Aguarda Chart.js carregar antes de tentar criar gráficos
+    if (typeof Chart !== 'undefined') {
+        console.log('Chart.js disponível, carregando dados...');
+        carregarDadosGraficos();
+    } else {
+        console.warn('Chart.js não disponível ainda, aguardando...');
+        let tentativas = 0;
+        const maxTentativas = 10;
+        const intervalo = setInterval(() => {
+            tentativas++;
+            if (typeof Chart !== 'undefined') {
+                console.log('Chart.js carregado após', tentativas, 'tentativas');
+                clearInterval(intervalo);
+                carregarDadosGraficos();
+            } else if (tentativas >= maxTentativas) {
+                console.error('Chart.js não carregou após', maxTentativas, 'tentativas');
+                clearInterval(intervalo);
+                document.querySelectorAll('.area-grafico').forEach(area => {
+                    area.innerHTML = `
+                        <div class="erro-grafico">
+                            <i class="fa-solid fa-exclamation-triangle me-2"></i>Erro ao carregar biblioteca de gráficos
+                        </div>
+                    `;
+                });
+            }
+        }, 500);
+    }
     
     carregarAtividadesRecentes();
 
@@ -253,21 +278,45 @@ function atualizarDadosGraficoUsuarios(filtro) {
 
 
 async function carregarDadosGraficos(filtroAdocoes = 'Anual', filtroUsuarios = 'Anual') {
+    console.log('Iniciando carregamento dos dados dos gráficos...');
+    console.log('Chart.js disponível:', typeof Chart !== 'undefined');
 
     document.querySelectorAll('.area-grafico').forEach(area => {
         area.innerHTML = `
             <div class="carregando-grafico">
-                Carregando dados...
+                <i class="fa-solid fa-spinner fa-spin me-2"></i>Carregando dados...
             </div>
         `;
     });
 
+    // Verifica se Chart.js está disponível
+    if (typeof Chart === 'undefined') {
+        console.error('Chart.js não está carregado!');
+        document.querySelectorAll('.area-grafico').forEach(area => {
+            area.innerHTML = `
+                <div class="erro-grafico">
+                    <i class="fa-solid fa-exclamation-triangle me-2"></i>Erro: Chart.js não carregado
+                </div>
+            `;
+        });
+        return;
+    }
+
     try {
+        console.log('Fazendo requisição para:', `/admin/dashboard/DadosGraficos?periodoAdocoes=${encodeURIComponent(filtroAdocoes)}&periodoUsuarios=${encodeURIComponent(filtroUsuarios)}`);
         const response = await fetch(`/admin/dashboard/DadosGraficos?periodoAdocoes=${encodeURIComponent(filtroAdocoes)}&periodoUsuarios=${encodeURIComponent(filtroUsuarios)}`);
+        
+        console.log('Response status:', response.status);
+        console.log('Response ok:', response.ok);
+        
         if (!response.ok) {
-            throw new Error('Falha ao carregar dados dos gráficos');
+            const errorText = await response.text();
+            console.error('Erro na resposta:', errorText);
+            throw new Error(`Falha ao carregar dados dos gráficos (${response.status}): ${errorText}`);
         }
+        
         const dados = await response.json();
+        console.log('Dados recebidos:', dados);
 
         if (!dados || typeof dados !== 'object') {
             throw new Error('Formato de dados inválido');
@@ -871,8 +920,8 @@ function atualizarListaAtividades(container, atividades) {
                 <i class="fa-solid ${icone}"></i>
             </div>
             <div class="conteudo-atividade">
-                <div class="acao-atividade">${atividade.descricao}</div>
-                <div class="data-atividade">${formatarDataAtividade(atividade.data)}</div>
+                <div class="acao-atividade">${atividade.descricao || atividade.Descricao || 'Atividade'}</div>
+                <div class="data-atividade">${formatarDataAtividade(atividade.dataOcorrencia || atividade.DataOcorrencia || atividade.data)}</div>
             </div>
         `;
         
@@ -883,7 +932,9 @@ function atualizarListaAtividades(container, atividades) {
 
 
 function formatarDataAtividade(data) {
+    if (!data) return 'Data não disponível';
     const dataAtividade = new Date(data);
+    if (isNaN(dataAtividade.getTime())) return 'Data inválida';
     const agora = new Date();
     const diferencaMs = agora - dataAtividade;
     

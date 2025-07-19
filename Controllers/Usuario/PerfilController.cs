@@ -54,7 +54,7 @@ namespace CaotinhoAuMiau.Controllers.Usuario
                 CEP = usuario.CEP,
                 Logradouro = usuario.Logradouro,
                 Numero = usuario.Numero,
-                Complemento = usuario.Complemento,
+                Complemento = usuario.Complemento ?? string.Empty,
                 Bairro = usuario.Bairro,
                 Cidade = usuario.Cidade,
                 Estado = usuario.Estado,

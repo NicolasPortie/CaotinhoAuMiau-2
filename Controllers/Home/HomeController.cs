@@ -33,7 +33,7 @@ namespace CaotinhoAuMiau.Controllers.Home
         // Método assíncrono renomeado para seguir a convenção de sufixo 'Async'
         private async Task ConfigurarDadosComunsAsync()
         {
-            if (User.Identity.IsAuthenticated)
+            if (User.Identity?.IsAuthenticated == true)
             {
                 var idUsuario = User.ObterIdUsuario();
                 if (!string.IsNullOrEmpty(idUsuario))
@@ -47,7 +47,7 @@ namespace CaotinhoAuMiau.Controllers.Home
         [HttpGet]
         public async Task<IActionResult> IndexAsync()
         {
-            if (User.Identity.IsAuthenticated)
+            if (User.Identity?.IsAuthenticated == true)
             {
                 if (User.IsInRole("Administrador"))
                 {

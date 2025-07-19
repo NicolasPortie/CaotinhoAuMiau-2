@@ -1,10 +1,9 @@
 {
   "scripts": {
-    "postinstall": "mkdir -p wwwroot/lib/fontawesome/css wwwroot/lib/chart.js && cp node_modules/@fortawesome/fontawesome-free/css/all.min.css wwwroot/lib/fontawesome/css/all.min.css && cp -r node_modules/@fortawesome/fontawesome-free/webfonts wwwroot/lib/fontawesome/ && cp node_modules/chart.js/dist/chart.umd.min.js wwwroot/lib/chart.js/chart.umd.min.js"
+    "postinstall": "mkdir -p wwwroot/lib/chart.js && cp node_modules/chart.js/dist/chart.umd.min.js wwwroot/lib/chart.js/chart.umd.min.js"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
-    "@fortawesome/fontawesome-free": "^6.7.2",
     "chart.js": "^4.4.1"
   }
 }

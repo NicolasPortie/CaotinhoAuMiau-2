@@ -404,3 +404,7 @@ FodyWeavers.xsd
 *.msp
 *.runtimeconfig.json
 *.exe.config
+
+
+# Evitar conflitos com dispositivo reservado do Windows
+nul

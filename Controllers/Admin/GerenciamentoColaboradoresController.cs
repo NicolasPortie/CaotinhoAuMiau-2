@@ -453,7 +453,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
 
         [AllowAnonymous]
         [HttpGet("Login")]
-        public IActionResult TelaLogin(string urlRetorno = null)
+        public IActionResult TelaLogin(string? urlRetorno = null)
         {
             ViewData["ReturnUrl"] = urlRetorno;
             return View("~/Views/Admin/Login.cshtml");
@@ -462,7 +462,7 @@ namespace CaotinhoAuMiau.Controllers.Admin
         [AllowAnonymous]
         [HttpPost("Login")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> FazerLoginAsync(AutenticacaoLoginViewModel modelo, string urlRetorno = null)
+        public async Task<IActionResult> FazerLoginAsync(AutenticacaoLoginViewModel modelo, string? urlRetorno = null)
         {
             if (!ModelState.IsValid)
             {

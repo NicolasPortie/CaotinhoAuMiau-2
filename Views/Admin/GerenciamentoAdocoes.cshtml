@@ -6,33 +6,20 @@
 
 @{
     ViewData["Title"] = "Gerenciamento de Adoções";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
     
     var total = Model.Count();
     var emProcesso = Model.Count(a => a.Status == "Em Processo");
     var finalizadas = Model.Count(a => a.Status == "Finalizada");
     var aguardandoBusca = Model.Count(a => a.Status == "Aguardando buscar");
     var expiradas = Model.Count(a => a.Status == "Expirada");
-    
-    Layout = null;
 }
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Cãotinho AuMiau</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+@section Styles {
     <link rel="stylesheet" href="~/css/admin/admin-gerenciamento-adocoes.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/shared/paginacao.css" asp-append-version="true" />
-</head>
-<body class="d-flex">
-    
-    @await Html.PartialAsync("~/Views/Shared/_SlidebarAdmin.cshtml")
-    
+}
+
+@Html.AntiForgeryToken()
     <div class="conteudo-principal">
         <div class="cabecalho-painel">
             <h1 class="titulo-pagina">Gerenciamento de Adoções</h1>
@@ -184,7 +171,9 @@
                                                 @if (adocao.Usuario != null && !string.IsNullOrEmpty(adocao.Usuario.FotoPerfil))
                                                 {
                                                     <img src="/imagens/perfil/@adocao.Usuario.FotoPerfil" 
-                                                        alt="@adocao.Usuario.Nome" class="avatar-usuario">
+                                                        alt="@adocao.Usuario.Nome" 
+                                                        class="avatar-usuario"
+                                                        onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=&quot;avatar-sem-foto&quot;>@(adocao.Usuario?.Nome?.Length > 0 ? adocao.Usuario.Nome.Substring(0, 1).ToUpper() : "?")</div>';">
                                                 }
                                                 else
                                                 {
@@ -403,118 +392,248 @@
     
     <div class="modal fade" id="modalDetalhesAdocao" tabindex="-1" aria-labelledby="modalDetalhesAdocaoLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalDetalhesAdocaoLabel">
-                        <i class="fa-solid fa-paw me-2"></i>Detalhes da Adoção
-                    </h5>
-                    <div class="detalhes-tags">
-                        <div class="detalhes-status-tag" id="detalhesStatusAdocao">Aguardando buscar</div>
-                        <div class="detalhes-dias-tag" id="detalhesPrazoBusca">10 dias</div>
-                    </div>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                </div>
-                <div class="modal-body" id="modalDetalhesAdocaoBody">
-                    
-                    <div class="carregando-detalhes">
-                        <div class="spinner-border texto-primario" role="status">
-                            <span class="visually-hidden">Carregando...</span>
+            <div class="modal-content modal-detalhes-melhorado">
+                <div class="modal-header modal-header-detalhes">
+                    <div class="modal-header-content">
+                        <div class="modal-titulo-section">
+                            <h5 class="modal-title modal-title-detalhes" id="modalDetalhesAdocaoLabel">
+                                <div class="modal-icone-wrapper">
+                                    <i class="fa-solid fa-heart"></i>
+                                </div>
+                                <span>Detalhes da Adoção</span>
+                            </h5>
+                            <p class="modal-subtitulo">Informações completas do processo de adoção</p>
                         </div>
-                        <p>Carregando detalhes da adoção...</p>
+                        <div class="detalhes-tags-melhorado">
+                            <div class="detalhes-status-tag-melhorado" id="detalhesStatusAdocao">
+                                <i class="fa-solid fa-clock me-1"></i>Aguardando buscar
+                            </div>
+                            <div class="detalhes-prazo-tag-melhorado" id="detalhesPrazoBusca">
+                                <i class="fa-solid fa-calendar-alt me-1"></i>10 dias
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close-melhorado" data-bs-dismiss="modal" aria-label="Fechar">
+                        <i class="fa-solid fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body modal-body-detalhes" id="modalDetalhesAdocaoBody">
+                    <!-- Loading State Melhorado -->
+                    <div class="carregando-detalhes carregando-melhorado">
+                        <div class="loading-animation">
+                            <div class="loading-paw">
+                                <i class="fa-solid fa-paw"></i>
+                            </div>
+                            <div class="loading-dots">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </div>
+                        <p class="loading-text">Carregando detalhes da adoção...</p>
                     </div>
                     
                     
                     <div class="detalhes-adocao-container d-none">
                         
-                        <div class="detalhes-navegacao">
-                            <ul class="detalhes-abas">
-                                <li class="detalhes-aba ativa" data-painel="painel-informacoes">
-                                    <i class="fa-solid fa-info-circle"></i> Informações Básicas
-                                </li>
-                                <li class="detalhes-aba" data-painel="painel-processo">
-                                    <i class="fa-solid fa-clipboard-list"></i> Processo de Adoção
-                                </li>
-                            </ul>
+                        <!-- Navigation Melhorada -->
+                        <div class="detalhes-navegacao-melhorada">
+                            <div class="nav-tabs-custom">
+                                <button class="nav-tab-custom active" data-painel="painel-informacoes">
+                                    <div class="nav-tab-icon">
+                                        <i class="fa-solid fa-info-circle"></i>
+                                    </div>
+                                    <div class="nav-tab-content">
+                                        <span class="nav-tab-title">Informações</span>
+                                        <span class="nav-tab-subtitle">Dados do pet e adotante</span>
+                                    </div>
+                                </button>
+                                <button class="nav-tab-custom" data-painel="painel-processo">
+                                    <div class="nav-tab-icon">
+                                        <i class="fa-solid fa-route"></i>
+                                    </div>
+                                    <div class="nav-tab-content">
+                                        <span class="nav-tab-title">Processo</span>
+                                        <span class="nav-tab-subtitle">Timeline da adoção</span>
+                                    </div>
+                                </button>
+                                <button class="nav-tab-custom" data-painel="painel-formulario">
+                                    <div class="nav-tab-icon">
+                                        <i class="fa-solid fa-file-alt"></i>
+                                    </div>
+                                    <div class="nav-tab-content">
+                                        <span class="nav-tab-title">Formulário</span>
+                                        <span class="nav-tab-subtitle">Respostas detalhadas</span>
+                                    </div>
+                                </button>
+                            </div>
                         </div>
                         
                         
                         <div class="detalhes-conteudo">
                             
                             <div class="detalhes-painel ativo" id="painel-informacoes">
-                                <div class="detalhes-grid">
-                                    
-                                    <div class="detalhes-card">
-                                        <div class="detalhes-card-header">
-                                            <h6 class="detalhes-card-titulo">
-                                                <i class="fa-solid fa-paw"></i> Informações do Pet
-                                            </h6>
-                                        </div>
-                                        <div class="detalhes-card-body">
-                                            <div class="detalhes-pet-imagem" id="detalhesPetImagem">
+                                <div class="detalhes-grid-melhorada">
+                                    <!-- Card do Pet Melhorado -->
+                                    <div class="detalhes-card-melhorado pet-card">
+                                        <div class="card-header-melhorado pet-header">
+                                            <div class="card-icon-wrapper pet-icon">
                                                 <i class="fa-solid fa-paw"></i>
                                             </div>
-                                            <div class="detalhes-info-lista">
-                                                <div class="detalhes-info-linha">
-                                                    <span class="detalhes-info-label">Nome</span>
-                                                    <span class="detalhes-info-valor destaque" id="detalhesNomePet"></span>
+                                            <div class="card-title-section">
+                                                <h6 class="card-title-melhorado">Informações do Pet</h6>
+                                                <p class="card-subtitle">Dados completos do animal</p>
+                                            </div>
+                                        </div>
+                                        <div class="card-body-melhorado">
+                                            <div class="pet-showcase">
+                                                <div class="pet-image-container" id="detalhesPetImagem">
+                                                    <div class="pet-image-placeholder">
+                                                        <i class="fa-solid fa-paw"></i>
+                                                        <span>Foto do Pet</span>
+                                                    </div>
                                                 </div>
-                                                <div class="detalhes-info-linha">
-                                                    <span class="detalhes-info-label">Espécie</span>
-                                                    <span class="detalhes-info-valor" id="detalhesEspeciePet"></span>
+                                                <div class="pet-status-badge" id="detalhesPetStatus">
+                                                    <i class="fa-solid fa-heart"></i>
+                                                    <span>Disponível</span>
                                                 </div>
-                                                <div class="detalhes-info-linha">
-                                                    <span class="detalhes-info-label">Raça</span>
-                                                    <span class="detalhes-info-valor" id="detalhesRacaPet"></span>
+                                            </div>
+                                            <div class="info-grid-melhorada">
+                                                <div class="info-item-melhorada">
+                                                    <div class="info-icon">
+                                                        <i class="fa-solid fa-tag"></i>
+                                                    </div>
+                                                    <div class="info-content">
+                                                        <span class="info-label">Nome</span>
+                                                        <span class="info-value primary" id="detalhesNomePet">Carregando...</span>
+                                                    </div>
                                                 </div>
-                                                <div class="detalhes-info-linha">
-                                                    <span class="detalhes-info-label">Idade</span>
-                                                    <span class="detalhes-info-valor" id="detalhesIdadePet"></span>
+                                                <div class="info-item-melhorada">
+                                                    <div class="info-icon">
+                                                        <i class="fa-solid fa-paw"></i>
+                                                    </div>
+                                                    <div class="info-content">
+                                                        <span class="info-label">Espécie</span>
+                                                        <span class="info-value" id="detalhesEspeciePet">Carregando...</span>
+                                                    </div>
                                                 </div>
-                                                <div class="detalhes-info-linha">
-                                                    <span class="detalhes-info-label">Sexo</span>
-                                                    <span class="detalhes-info-valor" id="detalhesSexoPet"></span>
+                                                <div class="info-item-melhorada">
+                                                    <div class="info-icon">
+                                                        <i class="fa-solid fa-dna"></i>
+                                                    </div>
+                                                    <div class="info-content">
+                                                        <span class="info-label">Raça</span>
+                                                        <span class="info-value" id="detalhesRacaPet">Carregando...</span>
+                                                    </div>
                                                 </div>
-                                                <div class="detalhes-info-linha">
-                                                    <span class="detalhes-info-label">Porte</span>
-                                                    <span class="detalhes-info-valor" id="detalhesPortePet"></span>
+                                                <div class="info-item-melhorada">
+                                                    <div class="info-icon">
+                                                        <i class="fa-solid fa-birthday-cake"></i>
+                                                    </div>
+                                                    <div class="info-content">
+                                                        <span class="info-label">Idade</span>
+                                                        <span class="info-value" id="detalhesIdadePet">Carregando...</span>
+                                                    </div>
+                                                </div>
+                                                <div class="info-item-melhorada">
+                                                    <div class="info-icon">
+                                                        <i class="fa-solid fa-venus-mars"></i>
+                                                    </div>
+                                                    <div class="info-content">
+                                                        <span class="info-label">Sexo</span>
+                                                        <span class="info-value" id="detalhesSexoPet">Carregando...</span>
+                                                    </div>
+                                                </div>
+                                                <div class="info-item-melhorada">
+                                                    <div class="info-icon">
+                                                        <i class="fa-solid fa-ruler-vertical"></i>
+                                                    </div>
+                                                    <div class="info-content">
+                                                        <span class="info-label">Porte</span>
+                                                        <span class="info-value" id="detalhesPortePet">Carregando...</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     
-                                    
-                                    <div class="detalhes-card">
-                                        <div class="detalhes-card-header">
-                                            <h6 class="detalhes-card-titulo">
-                                                <i class="fa-solid fa-user"></i> Informações do Adotante
-                                            </h6>
-                                        </div>
-                                        <div class="detalhes-card-body">
-                                            <div class="detalhes-adotante-avatar" id="detalhesAdotanteAvatar">
-                                                <i class="fa-solid fa-user"></i>
+                                    <!-- Card do Adotante Melhorado -->
+                                    <div class="detalhes-card-melhorado adotante-card">
+                                        <div class="card-header-melhorado adotante-header">
+                                            <div class="card-icon-wrapper adotante-icon">
+                                                <i class="fa-solid fa-user-heart"></i>
                                             </div>
-                                            <div class="detalhes-info-lista">
-                                                <div class="detalhes-info-linha">
-                                                    <span class="detalhes-info-label">Nome</span>
-                                                    <span class="detalhes-info-valor destaque" id="detalhesNomeAdotante"></span>
+                                            <div class="card-title-section">
+                                                <h6 class="card-title-melhorado">Informações do Adotante</h6>
+                                                <p class="card-subtitle">Dados do futuro tutor</p>
+                                            </div>
+                                        </div>
+                                        <div class="card-body-melhorado">
+                                            <div class="adotante-showcase">
+                                                <div class="adotante-avatar-container" id="detalhesAdotanteAvatar">
+                                                    <div class="adotante-avatar-placeholder">
+                                                        <i class="fa-solid fa-user"></i>
+                                                        <span>Adotante</span>
+                                                    </div>
                                                 </div>
-                                                <div class="detalhes-info-linha">
-                                                    <span class="detalhes-info-label">Email</span>
-                                                    <span class="detalhes-info-valor" id="detalhesEmailAdotante"></span>
+                                                <div class="adotante-verification">
+                                                    <div class="verification-badge verified">
+                                                        <i class="fa-solid fa-shield-check"></i>
+                                                        <span>Verificado</span>
+                                                    </div>
                                                 </div>
-                                                <div class="detalhes-info-linha">
-                                                    <span class="detalhes-info-label">Telefone</span>
-                                                    <span class="detalhes-info-valor" id="detalhesTelefoneAdotante"></span>
+                                            </div>
+                                            <div class="info-grid-melhorada">
+                                                <div class="info-item-melhorada">
+                                                    <div class="info-icon">
+                                                        <i class="fa-solid fa-user"></i>
+                                                    </div>
+                                                    <div class="info-content">
+                                                        <span class="info-label">Nome</span>
+                                                        <span class="info-value primary" id="detalhesNomeAdotante">Carregando...</span>
+                                                    </div>
                                                 </div>
-                                                <div class="detalhes-info-linha">
-                                                    <span class="detalhes-info-label">CPF</span>
-                                                    <span class="detalhes-info-valor" id="detalhesCpfAdotante"></span>
+                                                <div class="info-item-melhorada">
+                                                    <div class="info-icon">
+                                                        <i class="fa-solid fa-envelope"></i>
+                                                    </div>
+                                                    <div class="info-content">
+                                                        <span class="info-label">Email</span>
+                                                        <span class="info-value" id="detalhesEmailAdotante">Carregando...</span>
+                                                    </div>
                                                 </div>
-                                                <div class="detalhes-info-linha mt-3">
-                                                    <button class="botao-ver-perfil-completo" id="botaoVerPerfilCompleto">
-                                                        <i class="fa-solid fa-user-circle me-1"></i>Ver perfil completo
-                                                    </button>
+                                                <div class="info-item-melhorada">
+                                                    <div class="info-icon">
+                                                        <i class="fa-solid fa-phone"></i>
+                                                    </div>
+                                                    <div class="info-content">
+                                                        <span class="info-label">Telefone</span>
+                                                        <span class="info-value" id="detalhesTelefoneAdotante">Carregando...</span>
+                                                    </div>
                                                 </div>
+                                                <div class="info-item-melhorada">
+                                                    <div class="info-icon">
+                                                        <i class="fa-solid fa-id-card"></i>
+                                                    </div>
+                                                    <div class="info-content">
+                                                        <span class="info-label">CPF</span>
+                                                        <span class="info-value" id="detalhesCpfAdotante">Carregando...</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-actions">
+                                                <button class="btn-perfil-completo" id="botaoVerPerfilCompleto">
+                                                    <i class="fa-solid fa-user-circle"></i>
+                                                    <span>Ver perfil completo</span>
+                                                </button>
+                                                <button class="btn-contato" id="botaoContatarAdotante">
+                                                    <i class="fa-solid fa-comment"></i>
+                                                    <span>Contatar</span>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -820,11 +939,8 @@
         </div>
     </div>
 
-    
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <script src="~/js/shared/slidebar.js" asp-append-version="true"></script>
+
+@section Scripts {
     <script src="~/js/admin/admin-gerenciamento-adocoes.js" asp-append-version="true"></script>
     <script>
         $(document).ready(function() {
@@ -926,5 +1042,4 @@
             });
         });
     </script>
-</body>
-</html> 
+} 

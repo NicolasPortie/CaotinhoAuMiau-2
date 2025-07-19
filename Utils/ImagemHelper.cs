@@ -10,7 +10,7 @@ namespace CaotinhoAuMiau.Utils
         private const int MaxFileSizeInBytes = 2 * 1024 * 1024; // 2 MB
         private static readonly string[] AllowedExtensions = { ".jpg", ".jpeg", ".png" };
 
-        public static async Task<string> SalvarAsync(IFormFile imagem, string webRootPath, string subpasta, string? nomeAtual = null)
+        public static async Task<string?> SalvarAsync(IFormFile imagem, string webRootPath, string subpasta, string? nomeAtual = null)
         {
             if (imagem == null || imagem.Length <= 0)
                 return null;

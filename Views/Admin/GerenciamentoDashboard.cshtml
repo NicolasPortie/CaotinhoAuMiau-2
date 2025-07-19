@@ -1,36 +1,33 @@
-@{
-    Layout = null;
-}
-
 @model CaotinhoAuMiau.Models.ViewModels.Admin.DashboardViewModel
 @using CaotinhoAuMiau.Models.ViewModels
 @using System.Linq
 
 @{
     ViewData["Title"] = "Painel de Controle";
-    
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Cãotinho AuMiau</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css" />
-    <script src="~/lib/chart.js/chart.umd.min.js"></script>
-    <script>
-        if (typeof Chart === 'undefined') {
-            var fallback = document.createElement('script');
-            fallback.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js';
-            document.head.appendChild(fallback);
-        }
-    </script>
+@section Styles {
     <link rel="stylesheet" href="~/css/admin/admin-dashboard.css" asp-append-version="true" />
+    <script src="~/lib/chart.js/chart.umd.min.js" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js'"></script>
+    <script>
+        // Verifica se Chart.js carregou corretamente após um pequeno delay
+        setTimeout(function() {
+            if (typeof Chart === 'undefined') {
+                console.warn('Chart.js local falhou, carregando do CDN...');
+                var fallback = document.createElement('script');
+                fallback.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js';
+                fallback.onload = function() {
+                    console.log('Chart.js carregado do CDN com sucesso');
+                    if (typeof carregarDadosGraficos === 'function') {
+                        carregarDadosGraficos();
+                    }
+                };
+                document.head.appendChild(fallback);
+            }
+        }, 100);
+    </script>
     <style>
-        
         body {
             font-family: 'Poppins', sans-serif;
         }
@@ -45,15 +42,12 @@
             font-weight: 500;
         }
     </style>
-</head>
-<body class="d-flex">
-    
-    @await Html.PartialAsync("~/Views/Shared/_SlidebarAdmin.cshtml")
-    
-    <div class="conteudo-principal">
-        <div class="cabecalho-painel">
-            <h1 class="titulo-pagina">Painel de Controle</h1>
-        </div>
+}
+
+<div class="conteudo-principal">
+    <div class="cabecalho-painel">
+        <h1 class="titulo-pagina">Painel de Controle</h1>
+    </div>
 
         
         <div class="cartoes-status">
@@ -181,11 +175,8 @@
             </div>
         </div>
     </div>
+</div>
 
-    
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/shared/slidebar.js"></script>
+@section Scripts {
     <script src="~/js/admin/dashboard.js"></script>
-</body>
-</html> 
+} 

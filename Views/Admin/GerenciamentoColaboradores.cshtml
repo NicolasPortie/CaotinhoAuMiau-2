@@ -1,6 +1,6 @@
 @model List<CaotinhoAuMiau.Models.ViewModels.Admin.ColaboradorViewModel>
 @{
-    Layout = null;
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
     ViewData["Title"] = "Gerenciamento de Colaboradores";
     
     var cargoUsuario = User.ObterValorClaim("Cargo");
@@ -10,22 +10,8 @@
     var inativos = Model.Count(c => !c.Ativo);
 }
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Cãotinho AuMiau</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
-    
-    
+@section Styles {
     <link rel="stylesheet" href="~/css/admin/admin-gerenciamento-colaboradores.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/shared/paginacao.css" asp-append-version="true" />
     
     <style>
         
@@ -63,12 +49,7 @@
         
         
     </style>
-</head>
-<body class="d-flex">
-    
-    @await Html.PartialAsync("~/Views/Shared/_SlidebarAdmin.cshtml")
-    
-    <div class="conteudo-principal">
+}
         <div class="cabecalho-painel">
             <h1 class="titulo-pagina">Gerenciamento de Colaboradores</h1>
             @if (podeGerenciarColaboradores)
@@ -316,7 +297,6 @@
                 </div>
             </div>
         </div>
-    </div>
 
     
     <div class="modal fade" id="modalColaborador" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="tituloModalColaborador" aria-hidden="true">
@@ -509,15 +489,6 @@
             </div>
         </div>
     </div>
-
-    @Html.AntiForgeryToken()
-    <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
-    @await Html.PartialAsync("_ValidationScriptsPartial")
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <script src="~/lib/vanilla-masker/vanilla-masker.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
-    <script src="~/js/admin/gerenciamento-colaboradores.js" asp-append-version="true"></script>
 
     
     <div class="modal fade" id="modalStatus" tabindex="-1" aria-hidden="true">
@@ -778,5 +749,203 @@
             });
         });
     </script>
-</body>
-</html>
+}
+
+@Html.AntiForgeryToken()
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script src="~/lib/vanilla-masker/vanilla-masker.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    <script src="~/js/admin/gerenciamento-colaboradores.js" asp-append-version="true"></script>
+    
+    <script>
+        $(document).ready(function() {
+            // Prevenir que os links de paginação façam o conteúdo desaparecer
+            $('.pagination .page-link').on('click', function(e) {
+                e.preventDefault(); // Previne o comportamento padrão do link
+                var url = $(this).attr('href');
+                if (url) {
+                    window.location.href = url; // Navega para a URL mantendo o comportamento normal
+                }
+            });
+            
+            // Manipulador para o seletor de itens por página
+            $('#selectItensPorPagina').change(function() {
+                var itensPorPagina = $(this).val();
+                var statusFiltro = $('#filtroStatusColaborador').val() || '';
+                var cargoFiltro = $('#filtroCargoColaborador').val() || '';
+                var pesquisa = $('#pesquisaColaborador').val() || '';
+                
+                var url = '@Url.Action("Listar", "GerenciamentoColaboradores")' + 
+                    '?pagina=1&itensPorPagina=' + itensPorPagina;
+                
+                if (statusFiltro) {
+                    url += '&status=' + encodeURIComponent(statusFiltro);
+                }
+                
+                if (cargoFiltro) {
+                    url += '&cargo=' + encodeURIComponent(cargoFiltro);
+                }
+                
+                if (pesquisa) {
+                    url += '&pesquisa=' + encodeURIComponent(pesquisa);
+                }
+                
+                window.location.href = url;
+            });
+            
+            // Aplicar filtros quando mudar os campos de filtro
+            $('#filtroStatusColaborador, #filtroCargoColaborador').change(function() {
+                aplicarFiltros();
+            });
+            
+            // Aplicar filtros ao pressionar Enter no campo de pesquisa
+            $('#pesquisaColaborador').keypress(function(e) {
+                if (e.which === 13) {
+                    aplicarFiltros();
+                    return false;
+                }
+            });
+            
+            // Limpar filtros
+            $('#btnLimparFiltros').click(function() {
+                window.location.href = '@Url.Action("Listar", "GerenciamentoColaboradores")';
+            });
+            
+            function aplicarFiltros() {
+                var statusFiltro = $('#filtroStatusColaborador').val();
+                var cargoFiltro = $('#filtroCargoColaborador').val();
+                var pesquisa = $('#pesquisaColaborador').val();
+                
+                var url = '@Url.Action("Listar", "GerenciamentoColaboradores")' + 
+                    '?pagina=1&itensPorPagina=' + @ViewBag.ItensPorPagina;
+                
+                if (statusFiltro) {
+                    url += '&status=' + encodeURIComponent(statusFiltro);
+                }
+                
+                if (cargoFiltro) {
+                    url += '&cargo=' + encodeURIComponent(cargoFiltro);
+                }
+                
+                if (pesquisa) {
+                    url += '&pesquisa=' + encodeURIComponent(pesquisa);
+                }
+                
+                window.location.href = url;
+            }
+            
+            // Atualizar URLs de paginação para incluir filtros
+            $('.pagination .page-link').each(function() {
+                var href = $(this).attr('href');
+                if (href) {
+                    var match = href.match(/pagina=(\d+)&itensPorPagina=(\d+)/);
+                    if (match) {
+                        var pagina = match[1];
+                        var itensPorPagina = match[2];
+                        $(this).attr('href', getUrlWithFilters(pagina, itensPorPagina));
+                    }
+                }
+            });
+            
+            function getUrlWithFilters(pagina, itensPorPagina) {
+                var statusFiltro = $('#filtroStatusColaborador').val();
+                var cargoFiltro = $('#filtroCargoColaborador').val();
+                var pesquisa = $('#pesquisaColaborador').val();
+                
+                var url = '@Url.Action("Listar", "GerenciamentoColaboradores")' + 
+                    '?pagina=' + pagina + '&itensPorPagina=' + itensPorPagina;
+                
+                if (statusFiltro) {
+                    url += '&status=' + encodeURIComponent(statusFiltro);
+                }
+                
+                if (cargoFiltro) {
+                    url += '&cargo=' + encodeURIComponent(cargoFiltro);
+                }
+                
+                if (pesquisa) {
+                    url += '&pesquisa=' + encodeURIComponent(pesquisa);
+                }
+                
+                return url;
+            }
+            
+            // Preencher o select de cargos com os valores disponíveis
+            function preencherCargos() {
+                var cargos = [];
+                
+                // Extrair cargos únicos da tabela
+                $('.tabela-admin tbody tr').each(function() {
+                    var cargo = $(this).find('td:nth-child(4)').text().trim();
+                    if (cargo && cargos.indexOf(cargo) === -1) {
+                        cargos.push(cargo);
+                    }
+                });
+                
+                // Ordenar cargos
+                cargos.sort();
+                
+                // Adicionar opções ao select
+                var select = $('#filtroCargoColaborador');
+                cargos.forEach(function(cargo) {
+                    select.append($('<option>', {
+                        value: cargo,
+                        text: cargo
+                    }));
+                });
+            }
+            
+            preencherCargos();
+
+            $('#formularioColaborador').on('submit', function(e) {
+                e.preventDefault();
+                var email = $('#emailColaborador').val();
+                var cpf = $('#cpfColaborador').val();
+
+                $.get('/Admin/Colaboradores/VerificarUsuario', { email: email, cpf: cpf })
+                    .done(function(resp) {
+                        if (resp.existe) {
+                            $('#usuarioPromocaoId').val(resp.usuario.id);
+                            $('#modalPromover').modal('show');
+                        } else {
+                            enviarFormulario();
+                        }
+                    })
+                    .fail(function() {
+                        toastr.error('Erro ao verificar usuário.');
+                    });
+            });
+
+            function enviarFormulario() {
+                var form = $('#formularioColaborador');
+                $.post(form.attr('action'), form.serialize())
+                    .done(function(res) {
+                        if (res.sucesso) {
+                            location.reload();
+                        } else {
+                            toastr.error(res.mensagem);
+                        }
+                    })
+                    .fail(function() { toastr.error('Erro ao salvar colaborador.'); });
+            }
+
+            $('#botaoConfirmarPromocao').on('click', function() {
+                var usuarioId = $('#usuarioPromocaoId').val();
+                var cargo = $('#cargoColaborador').val();
+                var token = $('input[name="__RequestVerificationToken"]').val();
+
+                $.post('/Admin/Colaboradores/PromoverUsuario', { usuarioId: usuarioId, cargo: cargo, __RequestVerificationToken: token })
+                    .done(function(res) {
+                        if (res.sucesso) {
+                            $('#modalPromover').modal('hide');
+                            location.reload();
+                        } else {
+                            toastr.error(res.mensagem);
+                        }
+                    })
+                    .fail(function() { toastr.error('Erro ao promover usuário.'); });
+            });
+        });
+    </script>

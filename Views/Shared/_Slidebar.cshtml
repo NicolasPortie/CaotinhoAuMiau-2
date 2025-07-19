@@ -42,7 +42,9 @@
                     
                     <div class="avatar">
                         <div class="avatar-foto">
-                            <img src="~/imagens/perfil/@fotoPerfil" alt="@usuarioNome" />
+                            <img src="~/imagens/perfil/@fotoPerfil" 
+                                 alt="@usuarioNome" 
+                                 onerror="this.style.display='none'; this.parentElement.parentElement.innerHTML='<div class=&quot;avatar-inicial&quot;><span>@inicial</span></div>';" />
                         </div>
                     </div>
                 }

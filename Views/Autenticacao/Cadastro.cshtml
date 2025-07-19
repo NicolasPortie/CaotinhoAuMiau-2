@@ -1,25 +1,14 @@
 ﻿@model CaotinhoAuMiau.Models.ViewModels.Usuario.UsuarioViewModel
 
 @{
-    Layout = null;
-    ViewData["Title"] = "Cadastro - CaotinhoAuMiau";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Cadastro";
 }
 
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewData["Title"]</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+@section Styles {
     <link rel="stylesheet" href="~/css/home/home.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/autenticacao/usuario-cadastro.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         span[data-valmsg-for="CEP"],
@@ -38,38 +27,7 @@
             return jQuery(a).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
         };
     </style>
-</head>
-<body>
-    
-    <nav class="navbar">
-        <div class="navbar-container">
-            <a href="@Url.Action("Index", "Home")" class="navbar-brand">
-                <i class="fas fa-paw"></i> CaotinhoAuMiau
-            </a>
-            <div class="navbar-links">
-                @if (Context.Session.GetString("UsuarioEmail") == null)
-                {
-                    <a href="/usuario/login" class="navbar-link">
-                        <i class="fas fa-sign-in-alt"></i> Login
-                    </a>
-                    <a href="/usuario/cadastro" class="navbar-link active">
-                        <i class="fas fa-user-plus"></i> Cadastro
-                    </a>
-                }
-                else
-                {
-                    <div class="navbar-user">
-                        <a href="@Url.Action("ExplorarPets", "Usuario")" class="navbar-link">
-                            <i class="fas fa-paw"></i> Explorar Pets
-                        </a>
-                        <a href="@Url.Action("Adocoes", "Usuario")" class="navbar-link">
-                            <i class="fas fa-heart"></i> Minhas Adoções
-                        </a>
-                    </div>
-                }
-            </div>
-        </div>
-    </nav>
+}
 
     <div class="container-cadastro">
         <div class="envolucro-login">
@@ -359,11 +317,9 @@
         </div>
     </div>
 
-    
+@section Scripts {
     <script src="~/lib/vanilla-masker/vanilla-masker.js"></script>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/js/autenticacao/cadastro.js" asp-append-version="true"></script>
-</body>
-</html>
+}

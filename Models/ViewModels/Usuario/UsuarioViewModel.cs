@@ -136,7 +136,7 @@ namespace CaotinhoAuMiau.Models.ViewModels.Usuario
                 CEP = usuario.CEP ?? string.Empty,
                 Logradouro = usuario.Logradouro ?? string.Empty,
                 Numero = usuario.Numero ?? string.Empty,
-                Complemento = usuario.Complemento,
+                Complemento = usuario.Complemento ?? string.Empty,
                 Bairro = usuario.Bairro ?? string.Empty,
                 Cidade = usuario.Cidade ?? string.Empty,
                 Estado = usuario.Estado ?? string.Empty,

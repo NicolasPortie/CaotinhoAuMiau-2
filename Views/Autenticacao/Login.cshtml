@@ -1,28 +1,16 @@
 ﻿@model CaotinhoAuMiau.Models.ViewModels.Comuns.AutenticacaoLoginViewModel
 
 @{
-    Layout = null;
-    ViewData["Title"] = "Login - CaotinhoAuMiau";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Login";
 }
 
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"]</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+@section Styles {
     <link rel="stylesheet" href="~/css/autenticacao/usuario-login.css" asp-append-version="true">
-    <link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body>
-    
-        <partial name="_NavbarPublic" />
+}
 
     <div class="login-wrapper">
         <div class="login-container">
@@ -102,9 +90,6 @@
         </div>
     </div>
 
-    
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+@section Scripts {
     <script src="~/js/autenticacao/login.js" asp-append-version="true"></script>
-</body>
-</html>
+}
